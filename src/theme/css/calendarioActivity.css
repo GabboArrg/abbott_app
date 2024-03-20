@@ -1,0 +1,57 @@
+.calendario-Activity .icono-evento{
+    zoom: 41%;
+    padding-left: 10px;
+}
+
+.calendario-Activity .titulo-evento{
+    font-size: 19px;
+    font-weight: bold;
+    margin-top: 9px;
+}
+
+.calendario-Activity .margen-direccion{
+    margin-top: 4px;
+}
+
+.calendario-Activity .icono-mapa{
+    zoom: 25%;
+}
+
+.calendario-Activity .direccion-evento{
+    margin-left: 5px;
+    font-size: 13px;
+    color: #9DA2A5;
+}
+
+.calendario-Activity .icono-corazon{
+    margin-top: 8px;
+}
+
+.calendario-Activity .icono-reloj{
+    zoom: 58%;
+}
+
+.calendario-Activity .texto-reloj{
+    margin-left: 5px;
+    font-size: 13px;
+    color: #9DA2A5;
+    font-weight: bold;
+}
+
+.calendario-Activity .banner-evento{
+    width: 100%;
+}
+
+.calendario-Activity .imagen-amigos{
+    zoom: 26%;
+    padding-left: 60px;
+}
+
+.calendario-Activity .texto-amigos{
+    color: #F7A542;
+    margin-top: 2px;
+}
+
+.calendario-Activity .icon-asistir{
+    zoom: 10%;
+}

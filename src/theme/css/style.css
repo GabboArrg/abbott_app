@@ -1,0 +1,1407 @@
+/* Empty. Add your own CSS if you like */
+
+
+/* Splash screen*/
+
+.background,
+.background .pane,
+.background .item,
+.background .item-complex .item-content {
+    /*background-color: #f4a435; verde #387ef5*/
+    /*background-color: #387ef5; */
+    background-color: white;
+    text-decoration-color: black;
+}
+
+.bg-abbott {
+    background-color: white;
+}
+
+.button {
+    font-weight: bold;
+}
+
+.buttons-right {
+    margin-left: auto;
+}
+
+
+/* Div for headers */
+
+.header-div {
+    /*margin: 20px;*/
+}
+
+.imagen {
+    position: relative;
+    margin-top: 50%;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+
+/* Use this in classes to delete all padding */
+
+.no-padding {
+    padding: 0px !important;
+    margin: 0px;
+}
+
+.buttons-padding {
+    padding: 0px !important;
+    margin: 10px;
+}
+
+
+/** Agregar Producto **/
+
+.prodcod {
+    width: 60%;
+}
+
+.col-cant-prod {
+    width: 20%;
+}
+
+.col-n-prod {
+    width: 60%;
+}
+
+.tit-n-prod {
+    width: 70%;
+}
+
+.input-n-prod {
+    width: 20%;
+}
+
+
+/** contenedor productos **/
+
+.col-titulo-prod {
+    width: 25%;
+    padding: 4px;
+}
+
+.col-cont-prod {
+    width: 18%;
+    padding: 4px;
+    border: 1px solid;
+}
+
+.col-productos-id {
+    width: 10%;
+}
+
+.col-productos-desc {
+    width: 90%;
+}
+
+.col-productos-cant {
+    width: 10%;
+}
+
+.col-productos-precio {
+    width: 20%%;
+}
+
+.col-productos-neto {
+    width: 30%;
+}
+
+.col-productos-bruto {
+    width: 40%;
+}
+
+[class*="col-productos-"] {
+    float: left;
+    text-align: center;
+    padding: 4px;
+    border: 1px solid;
+}
+
+
+/** contenedor Pedidos **/
+
+.col-pedidos-1 {
+    width: 20%;
+    font-weight: bold;
+}
+
+.col-pedidos-2 {
+    width: 40%;
+    font-weight: bold;
+}
+
+.col-pedidos-3 {
+    width: 40%;
+    font-weight: bold;
+}
+
+.col-pedidos-4 {
+    width: 25%;
+    font-weight: bold;
+}
+
+[class*="col-pedidos-"] {
+    float: left;
+    text-align: center;
+    /**border: 1px  green;*/
+}
+
+.row::after {
+    content: "";
+    clear: both;
+    display: table;
+    border: 1px green;
+}
+
+
+/** General */
+
+#center_text {
+    text-align: center;
+}
+
+
+/*****************      login.html          **************/
+
+#social_container {
+    padding-left: 16%;
+    padding-right: 16%;
+}
+
+#footer_login {
+    padding-top: 10%;
+}
+
+#img_logo {
+    padding-top: 25%;
+    text-align: center;
+}
+
+#login_label {
+    background-color: white;
+    border-color: #387ef5;
+    border-radius: 7px;
+    border-width: 2px;
+}
+
+#login_button_container {
+    padding-left: 16%;
+    padding-right: 16%;
+}
+
+#login_button {
+    border-color: #FFFFFF;
+    border-radius: 7px;
+    color: #FFFFFF;
+    border-width: 1px;
+}
+
+#login_div {
+    border-radius: 9px;
+    border-width: 5px;
+    margin-left: 16%;
+    margin-right: 16%;
+    /*margin-top: -20%;*/
+}
+
+#login_image {
+    background-color: #387ef5;
+}
+
+
+/******************      register.html          ************* */
+
+#register_ext_div {
+    margin-right: 6%;
+    margin-left: 6%;
+    width: 90%;
+    background-color: white;
+}
+
+#register_title {
+    text-align: center;
+    color: white;
+}
+
+#register_div {
+    border-radius: 5px;
+    border-width: 1px;
+    margin-left: 10%;
+    margin-right: 10%;
+    padding-top: 2px;
+    padding-bottom: 1px;
+    /*margin-top: -20%;*/
+}
+
+#register_input {
+    font-size: 30px;
+}
+
+#register_label {
+    background-color: white;
+    border-color: #BDBDBD;
+    border-radius: 6px;
+    border-width: 1px;
+}
+
+.register_arrow_up {
+    width: 0;
+    height: 0;
+    border-left: 7px solid transparent;
+    border-right: 7px solid transparent;
+    border-bottom: 7px solid black;
+}
+
+
+/*        abbott      */
+
+.clisel {
+    width: 100%;
+}
+
+.float-button {
+    -webkit-border-radius: 50%;
+    -moz-border-radius: 50%;
+    z-index: 9999;
+    border-radius: 50%;
+    position: fixed;
+    font-size: 40px;
+    width: 30px;
+    padding: 30px;
+    background: #f4a435;
+    left: 80%;
+    /* Adjust to where you want it */
+    top: 80vh !important/*-100px; Adjust to where you want it */
+}
+
+.float-button .height_fix {
+    margin-top: 100%;
+}
+
+.float-button .content {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    margin-top: -20px;
+    /* Note, this must be half the font size */
+    color: white;
+}
+
+.radio {
+    display: inline-block;
+    height: 1.25rem;
+    width: 1.25rem;
+    vertical-align: middle;
+    background: url(../img/circulos-asistir.png) 0 1.25rem;
+    background-size: 5rem;
+}
+
+.radioChecked {
+    background-position: 1.25rem 1.25rem;
+}
+
+.radioCheckedVerde {
+    background-position: 3.76rem 1.25rem;
+}
+
+.radioCheckedAmarillo {
+    background-position: 2.5rem 1.25rem;
+}
+
+.radioCheckedRojo {
+    background-position: 1.25rem 1.25rem;
+}
+
+.width100 {
+    width: 100%;
+}
+
+.paddingTopImagenPromo {
+    padding-top: 10px;
+}
+
+.width60 {
+    width: 60%;
+}
+
+.inlineBlock {
+    display: inline-block;
+}
+
+.inlineFlex {
+    display: inline-flex;
+}
+
+.tituloActivity {
+    color: #2bb674 !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+}
+
+.tituloActivityComment {
+    color: #000000 !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+}
+
+.paddingTituloPagina {
+    padding-top: 6px;
+}
+
+.fondoBlanco {
+    z-index: 999999;
+    background-color: #FFFFFF;
+    width: 85px;
+}
+
+.tituloSemana {
+    color: #FEA444 !important;
+    font-weight: bold !important;
+    font-size: 11px !important;
+    margin-left: 6px;
+    margin-top: -9px;
+}
+
+.tituloDia {
+    color: #FEA444 !important;
+    font-weight: bold !important;
+    font-size: 20px !important;
+    margin-top: -13px;
+}
+
+.tituloMes {
+    color: #FEA444 !important;
+    font-weight: bold !important;
+    font-size: 12px !important;
+    margin-top: -9px;
+}
+
+.borderTituloIzq {
+    width: 2%;
+    height: 1px;
+    float: left;
+    background-color: #5CBF8C;
+    margin-left: -10px;
+}
+
+.borderTituloDer {
+    width: 100%;
+    height: 1px;
+    background-color: #5CBF8C;
+}
+
+.textoActivity {
+    font-size: 12px !important;
+    color: #48484a !important;
+}
+
+.guestText {
+    color: #2bb674 !important;
+    font-size: 12px !important;
+}
+
+.margenTextoNo {
+    margin-left: 4px !important;
+}
+
+.margenTextoVoy {
+    margin-left: 2px !important;
+}
+
+.imagenActivity {
+    zoom: 30%;
+    padding-top: 55px;
+}
+
+.imagenActivityAdd {
+    zoom: 40%;
+}
+
+.headerFiltros {
+    width: 100px;
+    height: 200px;
+    background-color: #F4F4F4;
+    z-index: 99999999;
+    position: relative;
+    float: right;
+}
+
+.filstrosAll {
+    margin-top: 49px;
+    padding-left: 10px;
+}
+
+.colorCalendarioMenuSelect {
+    color: #2bb674 !important;
+}
+
+.marcoMapa {
+    height: 300px;
+    width: 100%;
+}
+
+.calendarioMenu1 {
+    margin-top: 62px;
+    padding-left: 10px;
+    font-weight: bold
+}
+
+.calendarioMenu2 {
+    margin-top: 20px;
+    padding-left: 10px;
+    font-weight: bold
+}
+
+.calendarioMenu3 {
+    margin-top: 20px;
+    padding-left: 10px;
+    font-weight: bold
+}
+
+.padding10 {
+    padding-left: 10px;
+}
+
+.divTextActivity {
+    width: 100%;
+    padding-left: 16px;
+}
+
+.borderActivity {
+    width: 79%;
+    height: 1px;
+    background-color: #efebeb;
+    float: right;
+}
+
+.borderActivityComment {
+    width: 100%;
+    height: 1px;
+    background-color: #efebeb;
+    float: right;
+}
+
+.responseComment {
+    float: right;
+    border-radius: 25px;
+    border: 1px solid #9A9A9A;
+    background-color: white;
+    padding-left: 8px;
+    padding-right: 8px;
+    color: #2bb674 !important;
+}
+
+.textoResponseComment {
+    color: #2bb674 !important;
+    font-size: 16px !important;
+}
+
+.paddingBorder {
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.divTextActivity p {
+    margin: 0 0 2px;
+}
+
+.imagenGuest {
+    zoom: 16%;
+    margin-right: 10px;
+}
+
+.imagenGuest2 {
+    zoom: 40%;
+    margin-right: 15px;
+}
+
+.estilosHoraActivity {
+    font-size: 11px;
+    margin: 0 0 -7px;
+    color: #9A9A9A;
+    font-weight: bold;
+}
+
+.estiloReloj {
+    width: 13px;
+    height: 13px;
+    margin-top: 11px;
+}
+
+.paddingHora {
+    padding-left: 5px;
+}
+
+.marginHora {
+    margin-top: -9px !important;
+}
+
+.floatRight {
+    float: right;
+}
+
+.divRadioActivity {
+    width: 80%;
+    display: flex;
+    float: right;
+}
+
+.displayNone {
+    display: none !important;
+}
+
+.paddingButtonCalendario {
+    padding-bottom: 12px;
+}
+
+.textoRadio {
+    font-size: 10px;
+    color: #BBBBBB !important;
+}
+
+.textoInvite {
+    font-size: 15px;
+    color: #387ef5;
+    margin-left: 5px !important;
+}
+
+.marginLeft10 {
+    margin-left: 10%;
+}
+
+.marginTopFecha {
+    margin-top: -91px;
+}
+
+.marginTopFechaComment {
+    margin-top: 6px;
+}
+
+.displayFlex {
+    display: flex;
+}
+
+.width55 {
+    width: 55px;
+}
+
+.marginLeft4Porciento {
+    margin-left: 4%;
+}
+
+.activityDetailInfo {
+    background: url(../img/info.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    height: 100px;
+    margin-left: 35%;
+}
+
+.activityDetailInfoSelect {
+    background: url(../img/info-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    height: 100px;
+    margin-left: 35%;
+}
+
+.activityDetailComment {
+    background: url(../img/comment.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    margin-left: 4%;
+}
+
+.activityDetailCommentSelect {
+    background: url(../img/comment-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    margin-left: 4%;
+}
+
+.activityDetailAdd {
+    background: url(../img/dctos.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    margin-left: 4%;
+}
+
+.activityDetailAddSelect {
+    background: url(../img/dctos-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    margin-left: 4%;
+}
+
+.activityDetailMap {
+    background: url(../img/adress.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    float: right;
+    margin-right: 35%;
+}
+
+.activityDetailMapSelect {
+    background: url(../img/adress-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    float: right;
+    margin-right: 35%;
+}
+
+.activityDetailPhoto {
+    background: url(../img/gallery.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    margin-left: 4%;
+}
+
+.activityDetailPhotoSelect {
+    background: url(../img/gallery-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 25%;
+    height: 100px;
+    margin-left: 4%;
+}
+
+.activityHeaderSearch {
+    background: url(../img/search.png);
+    background-repeat: no-repeat;
+    zoom: 44%;
+    width: 100px;
+    height: 100px;
+    border: 0;
+    margin-top: 14px;
+}
+
+.activityHeaderFilter {
+    background: url(../img/filtro.png);
+    background-repeat: no-repeat;
+    zoom: 44%;
+    width: 100px;
+    height: 100px;
+    border: 0;
+    margin-top: 17px;
+}
+
+.activityHeaderCalendar {
+    background: url(../img/calendar.png);
+    background-repeat: no-repeat;
+    zoom: 44%;
+    width: 100px;
+    height: 100px;
+    border: 0;
+    margin-top: 7px;
+}
+
+.tituloInfo {
+    /*color: black !important;*/
+    font-weight: bold !important;
+    font-size: 16px !important;
+}
+
+.infoSemana {
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 11px !important;
+    margin-top: -9px;
+}
+
+.infoDia {
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 20px !important;
+    margin-top: -16px;
+}
+
+.infoMes {
+    color: white !important;
+    font-weight: bold !important;
+    font-size: 12px !important;
+    margin-top: -13px;
+}
+
+.infoCajaFecha {
+    background-color: #2BB373 !important;
+    width: 52px;
+    text-align: center;
+}
+
+.margenInfoTitulo {
+    margin-top: -9px !important;
+}
+
+.bar-energized {
+    color: #f4a435 !important;
+    border-color: #2B2625 !important;
+    /*background-color: #2B2625!important;*/
+    background-color: #2E9AFE !important;
+    /**background-image: linear-gradient(0deg, #f4a435, #f4a435 50%, transparent 50%) !important;*/
+}
+
+.button-balanced {
+    /*color:#387ef5 !important;*/
+    /*border-color: #387ef5 !important;*/
+    background-color: #387ef5 !important;
+    /*background-image: linear-gradient(0deg, #387ef5, #387ef5 50%, transparent 50%) !important;*/
+}
+
+.balanced,
+a.balanced {
+    color: #9bbefa;
+}
+
+.lineaDivisoria {
+    height: 2px;
+    border: 0;
+    box-shadow: inset 0 10px 15px -5px rgba(189, 178, 189, 0.75);
+}
+
+#inputCreate {
+    background-color: white;
+    border-color: white;
+    height: 35px;
+    margin-left: -30px;
+    /*border-radius: 7px;*/
+    /*border-width:2px;*/
+}
+
+
+/*
+* avatar del Menu
+*/
+
+#avatarMenu {
+    background-position: center;
+    background-size: cover;
+    line-height: 50px;
+}
+
+
+/*
+* avatar del perfil
+*/
+
+.hero {
+    background-size: cover;
+    background-position: center;
+    box-shadow: 0px 2px 5px 0 rgba(0, 0, 0, 0.26);
+    color: #fff;
+    height: 230px;
+    position: relative;
+    text-align: center;
+    -webkit-transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    width: 100%;
+    padding-bottom: 30px;
+    background-color: #387ef5;
+}
+
+.hero > * {
+    -webkit-transition: opacity 2.5s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: opacity 2.5s cubic-bezier(0.55, 0, 0.1, 1);
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.hero + .mid-bar {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+    height: initial;
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.hero .hero-icon {
+    box-shadow: 0px 0 2px 0 rgba(0, 0, 0, 0.26);
+    border-radius: 50%;
+    display: inline-block;
+    font-size: 65px;
+    height: 150px;
+    padding: 10px 30px;
+    line-height: 136px;
+    width: 150px;
+}
+
+.hero.no-header {
+    height: 244px;
+}
+
+.hero > .content {
+    bottom: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+.hero > .content > .avatar {
+    background-position: center;
+    background-size: cover;
+    border: solid 1px rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: inline-block;
+    height: 88px;
+    /* 88px*/
+    left: auto;
+    margin-bottom: 5px;
+    position: relative;
+    bottom: -10px;
+    width: 88px;
+}
+
+
+/* 88px*/
+
+.hero > .content > .avatar2 {
+    background-position: center;
+    background-size: cover;
+    border: solid 1px rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: inline-block;
+    height: 88px;
+    /* 88px*/
+    left: auto;
+    margin-bottom: 5px;
+    position: relative;
+    bottom: -10px;
+    width: 88px;
+}
+
+
+/* 88px*/
+
+.hero h1 .hero h2,
+.hero h3,
+.hero h4,
+.hero h5,
+.hero h6 {
+    color: #fff;
+    margin: 0;
+}
+
+.hero h4 {
+    color: rgba(255, 255, 255, 0.7);
+    margin: 3px 0 16px;
+}
+
+.hero h1 > a,
+.hero h2 > a,
+.hero h3 > a,
+.hero h4 > a,
+.hero h5 > a,
+.hero h6 > a {
+    text-decoration: none;
+}
+
+.hero + .button-bar {
+    border-radius: 0;
+    margin-top: 0;
+}
+
+.hero + .button-bar > .button:first-child,
+.hero + .button-bar > .button:last-child {
+    border-radius: 0;
+}
+
+.hero .hero-icon {
+    color: #fff;
+    font-size: 96px;
+}
+
+.hero .hero-icon + h1 {
+    color: white;
+    letter-spacing: 0.15rem;
+}
+
+.hero .button,
+.hero .button.button-large,
+.hero .button.button-flat {
+    margin: 0;
+}
+
+.hero h1.title {
+    color: #fff;
+    font-size: 23px;
+    margin: 0;
+    text-align: left;
+    padding-left: 80px;
+    line-height: 59px;
+}
+
+.hero + .mid-bar {
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
+    -webkit-transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: all 1s cubic-bezier(0.55, 0, 0.1, 1);
+    height: initial;
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.hero > * {
+    -webkit-transition: opacity 2.5s cubic-bezier(0.55, 0, 0.1, 1);
+    transition: opacity 2.5s cubic-bezier(0.55, 0, 0.1, 1);
+    opacity: 1;
+    filter: alpha(opacity=100);
+}
+
+.hero > .content {
+    bottom: 0;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+
+
+/* estilos de botones add, char y gallery   */
+
+#actionButtonBar {
+    margin: 2% 0% 2% 0%;
+}
+
+#addButton,
+#chatButton,
+#galleryButton {
+    margin: 5% 5% 5% 5%;
+    border-radius: 10%;
+    font-size: 2.3vw;
+}
+
+#chatButton,
+#galleryButton {
+    background-color: #f4a435;
+}
+
+#addButton {
+    background-color: #387ef5;
+}
+
+#socialProfileBar {
+    padding: 5% 3% 0% 3%;
+}
+
+#twitterProfileButton,
+#linkedinProfileButton {
+    margin: 0% 3% 0% 3%;
+    border-radius: 50%;
+    background-color: #BDBDBD;
+}
+
+#faceProfileButton {
+    margin: 0% 3% 0% 10%;
+    border-radius: 50%;
+    background-color: #BDBDBD;
+}
+
+#googleProfileButton {
+    margin: 0% 10% 0% 3%;
+    border-radius: 50%;
+    background-color: #BDBDBD;
+}
+
+
+/*
+  Edicion del user profile
+*/
+
+#userBio {
+    text-align: center;
+}
+
+#titleToEdit input[type="text"] {
+    margin-left: 40%;
+}
+
+#nameContainer,
+#profesionContainer {
+    margin-left: 20%;
+    margin-right: 20%;
+    height: 30px;
+    opacity: 0.3;
+    margin-top: 5%;
+}
+
+#userName {
+    border-radius: 50%;
+}
+
+#bottomInit {
+    /*padding-top:40vw;*/
+}
+
+.calendarioColorDias {
+    color: #f4a435 !important;
+}
+
+.calendarioColorSemana {
+    color: #9A9A9A;
+    !important;
+}
+
+.calendarioMes {
+    color: #2bb674 !important;
+    font-weight: bold !important;
+    font-size: 16px !important;
+}
+
+.divBotonesCalendario {
+    width: 100%;
+    margin-top: -5px;
+    position: absolute;
+}
+
+.calendarioBotonBack {
+    float: left;
+}
+
+.calendarioBotonNext {
+    float: right;
+}
+
+#calendario {
+    width: 100%;
+    text-align: center;
+}
+
+#table {
+    font-size: 12px;
+    width: 100%;
+    font-weight: bold;
+}
+
+
+/*
+  *  estilo del friends
+  *
+  */
+
+.home-container {
+    display: -webkit-flex;
+    -webkit-flex-direction: column;
+    height: 100%;
+}
+
+.home-container > .row {
+    -webkit-flex: 1;
+}
+
+.icon-row {
+    -webkit-align-items: center;
+}
+
+.friendsAbbott {
+    background: url(../img/desconocido.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 40%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+.friendsAbbottSelected {
+    background: url(../img/desconocido-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 40%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+.groupAbbott {
+    background: url(../img/grupos.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 40%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+.groupAbbottSelected {
+    background: url(../img/grupos-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 40%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+.friendsUser {
+    background: url(../img/friends.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 40%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+.friendsUserSelected {
+    background: url(../img/friends-select.png);
+    background-repeat: no-repeat;
+    zoom: 34%;
+    width: 40%;
+    height: 100px;
+    margin-left: 10%;
+}
+
+
+/* CHAT 2.0 */
+
+.chat-izq {
+    background-color: #f4a435;
+    margin-top: 5vw;
+    margin-left: 15vw;
+    margin-right: 30vw;
+    border-radius: 3vw;
+    text-align: left;
+    display: block;
+    padding: 0.5vw;
+}
+
+.chat-der {
+    background-color: #387ef5;
+    margin-top: 5vw;
+    margin-right: 15vw;
+    margin-left: 30vw;
+    text-align: right;
+    border-radius: 10px;
+    display: block;
+    padding: 1.5vw;
+}
+
+.pic {
+    border-radius: 10px;
+    max-width: 30vw;
+    max-height: 20vh;
+}
+
+.userPic-izq img {
+    display: inline-block;
+    width: 10vw;
+    height: 5vh;
+    border-radius: 50%;
+    text-align: left;
+    clear: left;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+}
+
+.userPic-der img {
+    display: block;
+    width: 10vw;
+    height: 5vh;
+    border-radius: 50%;
+    text-align: right;
+    clear: right;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    position: absolute;
+    margin-left: 89vw;
+}
+
+
+/* FIN DEL CHAT 2.0 */
+
+
+/*  ESTILOS DEL MODAL DE FOTOS   */
+
+.image-list-thumb {
+    padding: 2px 2px 2px 2px;
+    height: 100px;
+}
+
+.image-modal {
+    width: 100% !important;
+    height: 100%;
+    top: 0 !important;
+    left: 0 !important;
+}
+
+.transparent {
+    background: transparent !important;
+}
+
+.fullscreen-image {
+    max-width: 100%;
+    max-height: 100%;
+    bottom: 0;
+    left: 0;
+    margin: auto;
+    overflow: auto;
+    position: fixed;
+    right: 0;
+    top: 0;
+}
+
+.slider {
+    width: 100%;
+    height: 100%;
+}
+
+
+/* FIN DE ESTILOS DEL MODAL DE FOTOS   */
+
+
+/* Estilos para avatar en creacion de listas de amigos */
+
+.eag-home-button {
+    min-height: 150px;
+}
+
+.eag-home-button img {
+    width: 70%;
+    background-position: center;
+    background-size: cover;
+    border: solid 1px rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    display: inline-block;
+    height: 48px;
+    /* 88px*/
+    left: auto;
+    margin-bottom: 5px;
+    position: relative;
+    bottom: -10px;
+    width: 48px;
+}
+
+.eag-home-icon {
+    width: 148px;
+}
+
+.eag-home-align {
+    text-align: center;
+}
+
+.eag-home-container-flex {
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+}
+
+.eag-home-container {
+    //    width: 326px;
+    //    height: 555px;
+    padding: 5px;
+    margin: auto;
+    transform: translateY(5%);
+}
+
+.eag-home-label {
+    padding: 0px;
+    margin: 0px;
+    text-align: center;
+    transform: translateY(-75%);
+}
+
+.eag-no-margin {
+    margin: 0 !important;
+}
+
+.alturaAnchoInvitarAmigo {
+    width: 10vw !important;
+    height: 5vh !important;
+}
+
+.tabs-abbotte .tab.active {
+    padding-bottom: .3rem;
+    border-bottom: .4rem solid #FFFFFF;
+}
+
+.active {
+    padding-bottom: .3rem;
+    border-bottom: .4rem solid #FFFFFF;
+}
+
+.alturaTabas {
+    height: 70px;
+}
+
+.tabs-abbotte .tab {
+    -webkit-box-flex: 1;
+    -webkit-flex: 1;
+    -moz-box-flex: 1;
+    -moz-flex: 1;
+    -ms-flex: 1;
+    flex: 1;
+    text-align: center;
+    padding: .7rem 1rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: #5d9eff;
+    background-color: #f4a435 !important;
+    ;
+}
+
+.item-select select {
+    max-width: 65%;
+}
+
+.activityImagen-Do-no-select {
+    zoom: 65%;
+}
+
+.activityImagen-Do-select {
+    zoom: 65%;
+}
+
+.activityImagen-mundo-no-select {
+    zoom: 65%;
+}
+
+.activityImagen-mundo-select {
+    zoom: 65%;
+}
+
+.activityImagen-invitaciones-no-select {
+    zoom: 65%;
+}
+
+.activityImagen-invitaciones-select {
+    zoom: 65%;
+}
+
+.fondoGris {
+    background-color: #F1F5F8;
+}
+
+.input-label-head {
+    background-color: #F1F5F8 !important;
+}
+
+.item-select select {
+    max-width: 100%;
+    direction: ltr !important;
+}

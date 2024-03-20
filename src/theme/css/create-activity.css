@@ -1,0 +1,8 @@
+.create-activity .upload-cover {
+  display: block;
+  margin: auto;
+}
+
+.create-activity a.activated {
+  background-color: white;
+}

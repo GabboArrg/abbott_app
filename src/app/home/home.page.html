@@ -1,0 +1,15 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Home</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <div id="img_logo">
+    <img src="assets/img/logo_grande.png" width="150px">
+    <h3> Versión 0.9.9.1 </h3>
+    <h3 *ngIf="mode === 'PRD'">Producción</h3>
+    <h3 *ngIf="mode === 'STAGING'">Pruebas</h3>
+    Usuario: {{ mail }}
+  </div>
+</ion-content>
