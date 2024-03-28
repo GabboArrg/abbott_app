@@ -3,7 +3,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: true,
+  production: false,
   MODE: 'STAGING',
   BASE_URL: 'http://174.138.191.33/',
   timeout: 20000,

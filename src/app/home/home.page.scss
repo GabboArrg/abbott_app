@@ -1,0 +1,37 @@
+.home-container {
+  text-align: center;
+
+.logo-image {
+  display: block;
+  margin: 0 auto; /* Centra horizontalmente */
+  max-width: 40%; /* Asegura que la imagen no supere el ancho del contenedor */
+  height: auto; /* Permite que la altura se ajuste automáticamente para mantener la proporción */
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+  h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .info {
+    background-color: #5D99FF;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    p {
+      margin: 0;
+      font-size: 16px;
+      color: #333;
+    }
+  }
+}
+
+ion-footer {
+  ion-toolbar {
+    text-align: center;
+  }
+}

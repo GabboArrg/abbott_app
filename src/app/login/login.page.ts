@@ -25,14 +25,10 @@ export class LoginPage {
   ionViewDidEnter() {
     if (this.userService.isLoggedIn()) {
       this.mail = this.userService.getMail() || '';
-      this.router.navigate(['/app/home']);
+      this.router.navigate(['/home']);
     } else {
       this.visible = true;
     }
-  }
-
-  logOut() {
-    // Implementar lógica de cierre de sesión
   }
 
   doLogin() {
@@ -49,11 +45,8 @@ export class LoginPage {
           loading.dismiss();
           this.userService.setToken(data);
 
-          console.log("User id:" + this.userService.getId());
-          console.log("User mail:" + this.userService.getMail());
-
           this.mail = this.userService.getMail() || '';
-          this.router.navigate(['/app/home']);
+          this.router.navigate(['/home']);
         })
         .catch((error: any) => {
           loading.dismiss();

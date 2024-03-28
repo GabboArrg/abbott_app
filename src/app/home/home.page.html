@@ -1,15 +1,19 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Home</ion-title>
-  </ion-toolbar>
-</ion-header>
+<app-header [tituloVar]="tituloVarLocal"></app-header>
 
-<ion-content>
-  <div id="img_logo">
-    <img src="assets/img/logo_grande.png" width="150px">
-    <h3> Versión 0.9.9.1 </h3>
-    <h3 *ngIf="mode === 'PRD'">Producción</h3>
-    <h3 *ngIf="mode === 'STAGING'">Pruebas</h3>
-    Usuario: {{ mail }}
+<ion-content class="ion-padding">
+  <div class="home-container">
+    <!-- Reemplaza el texto con la etiqueta img -->
+    <img src="assets/img/logo_grande.png" alt="Logo" class="logo-image">
+    <div class="info">
+      <p>Versión: {{ ver }}</p>
+      <p>Usuario: {{ mail }}</p>
+      <p>Entorno: {{ mode }}</p>
+    </div>
   </div>
 </ion-content>
+
+<ion-footer>
+  <ion-toolbar>
+    <p>© 2024 Todos los derechos reservados</p>
+  </ion-toolbar>
+</ion-footer>

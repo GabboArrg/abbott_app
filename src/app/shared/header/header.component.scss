@@ -1,0 +1,22 @@
+.title-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .title {
+    margin: 0; /* Quitamos el margen predeterminado */
+  }
+  
+  .img-logo-container {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+  }
+  
+  .img-logo-container img {
+    width: 35px; /* Ancho de la imagen */
+    height: auto; /* Altura ajustada automáticamente para mantener la proporción */
+  }
+  

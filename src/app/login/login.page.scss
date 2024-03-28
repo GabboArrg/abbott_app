@@ -1,0 +1,21 @@
+.logo-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px; /* Ajusta el margen superior según tus preferencias */
+  }
+  
+  .logo-img {
+    max-width: 40%; /* Ajusta el tamaño máximo de la imagen según tus preferencias */
+    margin-top: 10px;
+    margin-bottom: 20px;
+  }
+  
+  ion-item {
+    --padding-start: 0; /* Elimina el espacio adicional a la izquierda */
+    --padding-end: 0; /* Elimina el espacio adicional a la derecha */
+  }
+  
+  .login-btn {
+    margin-top: 20px; /* Ajusta el margen superior del botón según tus preferencias */
+  }
+  
