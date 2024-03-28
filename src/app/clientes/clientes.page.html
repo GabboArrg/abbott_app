@@ -1,7 +1,99 @@
 <app-header [tituloVar]="tituloVarLocal"></app-header>
 
-<ion-content>
-  <div>
-    <h3>Clientes</h3>
-  </div>
+<ion-content fullscreen padding>
+  <ion-list>
+    <ion-item-divider class="titulo_tabla">
+      <ion-label><b>Datos del cliente</b></ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label position="stacked">Nombre</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.nombre" placeholder="Ej.: Juan Pablo Perez Pereira"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">RUT</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.rut" placeholder="Ej.: 12345678-9"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Web</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.web" placeholder="Ej.: http://www.ejemplo.com"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">E-mail</ion-label>
+      <ion-input type="email" [(ngModel)]="cliente.email" placeholder="Ej.: cliente@servidor.com"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Teléfono</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.telefono" placeholder="Ej.: 987654321"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="stacked">Celular</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.tmobil" placeholder="Ej.: 987654321"></ion-input>
+    </ion-item>
+
+    <!-- Otras entradas de datos aquí -->
+
+    <ion-item-divider class="titulo_tabla">
+      <ion-label><b>Dirección Principal</b></ion-label>
+    </ion-item-divider>
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Dirección</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.direccion" placeholder="Ej.: Avda. Apoquindo #123"></ion-input>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Región</ion-label>
+      <ion-select [(ngModel)]="selectedData.region" (ionChange)="actualizarComunas()">
+        <ion-select-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Comuna</ion-label>
+      <ion-select [(ngModel)]="selectedData.comuna">
+        <ion-select-option *ngFor="let comuna of comunasCliente" [value]="comuna.id">{{ comuna.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Ciudad</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.ciudad" placeholder="Ej.: Santiago"></ion-input>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Código Postal</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.codigopostal" placeholder="Ej.: 62000000"></ion-input>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Médico Responsable</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.medico_responsable" placeholder="Ej.: Peter Perez"></ion-input>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Especialidad</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.especialidad" placeholder="Ej.: Cardiología"></ion-input>
+    </ion-item>
+    
+    <ion-item class="item item-input item-stacked-label">
+      <ion-label class="input-ion-item">Observaciones</ion-label>
+      <ion-input type="text" [(ngModel)]="cliente.observacion"></ion-input>
+    </ion-item>
+    <!-- Entradas de dirección aquí -->
+
+    <!-- Botones de acción -->
+    <ion-button color="primary" expand="block" *ngIf="cliente.estado == 'sin_evaluacion'" (click)="solicitarEvaluacion()">
+      Solicitar evaluación
+    </ion-button>
+
+    <ion-button color="primary" expand="block" (click)="agregarCliente()">
+      Guardar cliente
+    </ion-button>
+  </ion-list>
 </ion-content>
+
