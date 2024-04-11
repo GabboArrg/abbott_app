@@ -101,16 +101,19 @@ export class ClientesPage implements OnInit{
       message: 'Cargando...'
     });
     await loading.present();
-
+  
     try {
-      const keyUrl = this.route.snapshot.params['keyUrl'];
-console.log('asd'+ this.userService.getId())
+      const userId = this.userService.getId();
       const comunas$ = this.clienteService.getComunas();
       const regiones$ = this.clienteService.getRegiones();
       const paises$ = this.clienteService.getPaises();
       const monedas$ = this.clienteService.getMonedas();
-      const cliente$ = this.clienteService.getCliente(keyUrl); // Utiliza keyUrl aquí
-
+      let cliente$: Observable<any> | null = null; // Declarar cliente$ fuera del bloque if
+  
+      if (userId !== null) {
+        cliente$ = this.clienteService.getCliente(userId);
+      }
+  
       comunas$.subscribe(comunasResponse => {
         const comunas = comunasResponse.monedas.map((comuna: any) => ({
           id: comuna.id,
@@ -119,9 +122,6 @@ console.log('asd'+ this.userService.getId())
           region: comuna.region,
           provincia: comuna.provincia
         }));
-
-        this.comunas = comunas;
-        console.log('Comunas:', comunas);
       });
       
       regiones$.subscribe(regionesResponse => {
@@ -140,64 +140,77 @@ console.log('asd'+ this.userService.getId())
       monedas$.subscribe(monedas => {
         this.monedas = monedas;
       });
-
-      cliente$.subscribe(cliente => {
-        console.log('Cliente5:', cliente);
-        this.cliente = cliente;
-        this.selectedData.region = cliente.region;
-        this.selectedData.comuna = cliente.comuna;
-        this.selectedData.moneda = cliente.moneda;
-        this.selectedData.pais = cliente.pais;
-        this.cliente.region_id = cliente.region.id;
-        this.cliente.comuna_id = cliente.comuna.id;
-        this.cliente.moneda_id = cliente.moneda.id;
-        this.cliente.pais_id = cliente.pais.id;
-
-        if (cliente.cliente_contactos !== undefined) {
-          cliente.cliente_contactos.forEach((contacto: any) => {
-            var tmp = contacto;
-            tmp.id = tmp.id.toString();
-            tmp['_destroy'] = 'false';
-            this.contactos.push(tmp);
-          });
-        }
-
-        if (cliente.cliente_sucursales !== undefined) {
-          cliente.cliente_sucursales.forEach((sucursal: any) => {
-            var tmp = sucursal;
-            tmp.is_new = 'false';
-            tmp._destroy = 'false';
-            tmp.selectedData = {};
-            tmp.selectedData.region = {
-              id: tmp.region_id,
-              nombre: tmp.region
-            };
-            tmp.selectedData.comuna = {
-              id: tmp.comuna_id,
-              nombre: tmp.comuna
-            };
-            this.sucursales.push(tmp);
-          });
-        }
-
-        if (cliente.archivos !== undefined) {
-          if (Array.isArray(cliente.archivos)) {
-            this.archivos = cliente.archivos.map((archivo: any, index: number) => {
-              archivo.adjunto.url = environment.API_ABBOTT + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
-              archivo.arch_url = archivo.adjunto.url;
-              archivo.number = index + 1;
-              archivo._destroy = 'false';
-              return archivo;
+  
+      if (userId !== null && cliente$ !== null) {
+        cliente$.subscribe(cliente => {
+        this.cliente = cliente.cliente;
+        this.selectedData.region = this.cliente.region.id;
+        this.selectedData.comuna = this.cliente.comuna.id;
+        this.selectedData.moneda = this.cliente.moneda.id;
+        this.selectedData.pais = this.cliente.pais.id;
+        this.cliente.region_id = this.cliente.region.id;
+        this.cliente.comuna_id = this.cliente.comuna.id;
+        this.cliente.moneda_id = this.cliente.moneda.id;
+        this.cliente.pais_id = this.cliente.pais.id;
+        console.log("region"+this.cliente.region);
+        console.log("comuna"+this.cliente.comuna);
+        console.log("moneda"+this.cliente.moneda);
+        console.log("pais"+this.cliente.pais);
+        console.log("region id"+this.cliente.region.id);
+        console.log("comuna id"+this.cliente.comuna.id);
+        console.log("moneda id"+this.cliente.moneda.id);
+        console.log("pais id"+this.cliente.pais.id);
+  
+          if (cliente.cliente_contactos !== undefined) {
+            cliente.cliente_contactos.forEach((contacto: any) => {
+              var tmp = contacto;
+              tmp.id = tmp.id.toString();
+              tmp['_destroy'] = 'false';
+              this.contactos.push(tmp);
             });
           }
-        }
-      });
+  
+          if (cliente.cliente_sucursales !== undefined) {
+            cliente.cliente_sucursales.forEach((sucursal: any) => {
+              var tmp = sucursal;
+              tmp.is_new = 'false';
+              tmp._destroy = 'false';
+              tmp.selectedData = {};
+              tmp.selectedData.region = {
+                id: tmp.region_id,
+                nombre: tmp.region
+              };
+              tmp.selectedData.comuna = {
+                id: tmp.comuna_id,
+                nombre: tmp.comuna
+              };
+              this.sucursales.push(tmp);
+            });
+          }
+  
+          if (cliente.archivos !== undefined) {
+            if (Array.isArray(cliente.archivos)) {
+              this.archivos = cliente.archivos.map((archivo: any, index: number) => {
+                archivo.adjunto.url = environment.API_ABBOTT + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
+                archivo.arch_url = archivo.adjunto.url;
+                archivo.number = index + 1;
+                archivo._destroy = 'false';
+                return archivo;
+              });
+            }
+          }
+        });
+      } else {
+        console.log('El ID del usuario no está disponible');
+        this.navCtrl.navigateRoot('/login');
+      }
     } catch (error) {
       console.error(error);
     } finally {
       await loading.dismiss();
     }
   }
+  
 
   actualizarComunas() { // FALTA VER LAS SUCURSALES
     const comunasCliente = () => {

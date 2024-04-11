@@ -47,14 +47,15 @@
     </ion-item>
     
     <ion-item class="item item-input item-stacked-label">
-      <ion-label class="input-ion-item">Región</ion-label>
+      <ion-label class="input-ion-item" slot="start">Región</ion-label>
       <ion-select [(ngModel)]="selectedData.region" (ionChange)="actualizarComunas()">
         <ion-select-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</ion-select-option>
       </ion-select>
     </ion-item>
     
+    
     <ion-item class="item item-input item-stacked-label">
-      <ion-label class="input-ion-item">Comuna</ion-label>
+      <ion-label class="input-ion-item" slot="start">Comuna</ion-label>
       <ion-select [(ngModel)]="selectedData.comuna">
         <ion-select-option *ngFor="let comuna of comunasCliente" [value]="comuna.id">{{ comuna.nombre }}</ion-select-option>
       </ion-select>
