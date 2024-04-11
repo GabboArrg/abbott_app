@@ -5,6 +5,12 @@ import { IonicModule } from '@ionic/angular';
 import { ClientesPageRoutingModule } from './clientes-routing.module';
 import { ClientesPage } from './clientes.page';
 import { SharedModule } from '../shared/shared.module';
+import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
+import { ImagePicker } from '@awesome-cordova-plugins/image-picker/ngx';
+import { FileTransfer, FileUploadOptions, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 
 @NgModule({
   imports: [
@@ -14,6 +20,7 @@ import { SharedModule } from '../shared/shared.module';
     ClientesPageRoutingModule,
     SharedModule
   ],
-  declarations: [ClientesPage]
+  declarations: [ClientesPage],
+  providers: [Camera,ImagePicker,FileTransfer,FileOpener,FilePath,FileChooser]
 })
 export class ClientesPageModule {}

@@ -9,6 +9,10 @@ import { UserService } from 'src/app/login/services/user.service';
   providedIn: 'root'
 })
 export class ClienteService {
+  getFiles(idCliente: any): Observable<any[]> {
+    // Realiza una solicitud HTTP para obtener los archivos del cliente con el id proporcionado
+    return this.http.get<any[]>(`${environment.API_URL}/clientes/${idCliente}/archivos`);
+  }
 
   constructor(
     private http: HttpClient,
@@ -111,16 +115,6 @@ export class ClienteService {
       })
     );
   }
-
-  //postAdjunto(id: string, pictureUrl: string): Observable<any> {
-    // Aquí puedes implementar la lógica para subir archivos
-    // Ten en cuenta que esta función devuelve un Observable
-  //}
-
-  //postAdjunto2(id: string, pictureUrl: string): Observable<any> {
-    // Aquí puedes implementar la lógica para subir archivos
-    // Ten en cuenta que esta función devuelve un Observable
-  //}
 
   patchCliente(data: any, id: string): Observable<any> {
     const url = `${environment.API_ABBOTT}clientes/${id}`;

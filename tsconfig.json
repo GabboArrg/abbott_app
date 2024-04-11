@@ -22,7 +22,10 @@
       "es2018", 
       "dom"
     ],
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "paths": {
+      "@ionic-native/*": ["./node_modules/@ionic-native/*"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
