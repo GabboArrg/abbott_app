@@ -11,6 +11,8 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@awesome-co
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { AgregarDireccionComponent } from 'src/app/modals/agregar-direccion-modal/agregar-direccion.component';
+import { AgregarContactoComponent } from 'src/app/modals/agregar-contacto-modal/agregar-contacto.component';
 
 @NgModule({
   imports: [
@@ -20,7 +22,7 @@ import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
     ClientesPageRoutingModule,
     SharedModule
   ],
-  declarations: [ClientesPage],
+  declarations: [ClientesPage,AgregarDireccionComponent,AgregarContactoComponent],
   providers: [Camera,ImagePicker,FileTransfer,FileOpener,FilePath,FileChooser]
 })
 export class ClientesPageModule {}

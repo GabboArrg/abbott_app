@@ -87,14 +87,29 @@
     </ion-item>
     <!-- Entradas de dirección aquí -->
 
+    <ion-content>
+      <!-- Contenido de la página aquí -->
+      <ion-button expand="block" (click)="abrirModalAgregarDireccion()">Agregar Dirección</ion-button>
+    </ion-content>
+
+    <ion-button expand="block" color="primary" (click)="abrirModalAgregarDireccion()">
+      <ion-icon name="map" slot="start"></ion-icon>
+      Agregar Dirección
+    </ion-button>
+
+    <ion-button expand="block" color="primary" (click)="abrirModalAgregarContacto()">
+      <ion-icon name="accessibility-outline" slot="start"></ion-icon>
+      Agregar Contacto
+    </ion-button>
+
     <!-- Botones de acción -->
     <ion-button color="primary" expand="block" *ngIf="cliente.estado == 'sin_evaluacion'" (click)="solicitarEvaluacion()">
       Solicitar evaluación
     </ion-button>
 
     <ion-button color="primary" expand="block" (click)="agregarCliente()">
+      <ion-icon name="person-add" slot="start"></ion-icon>
       Guardar cliente
     </ion-button>
   </ion-list>
 </ion-content>
-

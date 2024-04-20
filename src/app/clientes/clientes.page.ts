@@ -11,7 +11,10 @@ import { FileTransfer, FileUploadOptions, FileTransferObject } from '@awesome-co
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { ModalController } from '@ionic/angular';
+import { AgregarDireccionComponent } from 'src/app/modals/agregar-direccion-modal/agregar-direccion.component';
+import { AgregarContactoComponent } from 'src/app/modals/agregar-contacto-modal/agregar-contacto.component';
 
 interface Cliente {
   cliente_clase_id: string;
@@ -26,9 +29,8 @@ interface Cliente {
   direccion: string;
   pais_id: string;
   region_id: string;
-  // Agrega las propiedades restantes según sea necesario
-  cliente_contactos_attributes?: any[]; // Esta línea agrega la propiedad cliente_contactos_attributes opcional de tipo any[]
-  [key: string]: any; // Esta línea permite añadir propiedades adicionales de tipo any si es necesario
+  cliente_contactos_attributes?: any[]; 
+  [key: string]: any;
 }
 @Component({
   selector: 'app-clientes',
@@ -39,7 +41,7 @@ export class ClientesPage implements OnInit{
   paises: any = {};
   monedas: any = {};
   regiones: any = [];
-  comunas: any = {};
+  comunas: any = [];
   comunasCliente: any[] = [];
   clientes: any = {};
   cliente: any = {};
@@ -82,8 +84,12 @@ export class ClientesPage implements OnInit{
     public fileOpener: FileOpener,
     public filePath: FilePath,
     public fileChooser: FileChooser,
-    private route: ActivatedRoute
-  ) {}
+    private route: ActivatedRoute,
+    private modalController: ModalController
+  ) {
+    this.comunas = [];
+    this.comunasCliente = [];
+  }
 
   ngOnInit() {
     
@@ -119,8 +125,7 @@ export class ClientesPage implements OnInit{
       const regiones$ = this.clienteService.getRegiones();
       const paises$ = this.clienteService.getPaises();
       const monedas$ = this.clienteService.getMonedas();
-      let cliente$: Observable<any> | null = null; // Declarar cliente$ fuera del bloque if
-  
+      let cliente$: Observable<any> | null = null;
       if (userId !== null) {
         cliente$ = this.clienteService.getCliente(this.idCliente);
         if (cliente$ == null){
@@ -129,15 +134,13 @@ export class ClientesPage implements OnInit{
       }
   
       comunas$.subscribe(comunasResponse => {
-        const comunas = comunasResponse.monedas.map((comuna: any) => ({
+        this.comunas = comunasResponse.monedas.map((comuna: any) => ({
           id: comuna.id,
           nombre: comuna.nombre,
-          codigo: comuna.codigo,
-          region: comuna.region,
-          provincia: comuna.provincia
+          region: comuna.region
         }));
       });
-      
+
       regiones$.subscribe(regionesResponse => {
         const regiones = regionesResponse.monedas.map((region: any) => ({
           id: region.id,
@@ -147,6 +150,8 @@ export class ClientesPage implements OnInit{
         this.regiones = regiones;
       });
   
+      
+
       paises$.subscribe(paises => {
         this.paises = paises;
       });
@@ -226,13 +231,16 @@ export class ClientesPage implements OnInit{
       await loading.dismiss();
     }
   }
+  regionesResponse(regionesResponse: any) {
+    throw new Error('Method not implemented.');
+  }
   
 
-  actualizarComunas() { // FALTA VER LAS SUCURSALES
+  actualizarComunas() {
     const comunasCliente = () => {
       this.comunasCliente = [];
       this.comunas.forEach((comuna: any) => {
-        if (comuna.region === this.selectedData.region.id) {
+        if (comuna.region === this.selectedData.region) {
           this.comunasCliente.push(comuna);
         }
       });
@@ -354,6 +362,32 @@ export class ClientesPage implements OnInit{
         this.archivos_elegidos = [];
       }
     });
+  }
+
+  //modals
+
+  async abrirModalAgregarDireccion() {
+    const modal = await this.modalController.create({
+      component: AgregarDireccionComponent,
+      componentProps: {
+        comunas: this.comunas,
+        regiones: this.regiones,
+        sucursal: this.sucursal
+      }
+    });
+    return await modal.present();
+  }
+
+  async abrirModalAgregarContacto() {
+    const modal = await this.modalController.create({
+      component: AgregarContactoComponent,
+      componentProps: {
+        comunas: this.comunas,
+        regiones: this.regiones,
+        sucursal: this.sucursal
+      }
+    });
+    return await modal.present();
   }
 
 }

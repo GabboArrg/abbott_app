@@ -1,0 +1,14 @@
+<div class="modal" scroll="true">
+  <header class="bar bar-header bar-positive">
+    <button class="button back-button buttons no-text button-clear header-item" ng-click="closeVerFoto()"><i class="icon ion-ios-arrow-back"></i><span class="back-text" style="transform: translate3d(0px, 0px, 0px);"></span></button>
+    <h1 class="title">Visualizar Adjunto</h1>
+  </header>
+  <ion-content delegate-handle="modalDireccionesContent" has-header="true" has-subheader="false" has-footer="false" overflow-scroll="true" scroll="true" on-refresh="onRefresh()" padding="true">
+    <br>
+    <br>
+    <div style="display:none">
+      <img imageonload="fincarga()" style="max-width: 100%" ng-src="{{curr_url}}"></img>
+    </div>
+    <img style="max-width: 100%" ng-src="{{ready_url}}"></img>
+  </ion-content>
+</div>
