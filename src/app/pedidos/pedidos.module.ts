@@ -5,6 +5,7 @@ import { IonicModule } from '@ionic/angular';
 import { PedidosPageRoutingModule } from './pedidos-routing.module';
 import { PedidosPage } from './pedidos.page';
 import { SharedModule } from '../shared/shared.module';
+import { ClienteModalComponent } from 'src/app/modals/cliente-modal/cliente-modal.component';
 
 @NgModule({
   imports: [
@@ -14,6 +15,6 @@ import { SharedModule } from '../shared/shared.module';
     PedidosPageRoutingModule,
     SharedModule
   ],
-  declarations: [PedidosPage]
+  declarations: [PedidosPage, ClienteModalComponent]
 })
 export class PedidosPageModule {}

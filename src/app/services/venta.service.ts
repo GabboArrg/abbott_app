@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
+import { Observable,throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/login/services/user.service';
 import { LoadingController } from '@ionic/angular';
@@ -135,6 +136,18 @@ export class VentaService {
     }
   }
 
-  // Implementa el resto de los métodos según sea necesario...
+  postDespacho(data: any): Observable<any> {
+    const url = environment.API_ABBOTT + 'entregas/';
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(url, data, { headers }).pipe(
+      catchError((error: any) => {
+        return throwError(error);
+      })
+    );
+  }
 
 }

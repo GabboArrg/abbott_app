@@ -1,7 +1,52 @@
 <app-header [tituloVar]="tituloVarLocal"></app-header>
 
 <ion-content>
-  <div>
-    <h3>Pedidos</h3>
-  </div>
+  <ion-button expand="full" color="primary" (click)="openModal()">
+    <ion-icon name="person-add" slot="start"></ion-icon>
+    Buscar Cliente
+    <span *ngIf="!selcli">Buscar Cliente</span>
+    <span *ngIf="selcli">{{selcli.nombre}}</span>
+  </ion-button>   
+
+  <ion-button expand="full" color="primary" (click)="nuevaVenta()">
+    <ion-icon name="person-add" slot="start"></ion-icon>
+    Nuevo Pedido
+  </ion-button>
+
+  <ion-button expand="full" color="primary" (click)="verCliente()">
+    <ion-icon name="eye" slot="start"></ion-icon>
+    Ver Cliente
+  </ion-button>
+
+  <ion-list *ngIf="verpedidos">
+    <ion-item class="titulo_tabla">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="1">Nº</ion-col>
+          <ion-col size="1">Fecha</ion-col>
+          <ion-col size="2">Monto</ion-col>
+          <ion-col size="1">Confir.</ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+
+    <ion-item *ngFor="let item of ventas | slice:0:pageSize" (click)="ventaSeleccionada(item.id)" class="lista">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="1">{{ item.numero_interno }}</ion-col>
+          <ion-col size="1">{{ item.fecha | date:'dd-MM-yyyy' }}</ion-col>
+          <ion-col size="2">${{ item.monto_total | number:'1.2-2' }}</ion-col>
+          <ion-col size="1">
+            <ion-icon *ngIf="setEstadoPedido(item.estado)" name="checkmark-circle" color="success"></ion-icon>
+            <ion-icon *ngIf="setEstadoPedido2(item.estado)" name="close-circle" color="danger"></ion-icon>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-item>
+  </ion-list>
+
+  <ion-button expand="full" color="primary" (click)="loadNextPage()">
+    <ion-icon name="arrow-down" slot="start"></ion-icon>
+    Carga más
+  </ion-button>
 </ion-content>
