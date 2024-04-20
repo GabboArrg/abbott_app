@@ -1,10 +1,17 @@
 <ion-header>
   <ion-toolbar>
-    <ion-buttons slot="start">
+    <!-- Verifica si editar es falso antes de mostrar el botón del menú -->
+    <ion-buttons slot="start" *ngIf="!editar">
       <ion-menu-button autoHide="false"></ion-menu-button>
     </ion-buttons>
+
+    <!-- Bloque ngIf para mostrar el botón de retroceso si editar es true -->
+    <ion-buttons slot="start" *ngIf="editar">
+      <ion-back-button defaultHref="/"></ion-back-button>
+    </ion-buttons>
+
     <div class="title-container">
-      <ion-title class="title"> {{ tituloVar }}</ion-title>
+      <ion-title class="title">{{ tituloVar }}</ion-title>
       <div class="img-logo-container" *ngIf="tituloVar !== 'Inicio'">
         <img src="assets/img/splash.png" width="25px">
       </div>

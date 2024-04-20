@@ -64,6 +64,7 @@ export class ClientesPage implements OnInit{
   start: any = '';
   archivos_elegidos: any[] = [];
   tituloVarLocal: string | undefined;
+  editarCliente: boolean  = false;
   //route: any;
   cliente_contactos: any = [];
 
@@ -85,7 +86,17 @@ export class ClientesPage implements OnInit{
   ) {}
 
   ngOnInit() {
-    this.tituloVarLocal = 'Cliente';
+    
+    this.route.paramMap.subscribe(params => {
+      this.idCliente = params.get('idCliente');
+    });
+    if (this.idCliente !== null){
+      this.tituloVarLocal = 'Editar Cliente';
+      this.editarCliente = true;
+    }else{
+      this.tituloVarLocal = 'Crear Cliente';
+      this.editarCliente = false;
+    }
   }
 
   agregarCliente(){
@@ -111,7 +122,10 @@ export class ClientesPage implements OnInit{
       let cliente$: Observable<any> | null = null; // Declarar cliente$ fuera del bloque if
   
       if (userId !== null) {
-        cliente$ = this.clienteService.getCliente(userId);
+        cliente$ = this.clienteService.getCliente(this.idCliente);
+        if (cliente$ == null){
+          cliente$ =="";
+        }
       }
   
       comunas$.subscribe(comunasResponse => {
@@ -141,7 +155,9 @@ export class ClientesPage implements OnInit{
         this.monedas = monedas;
       });
   
-      if (userId !== null && cliente$ !== null) {
+      if (this.idCliente !== null && userId !== null && cliente$ !== null) {
+        console.log("1 " +cliente$);
+        console.log("2 "+userId);
         cliente$.subscribe(cliente => {
         this.cliente = cliente.cliente;
         this.selectedData.region = this.cliente.region.id;
@@ -202,7 +218,7 @@ export class ClientesPage implements OnInit{
         });
       } else {
         console.log('El ID del usuario no está disponible');
-        this.navCtrl.navigateRoot('/login');
+        //this.navCtrl.navigateRoot('/login');
       }
     } catch (error) {
       console.error(error);

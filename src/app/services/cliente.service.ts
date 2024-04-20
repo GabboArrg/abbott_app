@@ -39,7 +39,7 @@ export class ClienteService {
   }
 
   getCliente(id: string): Observable<any> {
-    if (id === "0" || id === "0") {
+    if (id === "0" || id === "0" || id === null) {
       return new Observable<any>(observer => {
         observer.next(null);
         observer.complete();

@@ -10,6 +10,7 @@ export class ClienteModalComponent implements OnInit {
   
   clientesFiltrados: any[] = [];
   @Input() clientes: any[] = []; // Cambiar el nombre del atributo
+  @Input() clienteSeleccionado: any;
 
   constructor(private modalController: ModalController) { }
 
@@ -19,11 +20,12 @@ export class ClienteModalComponent implements OnInit {
   }
 
   seleccionarCliente(cliente: any) {
+    this.clienteSeleccionado = cliente;
     this.modalController.dismiss(cliente);
   }
 
   cerrarModal() {
-    this.modalController.dismiss();
+    this.modalController.dismiss(this.clienteSeleccionado);
   }
 
   buscarCliente(event: any) {
@@ -41,5 +43,3 @@ export class ClienteModalComponent implements OnInit {
   }
   
 }
-
-

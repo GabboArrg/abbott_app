@@ -16,7 +16,6 @@ export class PedidosPage implements OnInit {
   clientes: any[] = [];
   cliente: any = "";
   ventas: any[] = [];
-  selcli: any = "Cliente";
   clienteSeleccionado: number = 0;
   verpedidos: boolean = false;
   idCliente: number = 0;
@@ -24,6 +23,7 @@ export class PedidosPage implements OnInit {
   currentPage: number = 1;
   pageSize: number;
   tituloVarLocal: string | undefined;
+  selcli: any = null;
 
   constructor(
     public navCtrl: NavController,
@@ -40,7 +40,7 @@ export class PedidosPage implements OnInit {
   }
 
   ngOnInit(): void {
-    this.tituloVarLocal = 'Cliente';
+    this.tituloVarLocal = 'Pedidos';
   }
 
   async obtenerClientes() {
@@ -106,7 +106,7 @@ export class PedidosPage implements OnInit {
       this.mostrarAlerta('Atención', 'Debe seleccionar un cliente');
       return;
     }
-    this.navCtrl.navigateForward(`/editaCliente/${this.idCliente}`);
+    this.navCtrl.navigateForward(`/clientes/${this.idCliente}`);
   }
 
   async mostrarAlerta(titulo: string, mensaje: string) {
@@ -132,25 +132,34 @@ export class PedidosPage implements OnInit {
   }
 
   //modal
-  async openModal() {
-    const modal = await this.modalController.create({
-      component: ClienteModalComponent,
-      componentProps: {
-        clientes: this.clientes // Pasar la matriz de clientes dentro del objeto
+//modal
+//modal
+async openModal() {
+  const modal = await this.modalController.create({
+    component: ClienteModalComponent,
+    componentProps: {
+      clientes: this.clientes, // Pasar la matriz de clientes dentro del objeto
+      clienteSeleccionado: this.selcli // Pasar el cliente seleccionado
+    }
+  });
+
+  modal.onDidDismiss().then((data) => {
+    if (data.role === 'cancel') {
+      console.log('Modal cerrado sin selección');
+    } else {
+      this.selcli = data.data; // Actualiza selcli con el cliente seleccionado
+      if (this.selcli) {
+        this.idCliente = this.selcli.id;
+        console.log('Cliente seleccionado:', this.selcli);
       }
-    });
-  
-    modal.onDidDismiss().then((data) => {
-      if (data.role === 'cancel') {
-        console.log('Modal cerrado sin selección');
-      } else {
-        console.log('Cliente seleccionado:', data.data);
-        // Aquí puedes hacer lo que necesites con el cliente seleccionado
-      }
-    });
-  
-    return await modal.present();
-  }
+      // Aquí puedes hacer lo que necesites con el cliente seleccionado
+    }
+  });
+
+  return await modal.present();
+}
+
+
   
   
 

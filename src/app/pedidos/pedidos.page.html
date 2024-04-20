@@ -3,11 +3,9 @@
 <ion-content>
   <ion-button expand="full" color="primary" (click)="openModal()">
     <ion-icon name="person-add" slot="start"></ion-icon>
-    Buscar Cliente
-    <span *ngIf="!selcli">Buscar Cliente</span>
-    <span *ngIf="selcli">{{selcli.nombre}}</span>
-  </ion-button>   
-
+    {{ selcli ? selcli.nombre : 'Buscar Cliente' }}
+  </ion-button>
+  
   <ion-button expand="full" color="primary" (click)="nuevaVenta()">
     <ion-icon name="person-add" slot="start"></ion-icon>
     Nuevo Pedido
@@ -48,5 +46,5 @@
   <ion-button expand="full" color="primary" (click)="loadNextPage()">
     <ion-icon name="arrow-down" slot="start"></ion-icon>
     Carga más
-  </ion-button>
+  </ion-button>  
 </ion-content>
