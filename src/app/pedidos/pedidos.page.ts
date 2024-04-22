@@ -21,7 +21,7 @@ export class PedidosPage implements OnInit {
   idCliente: number = 0;
   LastidCliente: number = 0;
   currentPage: number = 1;
-  pageSize: number;
+  pageSize: number = 5; // Definir el tamaño de página por defecto
   tituloVarLocal: string | undefined;
   selcli: any = null;
 
@@ -35,7 +35,6 @@ export class PedidosPage implements OnInit {
     public route: ActivatedRoute,
     private modalController: ModalController
   ) {
-    this.pageSize = this.currentPage * DEFAULT_PAGE_SIZE_STEP;
     this.obtenerClientes();
   }
 
@@ -62,27 +61,11 @@ export class PedidosPage implements OnInit {
   }
 
   obtienePedidos(id: number) {
-    this.clienteSeleccionado = id;
-    this.selcli = id;
-
-    this.cliente = this.clientes.find(cliente => cliente.id === this.selcli);
-
-    if (this.cliente.id != this.LastidCliente && this.cliente.estado == "sin_evaluacion") {
-      this.LastidCliente = this.cliente.id;
-      this.mostrarAlerta('Advertencia', 'Cliente sin evaluación el pedido no podrá confirmarse');
-    }
-
-    this.idCliente = this.selcli;
-
-    this.clienteService.getPedidos(this.idCliente.toString()).subscribe(
-      (ventas) => {
-        this.ventas = ventas;
-        this.verpedidos = true;
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+  if (this.selcli.id != this.LastidCliente && this.selcli.estado == "sin_evaluacion") {
+    this.LastidCliente = this.cliente.id;
+    this.mostrarAlerta('Advertencia', 'Cliente sin evaluación el pedido no podrá confirmarse');
+  }
+    return this.clienteService.getPedidos(id.toString());
   }
 
   ventaSeleccionada(idVenta: number) {
@@ -132,37 +115,44 @@ export class PedidosPage implements OnInit {
   }
 
   //modal
-//modal
-//modal
-async openModal() {
-  const modal = await this.modalController.create({
-    component: ClienteModalComponent,
-    componentProps: {
-      clientes: this.clientes, // Pasar la matriz de clientes dentro del objeto
-      clienteSeleccionado: this.selcli // Pasar el cliente seleccionado
-    }
-  });
-
-  modal.onDidDismiss().then((data) => {
-    if (data.role === 'cancel') {
-      console.log('Modal cerrado sin selección');
-    } else {
-      this.selcli = data.data; // Actualiza selcli con el cliente seleccionado
-      if (this.selcli) {
-        this.idCliente = this.selcli.id;
-        console.log('Cliente seleccionado:', this.selcli);
+  async openModal() {
+    const modal = await this.modalController.create({
+      component: ClienteModalComponent,
+      componentProps: {
+        clientes: this.clientes, // Pasar la matriz de clientes dentro del objeto
+        clienteSeleccionado: this.selcli // Pasar el cliente seleccionado
       }
-      // Aquí puedes hacer lo que necesites con el cliente seleccionado
-    }
-  });
+    });
 
-  return await modal.present();
-}
+    modal.onDidDismiss().then((data) => {
+      if (data.role === 'cancel') {
+        console.log('Modal cerrado sin selección');
+      } else {
+        this.selcli = data.data; // Actualiza selcli con el cliente seleccionado
+        if (this.selcli) {
+          this.idCliente = this.selcli.id;
+          console.log('Cliente seleccionado:', this.selcli);
+          this.obtienePedidos(this.idCliente).subscribe(
+            (ventas) => {
+              this.ventas = ventas.ventas; // Asignar los pedidos al array ventas
+              if (this.ventas.length > 0){
+                this.verpedidos = true;
+              }else{
+                this.verpedidos = false;
+              }
+              
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+        }
+        // Aquí puedes hacer lo que necesites con el cliente seleccionado
+      }
+    });    
 
-
-  
-  
-
+    return await modal.present();
+  }
 }
 
 const DEFAULT_PAGE_SIZE_STEP = 5;
