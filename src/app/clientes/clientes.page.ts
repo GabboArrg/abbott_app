@@ -69,6 +69,7 @@ export class ClientesPage implements OnInit{
   editarCliente: boolean  = false;
   //route: any;
   cliente_contactos: any = [];
+  
 
   constructor(
     public navCtrl: NavController,
@@ -109,6 +110,15 @@ export class ClientesPage implements OnInit{
     
   }
 
+  eliminarSucursal(sucursal: any) {
+    sucursal['_destroy'] = 'true';
+  }
+  
+  eliminarContacto(contacto: any) {
+    contacto['_destroy'] = 'true';
+  }
+  
+
   solicitarEvaluacion(){
 
   }
@@ -129,114 +139,110 @@ export class ClientesPage implements OnInit{
       if (userId !== null) {
         cliente$ = this.clienteService.getCliente(this.idCliente);
         if (cliente$ == null){
-          cliente$ =="";
+          cliente$ =null;
         }
       }
   
-      comunas$.subscribe(comunasResponse => {
-        this.comunas = comunasResponse.monedas.map((comuna: any) => ({
-          id: comuna.id,
-          nombre: comuna.nombre,
-          region: comuna.region
-        }));
-      });
-
-      regiones$.subscribe(regionesResponse => {
-        const regiones = regionesResponse.monedas.map((region: any) => ({
-          id: region.id,
-          nombre: region.nombre,
-          numero: region.numero
-        }));
-        this.regiones = regiones;
-      });
+      // Esperar a que todas las llamadas asíncronas se completen
+      const [comunasResponse, regionesResponse, paises, monedas, cliente] = await Promise.all([
+        comunas$.toPromise(),
+        regiones$.toPromise(),
+        paises$.toPromise(),
+        monedas$.toPromise(),
+        cliente$ ? cliente$.toPromise() : null
+      ]);
   
-      
-
-      paises$.subscribe(paises => {
-        this.paises = paises;
-      });
+      // Manejar los datos recibidos
   
-      monedas$.subscribe(monedas => {
-        this.monedas = monedas;
-      });
+      this.comunas = comunasResponse.monedas.map((comuna: any) => ({
+        id: comuna.id,
+        nombre: comuna.nombre,
+        region: comuna.region
+      }));
   
-      if (this.idCliente !== null && userId !== null && cliente$ !== null) {
-        console.log("1 " +cliente$);
-        console.log("2 "+userId);
-        cliente$.subscribe(cliente => {
+      const regiones = regionesResponse.monedas.map((region: any) => ({
+        id: region.id,
+        nombre: region.nombre,
+        numero: region.numero
+      }));
+      this.regiones = regiones;
+  
+      this.paises = paises;
+  
+      this.monedas = monedas;
+  
+      if (this.idCliente !== null && userId !== null && cliente !== null) {
         this.cliente = cliente.cliente;
         this.selectedData.region = this.cliente.region.id;
-        this.selectedData.comuna = this.cliente.comuna.id;
         this.selectedData.moneda = this.cliente.moneda.id;
         this.selectedData.pais = this.cliente.pais.id;
         this.cliente.region_id = this.cliente.region.id;
         this.cliente.comuna_id = this.cliente.comuna.id;
         this.cliente.moneda_id = this.cliente.moneda.id;
         this.cliente.pais_id = this.cliente.pais.id;
-        console.log("region"+this.cliente.region);
-        console.log("comuna"+this.cliente.comuna);
-        console.log("moneda"+this.cliente.moneda);
-        console.log("pais"+this.cliente.pais);
-        console.log("region id"+this.cliente.region.id);
-        console.log("comuna id"+this.cliente.comuna.id);
-        console.log("moneda id"+this.cliente.moneda.id);
-        console.log("pais id"+this.cliente.pais.id);
+        if (this.cliente.comuna.id && this.cliente.region.id) {
+          this.actualizarComunas();
+          this.selectedData.comuna = this.cliente.comuna.id;
+        }
+        if (this.cliente.cliente_contactos !== undefined) {
+          this.cliente.cliente_contactos.forEach((contacto: any) => {
+            var tmp = contacto;
+            tmp.id = tmp.id.toString();
+            tmp['_destroy'] = 'false';
+            this.contactos.push(tmp);
+          });
+        }
   
-          if (cliente.cliente_contactos !== undefined) {
-            cliente.cliente_contactos.forEach((contacto: any) => {
-              var tmp = contacto;
-              tmp.id = tmp.id.toString();
-              tmp['_destroy'] = 'false';
-              this.contactos.push(tmp);
+        if (this.cliente.cliente_sucursales !== undefined) {
+          this.cliente.cliente_sucursales.forEach((sucursal: any) => {
+            var tmp = sucursal;
+            tmp.is_new = 'false';
+            tmp._destroy = 'false';
+            tmp.selectedData = {};
+            tmp.selectedData.region = {
+              id: +tmp.region_id,
+              nombre: tmp.region,
+              numero: tmp.numero
+            };
+            tmp.selectedData.comuna = {
+              id: +tmp.comuna_id,
+              nombre: tmp.comuna
+            };
+            this.sucursales.push(tmp);
+            console.log("region suc "+ tmp.selectedData.region.id);
+          });
+        }
+  
+        if (this.cliente.archivos !== undefined) {
+          if (Array.isArray(this.cliente.archivos)) {
+            this.archivos = this.cliente.archivos.map((archivo: any, index: number) => {
+              archivo.adjunto.url = environment.API_ABBOTT + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
+              archivo.arch_url = archivo.adjunto.url;
+              archivo.number = index + 1;
+              archivo._destroy = 'false';
+              return archivo;
+              
             });
           }
-  
-          if (cliente.cliente_sucursales !== undefined) {
-            cliente.cliente_sucursales.forEach((sucursal: any) => {
-              var tmp = sucursal;
-              tmp.is_new = 'false';
-              tmp._destroy = 'false';
-              tmp.selectedData = {};
-              tmp.selectedData.region = {
-                id: tmp.region_id,
-                nombre: tmp.region
-              };
-              tmp.selectedData.comuna = {
-                id: tmp.comuna_id,
-                nombre: tmp.comuna
-              };
-              this.sucursales.push(tmp);
-            });
-          }
-  
-          if (cliente.archivos !== undefined) {
-            if (Array.isArray(cliente.archivos)) {
-              this.archivos = cliente.archivos.map((archivo: any, index: number) => {
-                archivo.adjunto.url = environment.API_ABBOTT + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
-                archivo.arch_url = archivo.adjunto.url;
-                archivo.number = index + 1;
-                archivo._destroy = 'false';
-                return archivo;
-              });
-            }
-          }
-        });
-      } else {
-        console.log('El ID del usuario no está disponible');
-        //this.navCtrl.navigateRoot('/login');
+        }
       }
+  
+      // Ahora que todas las operaciones asíncronas han terminado, llamamos a actualizarComunas()
+      this.actualizarComunas();
     } catch (error) {
       console.error(error);
     } finally {
       await loading.dismiss();
     }
   }
+  
   regionesResponse(regionesResponse: any) {
     throw new Error('Method not implemented.');
   }
   
 
   actualizarComunas() {
+    console.log("entra al actualizar");
     const comunasCliente = () => {
       this.comunasCliente = [];
       this.comunas.forEach((comuna: any) => {
