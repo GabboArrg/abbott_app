@@ -4,9 +4,12 @@
     <ion-menu *ngIf="showSidebar" contentId="main-content" side="start" menuId="sidebar">
       <ion-header>
         <ion-toolbar color="primary">
-          <ion-title>Abbott :: Pedidos</ion-title>
+          <ion-title>
+            <span class="brand">Abbott</span> <span class="separator">-</span> <span class="subtitle">Pedidos</span>
+          </ion-title>
         </ion-toolbar>
       </ion-header>
+      
       <ion-content>
         <ion-list>
           <ion-item (click)="closeSidebarAndNavigate('/home')" routerDirection="root">

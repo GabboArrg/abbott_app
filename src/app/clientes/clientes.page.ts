@@ -16,6 +16,14 @@ import { ModalController } from '@ionic/angular';
 import { AgregarDireccionComponent } from 'src/app/modals/agregar-direccion-modal/agregar-direccion.component';
 import { AgregarContactoComponent } from 'src/app/modals/agregar-contacto-modal/agregar-contacto.component';
 
+
+interface ClienteContacto {
+  // Definir las propiedades de los objetos de contacto
+  // por ejemplo:
+  nombre: string;
+  email: string;
+  // Otras propiedades
+}
 interface Cliente {
   cliente_clase_id: string;
   rut: string;
@@ -29,9 +37,10 @@ interface Cliente {
   direccion: string;
   pais_id: string;
   region_id: string;
-  cliente_contactos_attributes?: any[]; 
+  cliente_contactos_attributes: ClienteContacto[];
   [key: string]: any;
 }
+
 @Component({
   selector: 'app-clientes',
   templateUrl: './clientes.page.html',
@@ -69,6 +78,8 @@ export class ClientesPage implements OnInit{
   editarCliente: boolean  = false;
   //route: any;
   cliente_contactos: any = [];
+  loadingController: any;
+  alertController: any;
   
 
   constructor(
@@ -105,10 +116,178 @@ export class ClientesPage implements OnInit{
       this.editarCliente = false;
     }
   }
-
-  agregarCliente(){
-    
+///      COMIENZA AGREGAR CLIENTES      ///
+agregarCliente(): void {
+  console.log("entra al AGREGAR CLIENTE");
+  if (this.contactos.length === 0) {
+    this.mostrarAlerta('Error', 'Debe ingresar al menos un contacto');
+    return;
   }
+
+  const userId = this.userService.getId();
+  if (!userId) {
+    this.mostrarAlerta('Error', 'ID de usuario no encontrado');
+    return;
+  }
+
+  const tmpCliente = {
+    cliente: {
+      id: this.getMember(this.cliente.id),
+      cliente_clase_id: '1',
+      rut: this.getMember(this.cliente.rut),
+      nombre: this.getMember(this.cliente.nombre),
+      email: this.getMember(this.cliente.email),
+      web: this.getMember(this.cliente.web),
+      idioma_id: '40',
+      moneda_id: '29',
+      giro: this.getMember(this.cliente.giro),
+      observacion: this.getMember(this.cliente.observacion),
+      direccion: this.getMember(this.cliente.direccion),
+      pais_id: '41',
+      region_id: this.getMember(this.selectedData.region.id),
+      comuna_id: this.getMember(this.selectedData.comuna.id),
+      ciudad: this.getMember(this.cliente.ciudad),
+      codigopostal: this.getMember(this.cliente.codigopostal),
+      telefono: this.getMember(this.cliente.telefono),
+      tmobil: this.getMember(this.cliente.tmobil),
+      visitador_user_id: userId,
+      medico_responsable: this.getMember(this.cliente.medico_responsable),
+      especialidad: this.getMember(this.cliente.especialidad),
+      estado: this.getMember(this.cliente.estado),
+      cliente_contactos_attributes: [] as ClienteContacto[],
+    }
+  };
+
+  if (this.contactos.length > 0) {
+    tmpCliente.cliente.cliente_contactos_attributes = this.contactos.filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined));
+  }
+
+  const catch_response = (response: any) => {
+    if (response !== undefined) {
+      this.cliente.id = response.data.cliente.id;
+    }
+    this.sucursales.forEach((sucursal: any) => {
+      const tmp = {
+        cliente_sucursal: {
+          cliente_id: this.getMember(sucursal.cliente.id),
+          nombre: this.getMember(sucursal.nombre),
+          recibe: this.getMember(sucursal.recibe),
+          pais_id: '41',
+          ciudad: this.getMember(sucursal.ciudad),
+          region_id: this.getMember(sucursal.selectedData.region.id),
+          comuna_id: this.getMember(sucursal.selectedData.comuna.id),
+          direccion: this.getMember(sucursal.direccion),
+          telefono: this.getMember(sucursal.telefono),
+          movil: this.getMember(sucursal.movil),
+          email: this.getMember(sucursal.email),
+          codpostal: this.getMember(sucursal.codpostal),
+          req_adicionales: this.getMember(sucursal.req_adicionales),
+          pais: this.getMember(sucursal.pais),
+          region: this.getMember(sucursal.region),
+          comuna: this.getMember(sucursal.comuna)
+        }
+      };
+      if (sucursal._destroy === 'false') {
+        if (sucursal.is_new === 'true') {
+          tmp.cliente_sucursal.cliente_id = this.getMember(this.cliente.id);
+          this.clienteService.postSucursal(tmp).subscribe(() => {
+            console.log("ESTO PASO EL POST DE SUCURSALES");
+          }, () => {
+            console.log("ESTO NO PASO EL POST DE SUCURSALES");
+          });
+        } else {
+          if (sucursal.casa_matriz !== true) {
+            tmp.cliente_sucursal.pais = 'Chile';
+            tmp.cliente_sucursal.region = sucursal.region;
+            tmp.cliente_sucursal.comuna = sucursal.comuna;
+            console.log("CLIENTE SUCURSAL PATCH JSON");
+            this.clienteService.patchSucursal(tmp, this.getMember(sucursal.id)).subscribe(() => {
+              console.log("CLIENTE_SURCUSALES: PATCH");
+            }, () => {
+              console.log("CLIENTE_SUCURSALES: PATCH ERROR");
+            });
+          }
+        }
+      } else {
+        this.clienteService.deleteSucursal(this.getMember(sucursal.id)).subscribe(() => {
+          console.log("Delete sucursal");
+        }, () => {
+          console.log("Delete sucursal error");
+          const msg = 'La sucursal ' + sucursal.nombre + ' no se puede eliminar';
+          this.mostrarAlerta('Atención', msg);
+        });
+      }
+    });
+    let msg = '';
+    if (this.statusCliente === 'agregar') {
+      msg = 'El cliente ha sido añadido exitósamente';
+    } else {
+      msg = 'El cliente ha sido actualizado exitósamente';
+    }
+    this.mostrarAlerta('Atención', msg);
+    this.navCtrl.navigateRoot('app/abbott');
+  };
+
+  const catch_error = (error: any) => {
+    let msg = '<br>';
+    for (const k in error.data) {
+      let j = k;
+      j = j.replace(/\w/, c => c.toUpperCase());
+      j = j.replace("_", " ");
+      msg += '<b>' + j + '</b><br>' + error.data[k] + '<br>';
+    }
+    this.mostrarAlerta('Error', 'Uno o más campos se encuentran vacíos o con error' + msg);
+  };
+
+this.loadingCtrl.create({
+  message: 'Cargando...',
+  spinner: 'bubbles',
+  translucent: true
+}).then((loading) => {
+  loading.present();
+  console.log("edita?" + this.editarCliente);
+  if (this.editarCliente === true) {
+    console.log("TMP Cliente: "+ tmpCliente);
+    this.clienteService.postCliente(tmpCliente).subscribe(
+      (response: any) => {
+        catch_response(response);
+        loading.dismiss();
+      },
+      (error: any) => {
+        catch_error(error);
+        loading.dismiss();
+      }
+    );
+  } else {
+    tmpCliente.cliente.id = this.getMember(this.cliente.id);
+    this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
+      (response: any) => {
+        catch_response(response);
+        loading.dismiss();
+      },
+      (error: any) => {
+        catch_error(error);
+        loading.dismiss();
+      }
+    );
+  }
+});
+
+}//llave cliente
+
+  ///      FINALIZA AGREGAR CLIENTES      ///
+  mostrarAlerta(header: string, message: string): void {
+    this.alertController.create({
+      header,
+      message,
+      buttons: ['Aceptar']
+    }).then((alert: { present: () => any; }) => alert.present());
+  }
+  
+  getMember(member: any): string {
+    return member !== null && member !== '' && member !== undefined && member.length !== 0 ? (typeof member !== 'string' ? member.toString() : member) : '';
+  }
+  
 
   eliminarSucursal(sucursal: any) {
     sucursal['_destroy'] = 'true';
@@ -128,7 +307,6 @@ export class ClientesPage implements OnInit{
       message: 'Cargando...'
     });
     await loading.present();
-  
     try {
       const userId = this.userService.getId();
       const comunas$ = this.clienteService.getComunas();

@@ -46,7 +46,7 @@
   
   
 
-  <ion-button expand="full" color="primary" (click)="loadNextPage()">
+  <ion-button expand="full" color="primary" (click)="loadNextPage()" *ngIf="verpedidos">
     <ion-icon name="arrow-down" slot="start"></ion-icon>
     Carga más
   </ion-button>  
