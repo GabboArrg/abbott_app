@@ -33,10 +33,10 @@ export class VentasPage implements OnInit {
   pos_venta_attributes: any[] = [];
   booleanBonificacion: boolean = true;
   onlyNumbers: RegExp = /^\d+$/;
-  socSucursales: any = {};
+  socSucursales: any[] = [];
   idSucursal: number = 0;
   idFormaPago: number = 0;
-  socSucursal: any = {};
+  socSucursal: any[] = [];
   formaPago: any = {};
   generico_precio: number = 0;
   ventaAux: any = {};
@@ -60,6 +60,7 @@ export class VentasPage implements OnInit {
   idCliente: number = 0;
   selsucursal: any;
   selformapago: number | undefined;
+  editarCliente: boolean  = true;
 
   constructor(
     private loadingCtrl: LoadingController,
@@ -108,11 +109,18 @@ export class VentasPage implements OnInit {
         console.log("cliente id antes de cs: "+ this.idCliente);
         console.log("idventa id antes de cs: "+ this.idVenta);
         this.clienteService.getCliente(this.idCliente.toString()).subscribe((data: any) => {
-          this.venta.cliente.email = data.email;
-          this.venta.cliente.estado = data.estado;
-          this.venta.cliente.nombre = data.nombre;
+          // Asignar variables
+          this.venta.cliente.email = data.cliente.email;
+          this.venta.cliente.estado = data.cliente.estado;
+          this.venta.cliente.nombre = data.cliente.nombre;
+        
+          // Imprimir variables
+          console.log("Email del cliente:", this.venta.cliente.email);
+          console.log("Estado del cliente:", this.venta.cliente.estado);
+          console.log("Nombre del cliente:", this.venta.cliente.nombre);
         });
-
+        
+        
         this.ventaService.getFormaPago(this.idCliente).subscribe((resp: any) => {
           // Imprimir cada campo de la respuesta
           console.log("Respuesta de forma de pago:", resp.forma_pago);
@@ -193,7 +201,8 @@ export class VentasPage implements OnInit {
 
     this.ventaService.getSocSucursal().subscribe(
       resp => {
-        this.socSucursales = resp;
+        this.socSucursales = Object.values(resp.sociedad_sucursal);
+        console.log(resp);
         loading.dismiss();
       },
       error => {

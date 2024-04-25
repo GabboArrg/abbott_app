@@ -46,6 +46,7 @@ export class ClienteService {
       });
     }
     const url = `${environment.API_ABBOTT}clientes/${id}`;
+    console.log("url: "+url)
     return this.http.get(url).pipe(
       catchError(error => {
         throw error;

@@ -1,49 +1,67 @@
-<app-header [tituloVar]="tituloVarLocal"></app-header>
-
+<app-header [tituloVar]="tituloVarLocal" [editar]="editarCliente"></app-header>
 <ion-content fullscreen padding>
   <ion-list>
     <ion-item *ngIf="venta.cliente.nombre">
-      <ion-label>Cliente</ion-label>
-      <ion-note *ngIf="venta.cliente.estado=='cliente_contado'" color="danger">{{venta.cliente.nombre}} (Contado)</ion-note>
-      <ion-note *ngIf="venta.cliente.estado=='sin_evaluacion'" color="warning">{{venta.cliente.nombre}} (Sin Evaluar)</ion-note>
-      <ion-note *ngIf="venta.cliente.estado=='cliente_linea_credito'" color="success">{{venta.cliente.nombre}} (Crédito)</ion-note>
+      <ion-label position="stacked">Cliente</ion-label>
+      <ion-input readonly *ngIf="venta.cliente.estado=='cliente_contado'" color="danger">{{venta.cliente.nombre}} (Contado)</ion-input>
+      <ion-input readonly *ngIf="venta.cliente.estado=='sin_evaluacion'" color="warning">{{venta.cliente.nombre}} (Sin Evaluar)</ion-input>
+      <ion-input readonly *ngIf="venta.cliente.estado=='cliente_linea_credito'" color="success">{{venta.cliente.nombre}} (Crédito)</ion-input>
     </ion-item>
   
 
     <ion-item>
-      <ion-label>E-Mail</ion-label>
-      <ion-note>{{venta.cliente.email}}</ion-note>
+      <ion-label position="stacked">E-Mail</ion-label>
+      <ion-input readonly>{{venta.cliente.email}}</ion-input>
     </ion-item>
 
     <ion-item>
-      <ion-label>Fecha</ion-label>
-      <ion-note>{{ venta.fecha | formatDate }}</ion-note>
+      <ion-label position="stacked">Fecha</ion-label>
+      <ion-input readonly>{{ venta.fecha | formatDate }}</ion-input>
     </ion-item>
 
     <ion-item *ngIf="!creaVenta">
-      <ion-label>Neto</ion-label>
-      <ion-note>${{venta.monto_subtotal | comma2decimal }}</ion-note>
+      <ion-label position="stacked">Neto</ion-label>
+      <ion-input readonly>${{venta.monto_subtotal | comma2decimal }}</ion-input>
     </ion-item>
 
     <ion-item *ngIf="!creaVenta">
-      <ion-label>IVA</ion-label>
-      <ion-note>${{venta.monto_iva | comma2decimal }}</ion-note>
+      <ion-label position="stacked">IVA</ion-label>
+      <ion-input readonly>${{venta.monto_iva | comma2decimal }}</ion-input>
     </ion-item>
 
     <ion-item *ngIf="!creaVenta">
-      <ion-label>Total</ion-label>
-      <ion-note>${{venta.monto_total | comma2decimal }}</ion-note>
+      <ion-label position="stacked">Total</ion-label>
+      <ion-input readonly>${{venta.monto_total | comma2decimal }}</ion-input>
     </ion-item>
 
     <!-- inicio errores -->
 
+    <ion-item class="item item-input item-stacked-label" *ngIf="venta.estado=='confirmado'">
+      <ion-label position="stacked">Sucursal de Facturación</ion-label>
+      <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)" [disabled]="true">
+        <ion-select-option *ngFor="let socSucursal of socSucursales" [value]="socSucursal.id">{{socSucursal.nombre}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+  
+    <ion-item class="item item-input item-stacked-label" *ngIf="venta.estado!='confirmado'">
+      <ion-label position="stacked">Sucursal de Facturación</ion-label>
+      <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)">
+        <ion-select-option *ngFor="let socSucursal of socSucursales" [value]="socSucursal.id">{{socSucursal.nombre}}</ion-select-option>
+      </ion-select>
+    </ion-item>
 
-    <ion-item *ngIf="venta.estado!='confirmado'">
-      <ion-label>Forma de Pago</ion-label>
+    <ion-item class="item item-input item-stacked-label" *ngIf="venta.estado!='confirmado'">
+      <ion-label position="stacked">Forma de Pago</ion-label>
       <ion-select [(ngModel)]="selformapago" (ionChange)="seleccionaFormaPago(selformapago)">
         <ion-select-option *ngFor="let formaPago of formaPagos" [value]="formaPago.id">{{formaPago.nombre}}</ion-select-option>
       </ion-select>
     </ion-item>
+
+    <ion-item>
+      <ion-label>Observaciones</ion-label>
+      <ion-input type="text" [(ngModel)]="venta.observaciones" placeholder="Observaciones de la venta"></ion-input>
+    </ion-item>
+  
 
     <!-- fin -->
     <!-- Botones -->
