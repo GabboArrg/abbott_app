@@ -1,0 +1,64 @@
+<app-header [tituloVar]="tituloVarLocal"></app-header>
+
+<ion-content fullscreen padding>
+  <ion-list>
+    <ion-item *ngIf="venta.cliente.nombre">
+      <ion-label>Cliente</ion-label>
+      <ion-note *ngIf="venta.cliente.estado=='cliente_contado'" color="danger">{{venta.cliente.nombre}} (Contado)</ion-note>
+      <ion-note *ngIf="venta.cliente.estado=='sin_evaluacion'" color="warning">{{venta.cliente.nombre}} (Sin Evaluar)</ion-note>
+      <ion-note *ngIf="venta.cliente.estado=='cliente_linea_credito'" color="success">{{venta.cliente.nombre}} (Crédito)</ion-note>
+    </ion-item>
+  
+
+    <ion-item>
+      <ion-label>E-Mail</ion-label>
+      <ion-note>{{venta.cliente.email}}</ion-note>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Fecha</ion-label>
+      <ion-note>{{ venta.fecha | formatDate }}</ion-note>
+    </ion-item>
+
+    <ion-item *ngIf="!creaVenta">
+      <ion-label>Neto</ion-label>
+      <ion-note>${{venta.monto_subtotal | comma2decimal }}</ion-note>
+    </ion-item>
+
+    <ion-item *ngIf="!creaVenta">
+      <ion-label>IVA</ion-label>
+      <ion-note>${{venta.monto_iva | comma2decimal }}</ion-note>
+    </ion-item>
+
+    <ion-item *ngIf="!creaVenta">
+      <ion-label>Total</ion-label>
+      <ion-note>${{venta.monto_total | comma2decimal }}</ion-note>
+    </ion-item>
+
+    <!-- inicio errores -->
+
+
+    <ion-item *ngIf="venta.estado!='confirmado'">
+      <ion-label>Forma de Pago</ion-label>
+      <ion-select [(ngModel)]="selformapago" (ionChange)="seleccionaFormaPago(selformapago)">
+        <ion-select-option *ngFor="let formaPago of formaPagos" [value]="formaPago.id">{{formaPago.nombre}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <!-- fin -->
+    <!-- Botones -->
+    <ion-button *ngIf="!setEstadoPedido2(venta.estado) && (venta.entregas != 'Sin entregas realizadas.' || venta.id != undefined )" expand="full" (click)="getReSendEmail()">Enviar Correo Sucursal</ion-button>
+
+    <ion-button *ngIf="setEstadoPedido2(venta.estado) && (venta.entregas === 'Sin entregas realizadas.' || venta.id === undefined )" expand="full" (click)="openModalProducto()">Agregar Producto</ion-button>
+
+    <ion-button *ngIf="!creaVenta" expand="full" (click)="despacho()">Entregas Pedido</ion-button>
+
+    <ion-button *ngIf="!creaVenta" expand="full" (click)="openModalVerAdjuntos(venta.id)">Archivos Adjuntos</ion-button>
+
+    <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas != 'Sin entregas realizadas.' && venta.cliente.estado != 'sin_evaluacion' && !creaVenta" expand="full" (click)="confirmarPedido()">Confirmar Pedido</ion-button>
+
+    <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas === 'Sin entregas realizadas.' && !creaVenta" expand="full" (click)="eliminarVenta()">Eliminar Pedido</ion-button>
+
+    <ion-button *ngIf="venta.productos != undefined && creaVenta" expand="full" (click)="grabarPedido()">Crear Pedido</ion-button>
+  </ion-list>
+</ion-content>

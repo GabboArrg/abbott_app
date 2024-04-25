@@ -1,0 +1,33 @@
+<!-- HTML del modal para agregar productos -->
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="closeModalProducto()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Agregar Productos</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label>Producto</ion-label>
+      <ion-select [(ngModel)]="codprod">
+        <ion-select-option *ngFor="let material of materiales" [value]="material.codigo">{{ material.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Cantidad</ion-label>
+      <ion-input type="number" [(ngModel)]="cantidad" min="0"></ion-input>
+    </ion-item>
+
+    <!-- Otros elementos según tu diseño -->
+    
+    <ion-item>
+      <ion-button expand="full" color="primary" (click)="agregaProducto()">Guardar Producto</ion-button>
+    </ion-item>
+  </ion-list>
+</ion-content>

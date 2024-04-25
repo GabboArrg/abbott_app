@@ -73,15 +73,15 @@ export class PedidosPage implements OnInit {
     // Debes definir la navegación a la página de detalle de la venta
   }
 
-  async nuevaVenta() {
+  nuevaVenta() {
     console.log("El cliente seleccionado es = " + this.idCliente);
-
-    if (this.idCliente == 0) {
+    if (Number(this.idCliente) <= 0) {
       this.mostrarAlerta('Atención', 'Debe seleccionar un cliente');
-    } else {
-      this.navCtrl.navigateForward(`/ventasDetail/${this.idCliente}`);
+      return;
     }
+    this.navCtrl.navigateForward(`/ventas/${this.idCliente}`);
   }
+  
 
   verCliente() {
     console.log("Cliente id:" + this.idCliente);
