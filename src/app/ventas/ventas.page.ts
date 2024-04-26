@@ -61,6 +61,10 @@ export class VentasPage implements OnInit {
   selsucursal: any;
   selformapago: number | undefined;
   editarCliente: boolean  = true;
+  nprecio1: any;
+  bonificacion: number | undefined;
+  nneto: number | undefined;
+  nbruto: number | undefined;
 
   constructor(
     private loadingCtrl: LoadingController,
@@ -199,10 +203,22 @@ export class VentasPage implements OnInit {
     });
     await loading.present();
 
+    this.ventaService.getMateriales().subscribe(
+      materiales => {
+        this.materiales = materiales.materiales
+        console.log("Materiales ", this.materiales);
+        loading.dismiss();
+      },
+      error => {
+        console.log(error);
+        loading.dismiss();
+      }
+    );
+    
+
     this.ventaService.getSocSucursal().subscribe(
       resp => {
         this.socSucursales = Object.values(resp.sociedad_sucursal);
-        console.log(resp);
         loading.dismiss();
       },
       error => {
@@ -211,7 +227,7 @@ export class VentasPage implements OnInit {
       }
     );
   }
-
+//ver como implementar
   async cargarMateriales() {
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
@@ -222,6 +238,7 @@ export class VentasPage implements OnInit {
     this.ventaService.getMateriales().subscribe(
       materiales => {
         this.materiales = materiales;
+        console.log("entrea al getmateriales");
         loading.dismiss();
       },
       error => {
@@ -258,13 +275,13 @@ export class VentasPage implements OnInit {
     this.generico_precio = material.precio;
     // Las siguientes propiedades deberían ser declaradas en la clase
     // this.nprecio = material.precio;
-    // this.nprecio1 = material.precio;
+    this.nprecio1 = material.precio;
     // this.tiene_bonificacion = material.tiene_bonificacion;
-    // this.nneto = 0;
+    this.nneto = 0;
     // this.niva = 0;
-    // this.nbruto = 0;
+    this.nbruto = 0;
     // this.descuento = 0;
-    // this.bonificacion = 0;
+    this.bonificacion = 0;
     // this.updCantidad(this.cantidad);
     // this.updateTotal();
     // this.updateTotales();
@@ -392,7 +409,31 @@ export class VentasPage implements OnInit {
     const modal = await this.modalController.create({
       component: AgregarProductosComponent,
       componentProps: {
-        // Pasa los parámetros necesarios al componente del modal si es necesario
+        materiales: this.materiales,
+        bonificacion: this.bonificacion,
+        promociones: this.promociones,
+        descuento: this.descuento,
+        nprecio: this.nprecio,
+        nprecio1: this.nprecio1,
+        booleanBonificacion: this.booleanBonificacion,
+        nneto: this.nneto,
+        niva: this.niva,
+        nbruto: this.nbruto,
+        subtotal_pos: this.subtotal_pos,
+        total_pos: this.total_pos
+      }
+    });
+
+      // Escuchamos el evento que emite el modal al cerrarse
+    modal.onDidDismiss().then((data) => {
+      if (data && data.data) {
+        // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
+        const { bonificacion, promociones, descuento, nprecio, nprecio1 } = data.data;
+        this.bonificacion = bonificacion;
+        this.promociones = promociones;
+        this.descuento = descuento;
+        this.nprecio = nprecio;
+        this.nprecio1 = nprecio1;
       }
     });
     await modal.present();

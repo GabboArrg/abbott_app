@@ -95,6 +95,7 @@ export class VentaService {
   getMateriales(): Observable<any> {
     this.presentLoading();
     const url = environment.API_ABBOTT + 'materiales/';
+    console.log("url materiales"+url);
     return this.http.get(url).pipe(
       catchError((error: any) => {
         return throwError(error.json().error || 'Server error');

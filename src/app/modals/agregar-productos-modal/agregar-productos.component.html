@@ -1,16 +1,13 @@
-<!-- HTML del modal para agregar productos -->
 <ion-header>
   <ion-toolbar color="primary">
     <ion-buttons slot="start">
-      <ion-button (click)="closeModalProducto()">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
-      </ion-button>
+      <ion-back-button defaultHref="/"></ion-back-button>
     </ion-buttons>
     <ion-title>Agregar Productos</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<ion-content fullscreen>
   <ion-list>
     <ion-item>
       <ion-label>Producto</ion-label>
@@ -20,14 +17,38 @@
     </ion-item>
 
     <ion-item>
-      <ion-label>Cantidad</ion-label>
-      <ion-input type="number" [(ngModel)]="cantidad" min="0"></ion-input>
+      <ion-label position="stacked">Cantidad</ion-label>
+      <ion-input type="number" [(ngModel)]="cantidad" (ionChange)="updCantidad(cantidad)" min="0" debounce="500"></ion-input>
     </ion-item>
 
-    <!-- Otros elementos según tu diseño -->
-    
-    <ion-item>
-      <ion-button expand="full" color="primary" (click)="agregaProducto()">Guardar Producto</ion-button>
+    <ion-item *ngIf="(bonificacion && bonificacion > 0) && (!es_muestra)">
+      <ion-label position="stacked">Unidades bonificación</ion-label>
+      <ion-input type="number" [(ngModel)]="bonificacion" (ionChange)="updateTotal()" min="0" debounce="500"></ion-input>
     </ion-item>
+
+    <ion-item *ngIf="!es_muestra">
+      <ion-label position="stacked">Precio unitario</ion-label>
+      <ion-input type="text" readonly value="${{ nprecio ? nprecio : 0| comma2decimal }}"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="!es_muestra && (descuento && descuento > 0)">
+      <ion-label position="stacked">Descuento (%)</ion-label>
+      <ion-input type="number" [(ngModel)]="descuento" (ionChange)="updDescuento(descuento)" min="0" max="100" debounce="500"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="!es_muestra && (descuento && descuento > 0)">
+      <ion-label position="stacked">Total sin descuento</ion-label>
+      <ion-input type="text" readonly value="${{ subtotal_pos ? subtotal_pos : 0 | comma2decimal }}"></ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="!es_muestra">
+      <ion-label position="stacked">Total productos</ion-label>
+      <ion-input type="text" readonly value="${{ total_pos ? total_pos :0 | comma2decimal }}"></ion-input>
+    </ion-item>
+
+    <ion-button expand="full" color="primary" (click)="agregaProducto()">
+      <ion-icon name="archive" slot="start"></ion-icon>
+      Guardar Producto
+    </ion-button>
   </ion-list>
 </ion-content>
