@@ -9,6 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { AgregarProductosComponent } from 'src/app/modals/agregar-productos-modal/agregar-productos.component';
 import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
 import { environment } from 'src/environments/environment';//aqui está el service, la url
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-ventas',
@@ -65,6 +66,7 @@ export class VentasPage implements OnInit {
   bonificacion: number | undefined;
   nneto: number | undefined;
   nbruto: number | undefined;
+  fechaFormateada: string | undefined;
 
   constructor(
     private loadingCtrl: LoadingController,
@@ -88,7 +90,7 @@ export class VentasPage implements OnInit {
     this.tituloVarLocal = 'Detalle Pedido';
     this.activatedRoute.params.subscribe(params => {
       this.idCliente = +params['idCliente'];
-      console.log("El cliente seleccionado en venta es = " + this.idCliente);
+      this.idVenta = +params['idVenta'];
       if (!this.idVenta) {
         this.creaVenta = true;
         const today = new Date().toLocaleDateString();
@@ -110,61 +112,45 @@ export class VentasPage implements OnInit {
             'email': ''
           }
         }
-        console.log("cliente id antes de cs: "+ this.idCliente);
-        console.log("idventa id antes de cs: "+ this.idVenta);
         this.clienteService.getCliente(this.idCliente.toString()).subscribe((data: any) => {
-          // Asignar variables
           this.venta.cliente.email = data.cliente.email;
           this.venta.cliente.estado = data.cliente.estado;
           this.venta.cliente.nombre = data.cliente.nombre;
-        
-          // Imprimir variables
-          console.log("Email del cliente:", this.venta.cliente.email);
-          console.log("Estado del cliente:", this.venta.cliente.estado);
-          console.log("Nombre del cliente:", this.venta.cliente.nombre);
+      
         });
         
         
         this.ventaService.getFormaPago(this.idCliente).subscribe((resp: any) => {
-          // Imprimir cada campo de la respuesta
-          console.log("Respuesta de forma de pago:", resp.forma_pago);
-          console.log("Nombre de la forma de pago:", resp.forma_pago[0].nombre);
-          console.log("ID de la forma de pago:", resp.forma_pago[0].id);
-          console.log("Código de aduana de la forma de pago:", resp.forma_pago[0].codigo_aduana);
-          
           // Asignar los datos a las variables correspondientes
           this.formaPagos = Object.values(resp.forma_pago);
           this.formaPagoDefecto = resp.forma_pago_defecto;
           this.selformapago = this.formaPagoDefecto;
           this.idFormaPago = this.selformapago;
-        
-          // Imprimir otros datos relevantes para la depuración
-          console.log("Forma de pago por defecto:", this.formaPagoDefecto);
-          console.log("ID del cliente:", this.idCliente);
         }, (error: any) => {
           console.log("Error en getFormaPago = " + error);
         });
         
       } else {
         this.creaVenta = false;
-        this.idVenta = this.idVenta;
-        console.log("venta id"+ this.idVenta);
-        console.log("venta id"+ this.venta);
         this.ventaService.getVenta(this.idVenta).subscribe((venta: any) => {
-          this.venta = venta;
-          this.venta.observaciones = venta.observacion;
+          this.venta = venta.venta;
+          console.log("venta: "+this.venta.cliente.nombre);
+
+          const fechaVenta = new Date(this.venta.fecha);
+          this.fechaFormateada = fechaVenta.toLocaleDateString();
+          this.venta.observaciones = venta.venta.observacion;
           this.idSucursal = this.venta.sucursal_facturacion.id;
           this.idFormaPago = this.venta.forma_pago.id;
           this.socSucursal = this.venta.sucursal_facturacion;
-          this.selsucursal = this.socSucursal;
+          this.selsucursal = this.idSucursal;
           this.formaPago = this.venta.forma_pago;
-          this.selformapago = this.formaPago;
+          this.selformapago = this.formaPago.id;
           this.idCliente = this.venta.cliente.id;
           
 
           this.ventaService.getFormaPago(this.idCliente).subscribe((resp: any) => {
+            // Asignar los datos a las variables correspondientes
             this.formaPagos = Object.values(resp.forma_pago);
-            this.formaPagoDefecto = resp.forma_pago_defecto;
           }, (error: any) => {
             console.log("Error en getFormaPago = " + error);
           });
@@ -206,7 +192,6 @@ export class VentasPage implements OnInit {
     this.ventaService.getMateriales().subscribe(
       materiales => {
         this.materiales = materiales.materiales
-        console.log("Materiales ", this.materiales);
         loading.dismiss();
       },
       error => {
@@ -218,7 +203,7 @@ export class VentasPage implements OnInit {
 
     this.ventaService.getSocSucursal().subscribe(
       resp => {
-        this.socSucursales = Object.values(resp.sociedad_sucursal);
+        this.socSucursales = resp.sociedad_sucursal;
         loading.dismiss();
       },
       error => {
@@ -365,7 +350,6 @@ export class VentasPage implements OnInit {
   
             if (this.venta.id) {
               this.ventaService.updateVenta(data, this.venta.id).then(resp => {
-                // console.log(resp);
               }).catch(async error => {
                 const alertPopup = await this.alertCtrl.create({
                   header: 'Error',
@@ -504,7 +488,6 @@ export class VentasPage implements OnInit {
     this.subtotal_pos = 0;
     this.niva = 0;
     this.total_pos = 0;
-    console.log("promociones: "+ Object.values(this.promociones) );
     // Abre el modal
     const modal = await this.modalController.create({
       component: AgregarProductosComponent,
@@ -546,7 +529,6 @@ export class VentasPage implements OnInit {
   seleccionaFormaPago(id: number | undefined) {
     if (id !== undefined) {
       this.idFormaPago = id;
-      console.log("selecciona forma pago = " + id);
     } else {
       // Asigna un valor predeterminado para idFormaPago si id es undefined
       this.idFormaPago = 0; // o cualquier otro valor predeterminado que tenga sentido para tu aplicación

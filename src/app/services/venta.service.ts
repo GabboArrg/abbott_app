@@ -53,7 +53,6 @@ export class VentaService {
     }
   }
 
-  // Otros métodos omitidos por brevedad...
 
   postVenta(data: any): Promise<any> {
     this.presentLoading();

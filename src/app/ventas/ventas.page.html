@@ -1,22 +1,44 @@
 <app-header [tituloVar]="tituloVarLocal" [editar]="editarCliente"></app-header>
 <ion-content fullscreen padding>
   <ion-list>
-    <ion-item *ngIf="venta.cliente.nombre">
+    <!-- Titulo N° venta -->
+    <ion-item-divider class="titulo_tabla" *ngIf="!creaVenta">
+      <ion-label class="input-label" style="text-align: right; font-size: 1.2em;"><b>Nº {{venta.numero_interno}}</b></ion-label>
+      <div style="flex-grow: 1;"></div>
+
+      <ng-container *ngIf="setEstadoPedido(venta.estado)">
+        <ion-icon name="checkmark-circle" color="success" style="font-size: 1.2em;"></ion-icon>
+        <span style="color:green; font-size: 1.2em;">Confirmado</span>
+      </ng-container>
+
+      <ng-container *ngIf="setEstadoPedido2(venta.estado)">
+        <ion-icon name="close-circle" color="danger" style="font-size: 1.2em;"></ion-icon>
+        <span style="color:red; font-size: 1.2em;">Sin Confirmar</span>
+      </ng-container>
+    </ion-item-divider>
+    <!-- fin titulo -->
+    
+    <!-- datos venta-cliente -->
+    <ion-item *ngIf="venta.cliente">
       <ion-label position="stacked">Cliente</ion-label>
       <ion-input readonly *ngIf="venta.cliente.estado=='cliente_contado'" color="danger">{{venta.cliente.nombre}} (Contado)</ion-input>
       <ion-input readonly *ngIf="venta.cliente.estado=='sin_evaluacion'" color="warning">{{venta.cliente.nombre}} (Sin Evaluar)</ion-input>
       <ion-input readonly *ngIf="venta.cliente.estado=='cliente_linea_credito'" color="success">{{venta.cliente.nombre}} (Crédito)</ion-input>
     </ion-item>
-  
 
-    <ion-item>
+    <ion-item *ngIf="venta.cliente">
       <ion-label position="stacked">E-Mail</ion-label>
       <ion-input readonly>{{venta.cliente.email}}</ion-input>
     </ion-item>
 
-    <ion-item>
+    <ion-item *ngIf="creaVenta">
       <ion-label position="stacked">Fecha</ion-label>
       <ion-input readonly>{{ venta.fecha | formatDate }}</ion-input>
+    </ion-item>
+
+    <ion-item *ngIf="!creaVenta">
+      <ion-label position="stacked">Fecha</ion-label>
+      <ion-input readonly>{{ fechaFormateada | formatDate }}</ion-input>
     </ion-item>
 
     <ion-item *ngIf="!creaVenta">
@@ -34,18 +56,16 @@
       <ion-input readonly>${{venta.monto_total | comma2decimal }}</ion-input>
     </ion-item>
 
-    <!-- inicio errores -->
-
     <ion-item class="item item-input item-stacked-label" *ngIf="venta.estado=='confirmado'">
       <ion-label position="stacked">Sucursal de Facturación</ion-label>
-      <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)" [disabled]="true">
+      <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal)" [disabled]="true">
         <ion-select-option *ngFor="let socSucursal of socSucursales" [value]="socSucursal.id">{{socSucursal.nombre}}</ion-select-option>
       </ion-select>
     </ion-item>
   
     <ion-item class="item item-input item-stacked-label" *ngIf="venta.estado!='confirmado'">
       <ion-label position="stacked">Sucursal de Facturación</ion-label>
-      <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)">
+      <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal)">
         <ion-select-option *ngFor="let socSucursal of socSucursales" [value]="socSucursal.id">{{socSucursal.nombre}}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -68,22 +88,9 @@
       <ion-label position="stacked">Observaciones</ion-label>
       <ion-input type="text" [(ngModel)]="venta.observaciones" placeholder="Observaciones de la venta"></ion-input>
     </ion-item>
-<!-- inicio listado de productos agregados
-    <ng-container *ngIf="venta && venta.productos">
-      <ion-item *ngFor="let item of venta.productos">
-        <ion-label>Productos ({{venta.productos.length}})</ion-label>
-      </ion-item>
-    </ng-container>
-    <ng-container *ngIf="venta && venta.productos">
-      <ion-item *ngFor="let item of venta.productos">
-        <ion-label>Producto</ion-label>
-        <ion-note>{{item.descripcion}} x {{item.cantidad}}</ion-note>
-      </ion-item>
-    </ng-container>
--->
+  <!-- Fin datos venta-cliente -->
 
-
-
+  <!-- listado de productos agregados -->
     <div class="spacer" style="width: 300px; height: 32px;"></div>
     <ng-container *ngIf="venta && venta.productos">
       <ion-item>
@@ -96,12 +103,10 @@
         <ion-item>
           <div style="width: 100%;">
             <div class="spacer" style="width: 300px; height: 16px;"></div>
-            <!-- Título de los productos -->
+
             <ion-item-divider class="titulo_tabla">
               <ion-label><b>Producto: {{item.descripcion}} x {{item.cantidad}}</b></ion-label>
             </ion-item-divider>
-            
-            <!-- Contenido de los productos -->
 
             <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
               <ion-label position="stacked">Bonificación</ion-label>
@@ -113,19 +118,21 @@
               <ion-checkbox [checked]="item.bonificacion" disabled></ion-checkbox>
             </ion-item>
             
-
             <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
               <ion-label position="stacked">Precio Unitario</ion-label>
               <ion-input type="text" readonly>${{item.precio | comma2decimal }}</ion-input>
             </ion-item>
+
             <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
               <ion-label position="stacked">Subtotal Pos.</ion-label>
               <ion-input type="text" readonly>${{item.subtotal_pos | comma2decimal }}</ion-input>
             </ion-item>
+
             <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
               <ion-label position="stacked">Descuento (%)</ion-label>
               <ion-input type="text" readonly>{{item.descuento | comma2decimal }}</ion-input>
             </ion-item>
+
             <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
               <ion-label position="stacked">Total Pos.</ion-label>
               <ion-input type="text" readonly>${{item.total_pos | comma2decimal }}</ion-input>
@@ -140,10 +147,10 @@
         </ion-item>
       </ng-container>
     </ng-container>
-
-
     <!-- fin listado de productos agregados -->
+
     <!-- Botones -->
+
     <ion-button *ngIf="!setEstadoPedido2(venta.estado) && (venta.entregas != 'Sin entregas realizadas.' || venta.id != undefined )" expand="full" (click)="getReSendEmail()">Enviar Correo Sucursal</ion-button>
 
     <ion-button *ngIf="setEstadoPedido2(venta.estado) && (venta.entregas === 'Sin entregas realizadas.' || venta.id === undefined )" expand="full" (click)="openModalProducto()">Agregar Producto</ion-button>
@@ -152,10 +159,13 @@
 
     <ion-button *ngIf="!creaVenta" expand="full" (click)="openModalVerAdjuntos(venta.id)">Archivos Adjuntos</ion-button>
 
-    <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas != 'Sin entregas realizadas.' && venta.cliente.estado != 'sin_evaluacion' && !creaVenta" expand="full" (click)="confirmarPedido()">Confirmar Pedido</ion-button>
+    <div *ngIf="venta.cliente">
+      <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas != 'Sin entregas realizadas.' && venta.cliente.estado != 'sin_evaluacion' && !creaVenta" expand="full" (click)="confirmarPedido()">Confirmar Pedido</ion-button>
+    </div>
 
     <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas === 'Sin entregas realizadas.' && !creaVenta" expand="full" (click)="eliminarVenta()">Eliminar Pedido</ion-button>
 
     <ion-button *ngIf="venta.productos != undefined && creaVenta" color="success" expand="full" (click)="confirmarGuardarPedido()">Crear Pedido</ion-button>
+
   </ion-list>
 </ion-content>

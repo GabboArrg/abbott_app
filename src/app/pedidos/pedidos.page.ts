@@ -61,17 +61,23 @@ export class PedidosPage implements OnInit {
   }
 
   obtienePedidos(id: number) {
-  if (this.selcli.id != this.LastidCliente && this.selcli.estado == "sin_evaluacion") {
-    this.LastidCliente = this.cliente.id;
-    this.mostrarAlerta('Advertencia', 'Cliente sin evaluación el pedido no podrá confirmarse');
-  }
+    if (this.selcli.id != this.LastidCliente && this.selcli.estado == "sin_evaluacion") {
+      this.LastidCliente = this.cliente.id;
+      this.mostrarAlerta('Advertencia', 'Cliente sin evaluación el pedido no podrá confirmarse');
+    }
     return this.clienteService.getPedidos(id.toString());
   }
 
-  ventaSeleccionada(idVenta: number) {
+  ventaSeleccionada(idCliente: number, idVenta: number) {
     console.log("Venta.id = " + idVenta);
-    // Debes definir la navegación a la página de detalle de la venta
+    console.log("cliente.id = " + idCliente);
+    if (Number(idVenta) <= 0) {
+      this.mostrarAlerta('Atención', 'Debe seleccionar una venta');
+      return;
+    }
+    this.navCtrl.navigateForward(`/ventas/${idCliente}/${idVenta}`);
   }
+  
 
   nuevaVenta() {
     console.log("El cliente seleccionado es = " + this.idCliente);
@@ -79,9 +85,9 @@ export class PedidosPage implements OnInit {
       this.mostrarAlerta('Atención', 'Debe seleccionar un cliente');
       return;
     }
-    this.navCtrl.navigateForward(`/ventas/${this.idCliente}`);
+    this.navCtrl.navigateForward(`/ventas/${this.idCliente}/0`);
   }
-  
+
 
   verCliente() {
     console.log("Cliente id:" + this.idCliente);
@@ -135,12 +141,12 @@ export class PedidosPage implements OnInit {
           this.obtienePedidos(this.idCliente).subscribe(
             (ventas) => {
               this.ventas = ventas.ventas; // Asignar los pedidos al array ventas
-              if (this.ventas.length > 0){
+              if (this.ventas.length > 0) {
                 this.verpedidos = true;
-              }else{
+              } else {
                 this.verpedidos = false;
               }
-              
+
             },
             (error) => {
               console.log(error);
@@ -149,7 +155,7 @@ export class PedidosPage implements OnInit {
         }
         // Aquí puedes hacer lo que necesites con el cliente seleccionado
       }
-    });    
+    });
 
     return await modal.present();
   }

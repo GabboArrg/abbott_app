@@ -28,7 +28,7 @@
       </ion-grid>
     </ion-item>
   
-    <ion-item *ngFor="let item of ventas" (click)="ventaSeleccionada(item.id)" class="lista" lines="none">
+    <ion-item *ngFor="let item of ventas" (click)="ventaSeleccionada(selcli.id, item.id)" class="lista" lines="none">
       <ion-grid>
         <ion-row>
           <ion-col size="2">{{ item.numero_interno }}</ion-col>
