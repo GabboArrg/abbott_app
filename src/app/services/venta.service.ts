@@ -98,7 +98,6 @@ export class VentaService {
   getMateriales(): Observable<any> {
     this.presentLoading();
     const url = environment.API_ABBOTT + 'materiales/';
-    console.log("url materiales"+url);
     return this.http.get(url).pipe(
       catchError((error: any) => {
         return throwError(error.json().error || 'Server error');
@@ -187,7 +186,6 @@ export class VentaService {
 
   getFormaPago(idCliente: number): Observable<any> {
     const url = environment.API_ABBOTT + 'forma_pagos?cliente_id=' + idCliente;
-    console.log("url: "+url);
     return this.http.get<any>(url)
       .pipe(
         catchError((error) => {
@@ -257,7 +255,7 @@ export class VentaService {
     }
   }
 
-  async aplicarPromopacks(venta: any, promopacks: any): Promise<void> {
+  aplicarPromopacks(venta: any, promopacks: any): void {
     if (venta.productos.length > 1) {
       // material_tipo_id
       console.log('Hay más de una posición, buscando promopacks...');
@@ -270,12 +268,11 @@ export class VentaService {
       let posiciones: any[] = [];
       let nombre = '';
       let promopack_id = '';
-
-      console.log(this);
-
+  
+  
       for (let j = 0; j < venta.productos.length; j++) {
         const element1 = venta.productos[j];
-
+  
         promo_packs.sort((a: any, b: any) => {
           if (a.cantidad2 > b.cantidad2) {
             return -1;
@@ -286,10 +283,10 @@ export class VentaService {
           // a must be equal to b
           return 0;
         });
-
+  
         let descuento = 0;
-
-        promo_packs.forEach(async (promopack: any) => {
+  
+        promo_packs.forEach((promopack: any) => {
           console.log('c2 ' + promopack.cantidad2);
           if (promopack.material_id === element1.material_id && promopack.cantidad1 === element1.cantidad) {
             console.log('Promoción encontrada para material ' + element1.nombre + ' de posición ' + (j + 1));
@@ -316,17 +313,18 @@ export class VentaService {
             }
           }
         });
-
+  
         // Actualiza posiciones
         if (descuento > 0) {
           nombre = nombre + ' (' + descuento + '%)';
-          const alertPopup = await this.alertCtrl.create({
+          this.alertCtrl.create({
             header: 'Promoción Encontrada',
             message: nombre,
             buttons: ['OK']
+          }).then(alertPopup => {
+            alertPopup.present();
           });
-          await alertPopup.present();
-
+  
           for (let k = 0; k < venta.productos.length; k++) {
             if (posiciones[k] && venta.productos[k].descuento < descuento) {
               venta.productos[k].promo_asociada = promopack_id;
@@ -341,6 +339,7 @@ export class VentaService {
       } // next j
     }
   }
+  
 
 
 }

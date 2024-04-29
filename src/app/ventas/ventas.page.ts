@@ -226,46 +226,20 @@ export class VentasPage implements OnInit {
         loading.dismiss();
       }
     );
-  }
-
-  async cargarMateriales() {
-    const loading = await this.loadingCtrl.create({
-      spinner: 'bubbles',
-      cssClass: 'spinner-energized'
-    });
-    await loading.present();
-
-    this.ventaService.getMateriales().subscribe(
-      materiales => {
-        this.materiales = materiales;
-        console.log("entrea al getmateriales");
-        loading.dismiss();
-      },
-      error => {
-        console.log(error);
-        loading.dismiss();
-      }
-    );
-  }
-
-  async cargarPromopacks() {
-    const loading = await this.loadingCtrl.create({
-      spinner: 'bubbles',
-      cssClass: 'spinner-energized'
-    });
-    await loading.present();
 
     this.ventaService.getPromopacks().subscribe(
       promopacks => {
-        this.promopacks = promopacks;
+        this.promopacks = promopacks.promopacks;
         loading.dismiss();
       },
       error => {
-        console.log(error);
+        console.log("error en getPromopacks"+error);
         loading.dismiss();
       }
     );
+
   }
+
 
   async borraProducto(itemId: string, venta_id: string): Promise<void> {
     if (this.venta.entregas !== "Sin entregas realizadas.") {

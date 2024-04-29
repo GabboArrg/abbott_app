@@ -123,6 +123,10 @@
               <ion-input type="text" readonly>${{item.subtotal_pos | comma2decimal }}</ion-input>
             </ion-item>
             <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
+              <ion-label position="stacked">Descuento (%)</ion-label>
+              <ion-input type="text" readonly>{{item.descuento | comma2decimal }}</ion-input>
+            </ion-item>
+            <ion-item class="item item-input item-stacked-label" *ngIf="!item.es_muestra">
               <ion-label position="stacked">Total Pos.</ion-label>
               <ion-input type="text" readonly>${{item.total_pos | comma2decimal }}</ion-input>
             </ion-item>
