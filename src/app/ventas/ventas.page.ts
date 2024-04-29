@@ -598,7 +598,27 @@ export class VentasPage implements OnInit {
     });
   }
   
-
+  async confirmarGuardarPedido() {
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar',
+      message: '¿Está seguro que desea guardar el pedido?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Guardar',
+          handler: () => {
+            this.grabarPedido();
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+  
+  
   
   async grabarPedido() {
     const userId = this.userService.getId();

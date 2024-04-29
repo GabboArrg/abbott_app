@@ -22,8 +22,8 @@ export class AgregarProductosComponent implements OnInit {
   @Input() nneto?: number;
   @Input() niva?: number;
   @Input() nbruto?: number;
-  @Input() subtotal_pos?: number;
-  @Input() total_pos?: number;
+  @Input() subtotal_pos: number;
+  @Input() total_pos: number;
   es_muestra: boolean = false;
   codigo_producto: string | undefined;
   idProducto: any;
@@ -329,7 +329,7 @@ export class AgregarProductosComponent implements OnInit {
 
 
   updCantidad(cantidad: number): void {
-    console.log("UPDATE CANTIDAD");
+    console.log("UPDATE CANTIDAD: "+cantidad);
   
     let bonif1 = 0;
     let dcto1 = 0;
@@ -411,7 +411,7 @@ export class AgregarProductosComponent implements OnInit {
     let nneto: number;
     let niva: number;
     let nbruto: number;
-  
+  console.log("update total dsc: "+ this.descuento);
     if (this.descuento && this.nprecio && this.cantidad) {
       if (this.descuento >= 0) {
         nneto = (this.nprecio * this.cantidad) * (1 - (this.descuento / 100));
@@ -438,12 +438,13 @@ export class AgregarProductosComponent implements OnInit {
   
   
   updateTotales(): void {
-    if (this.nprecio && this.cantidad && this.descuento) {
+    if (this.nprecio && this.cantidad ) {
       this.subtotal_pos = this.nprecio * this.cantidad;
       this.total_pos = (this.nprecio * this.cantidad) * (1 - (this.descuento / 100));
       this.total_pos = this.redondear(this.total_pos)
     }
   }
+
 
   updateProductos() {
     let monto_subtotal = 0;

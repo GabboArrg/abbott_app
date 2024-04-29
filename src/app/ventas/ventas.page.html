@@ -65,7 +65,7 @@
     </ion-item>
 
     <ion-item>
-      <ion-label>Observaciones</ion-label>
+      <ion-label position="stacked">Observaciones</ion-label>
       <ion-input type="text" [(ngModel)]="venta.observaciones" placeholder="Observaciones de la venta"></ion-input>
     </ion-item>
 <!-- inicio listado de productos agregados
@@ -156,6 +156,6 @@
 
     <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas === 'Sin entregas realizadas.' && !creaVenta" expand="full" (click)="eliminarVenta()">Eliminar Pedido</ion-button>
 
-    <ion-button *ngIf="venta.productos != undefined && creaVenta" expand="full" (click)="grabarPedido()">Crear Pedido</ion-button>
+    <ion-button *ngIf="venta.productos != undefined && creaVenta" color="success" expand="full" (click)="confirmarGuardarPedido()">Crear Pedido</ion-button>
   </ion-list>
 </ion-content>
