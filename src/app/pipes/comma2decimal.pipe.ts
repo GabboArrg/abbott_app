@@ -6,8 +6,15 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class Comma2DecimalPipe implements PipeTransform {
   transform(input: number): string {
     if (input === null || input === undefined) {
-      return '';
+      return "0";
     }
-    return input.toString().replace(',', '.');
+
+    // Redondeamos el número a 0 decimales
+    const roundedNumber = Math.round(input);
+
+    // Formateamos el número con separadores de miles
+    const formattedNumber = roundedNumber.toLocaleString();
+
+    return formattedNumber;
   }
 }

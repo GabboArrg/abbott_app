@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule,DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { VentasPageRoutingModule } from './ventas-routing.module';
@@ -21,6 +21,6 @@ import { FormatDatePipe } from 'src/app/pipes/FormatDate.pipe';
     SharedModule
   ],
   declarations: [VentasPage,AgregarProductosComponent,AgregarAdjuntosComponent,Comma2DecimalPipe,FormatDatePipe],
-  providers: [FileTransfer,FileOpener]
+  providers: [FileTransfer,FileOpener,DatePipe]
 })
 export class VentasPageModule {}

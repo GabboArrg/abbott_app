@@ -1,17 +1,19 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-buttons slot="start">
-      <ion-back-button defaultHref="/"></ion-back-button>
-    </ion-buttons>
     <ion-title>Agregar Productos</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModalProducto()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen>
   <ion-list>
     <ion-item>
-      <ion-label>Producto</ion-label>
-      <ion-select [(ngModel)]="codprod">
+      <ion-label position="stacked">Producto</ion-label>
+      <ion-select [(ngModel)]="codprod" (ionChange)="selecProd(codprod)">
         <ion-select-option *ngFor="let material of materiales" [value]="material.codigo">{{ material.nombre }}</ion-select-option>
       </ion-select>
     </ion-item>
@@ -31,7 +33,8 @@
       <ion-input type="text" readonly value="${{ nprecio ? nprecio : 0| comma2decimal }}"></ion-input>
     </ion-item>
 
-    <ion-item *ngIf="!es_muestra && (descuento && descuento > 0)">
+
+    <ion-item *ngIf="!es_muestra">
       <ion-label position="stacked">Descuento (%)</ion-label>
       <ion-input type="number" [(ngModel)]="descuento" (ionChange)="updDescuento(descuento)" min="0" max="100" debounce="500"></ion-input>
     </ion-item>

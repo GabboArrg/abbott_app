@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { LoadingController } from '@ionic/angular';
+import { LoadingController, AlertController } from '@ionic/angular';
 import { UserService } from '../login/services/user.service';
 
 @Injectable({
@@ -14,12 +14,15 @@ export class VentaService {
   constructor(
     private http: HttpClient,
     private loadingController: LoadingController,
-    private userService: UserService
+    private userService: UserService,
+    private alertCtrl: AlertController
   ) { }
 
   async presentLoading() {
     const loading = await this.loadingController.create({
-      message: '<ion-spinner icon="bubbles" class="spinner-energized"></ion-spinner>'
+      message: 'Cargando...',
+      spinner: 'bubbles',
+      translucent: true
     });
     await loading.present();
   }
@@ -237,5 +240,107 @@ export class VentaService {
         });
     });
   }
+
+  getMaterialByCodigo(arr: any[], codigo: string) {
+    for (let d = 0, len = arr.length; d < len; d += 1) {
+      if (arr[d].codigo === codigo) {
+        return arr[d];
+      }
+    }
+  }
+
+  getMaterialById = function(arr: string | any[], id: any) {
+    for (var d = 0, len = arr.length; d < len; d += 1) {
+      if (arr[d].id === id) {
+        return arr[d];
+      }
+    }
+  }
+
+  async aplicarPromopacks(venta: any, promopacks: any): Promise<void> {
+    if (venta.productos.length > 1) {
+      // material_tipo_id
+      console.log('Hay más de una posición, buscando promopacks...');
+      let promo_packs = promopacks;
+      let dcto = 0;
+      let descuento_promo = 0;
+      let p1 = 0;
+      let p2 = 0;
+      let sum = 0;
+      let posiciones: any[] = [];
+      let nombre = '';
+      let promopack_id = '';
+
+      console.log(this);
+
+      for (let j = 0; j < venta.productos.length; j++) {
+        const element1 = venta.productos[j];
+
+        promo_packs.sort((a: any, b: any) => {
+          if (a.cantidad2 > b.cantidad2) {
+            return -1;
+          }
+          if (a.cantidad2 < b.cantidad2) {
+            return 1;
+          }
+          // a must be equal to b
+          return 0;
+        });
+
+        let descuento = 0;
+
+        promo_packs.forEach(async (promopack: any) => {
+          console.log('c2 ' + promopack.cantidad2);
+          if (promopack.material_id === element1.material_id && promopack.cantidad1 === element1.cantidad) {
+            console.log('Promoción encontrada para material ' + element1.nombre + ' de posición ' + (j + 1));
+            sum = 0;
+            for (let k = 0; k < venta.productos.length; k++) {
+              if (j !== k && venta.productos[k].material_tipo_id === promopack.material_tipo_id) {
+                sum += venta.productos[k].cantidad;
+                posiciones[k] = true;
+              } else {
+                posiciones[k] = false;
+              }
+            }
+            posiciones[j] = true;
+            dcto = 0;
+            // Promoción encontrada
+            if (sum >= promopack.cantidad2 && promopack.descuento >= descuento) {
+              nombre = promopack.nombre;
+              promopack_id = promopack.id;
+              console.log('Promoción aplicada para material ' + element1.material_id + ' de posición ' + (j + 1));
+              descuento = promopack.descuento;
+              // Ajusta las variables de promoción aplicada
+              const promo_aplicada = true;
+              const promo_asociada = promopack.id;
+            }
+          }
+        });
+
+        // Actualiza posiciones
+        if (descuento > 0) {
+          nombre = nombre + ' (' + descuento + '%)';
+          const alertPopup = await this.alertCtrl.create({
+            header: 'Promoción Encontrada',
+            message: nombre,
+            buttons: ['OK']
+          });
+          await alertPopup.present();
+
+          for (let k = 0; k < venta.productos.length; k++) {
+            if (posiciones[k] && venta.productos[k].descuento < descuento) {
+              venta.productos[k].promo_asociada = promopack_id;
+              venta.productos[k].promo_aplicada = true;
+              venta.productos[k].descuento = descuento;
+              venta.productos[k].total_pos =
+                (venta.productos[k].precio * venta.productos[k].cantidad) *
+                (1 - descuento / 100);
+            }
+          } // next k
+        }
+      } // next j
+    }
+  }
+
 
 }

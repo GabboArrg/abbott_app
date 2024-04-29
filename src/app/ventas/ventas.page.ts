@@ -227,7 +227,7 @@ export class VentasPage implements OnInit {
       }
     );
   }
-//ver como implementar
+
   async cargarMateriales() {
     const loading = await this.loadingCtrl.create({
       spinner: 'bubbles',
@@ -267,25 +267,160 @@ export class VentasPage implements OnInit {
     );
   }
 
-  selecProd(id: string) {
-    this.codigo_producto = id;
-    const material = this.getMaterialByCodigo(this.materiales, id);
-    this.idProducto = material.id;
-    this.promociones = JSON.parse(material.promocion);
-    this.generico_precio = material.precio;
-    // Las siguientes propiedades deberían ser declaradas en la clase
-    // this.nprecio = material.precio;
-    this.nprecio1 = material.precio;
-    // this.tiene_bonificacion = material.tiene_bonificacion;
-    this.nneto = 0;
-    // this.niva = 0;
-    this.nbruto = 0;
-    // this.descuento = 0;
-    this.bonificacion = 0;
-    // this.updCantidad(this.cantidad);
-    // this.updateTotal();
-    // this.updateTotales();
+  async borraProducto(itemId: string, venta_id: string): Promise<void> {
+    if (this.venta.entregas !== "Sin entregas realizadas.") {
+      const alertPopup = await this.alertCtrl.create({
+        header: 'Error',
+        message: "El pedido posee entregas.",
+        buttons: ['OK']
+      });
+      await alertPopup.present();
+      return;
+    }
+  
+    const confirmPopup = await this.alertCtrl.create({
+      header: 'Eliminar Producto',
+      message: '¿Está seguro de eliminar este producto?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        },
+        {
+          text: 'Eliminar',
+          handler: async () => {
+            this.pos_venta_attributes = [];
+            this.updateProductos();
+  
+            for (let i = 0; i < this.venta.productos.length; i++) {
+              let destruir = false;
+              if (this.venta.productos[i].id === itemId) {
+                destruir = true;
+              }
+  
+              const materialProd = this.ventaService.getMaterialByCodigo(this.materiales, this.venta.productos[i].material.codigo);
+  
+              // Eliminar promo asociada
+              if (this.venta.productos[i].id === itemId) {
+                for (let w = 0; w < this.venta.productos.length; w++) {
+                  if (this.venta.productos[i].promo_asociada === this.venta.productos[w].promo_asociada) {
+                    this.venta.productos[w].promo_aplicada = false;
+                    this.venta.productos[w].promo_asociada = null;
+                    this.venta.productos[w].descuento = 0;
+                    this.venta.productos[w].total_pos = this.venta.productos[w].precio * this.venta.productos[w].cantidad;
+  
+                    this.venta.productos[i].promo_aplicada = false;
+                    this.venta.productos[i].promo_asociada = null;
+                    this.venta.productos[i].descuento = 0;
+                    this.venta.productos[i].total_pos = this.venta.productos[i].precio * this.venta.productos[i].cantidad;
+                  }
+                }
+              }
+  
+              if (this.venta.productos[i].promo_aplicada) {
+                this.venta.productos[i].promo_aplicada = false;
+                this.venta.productos[i].promo_asociada = null;
+                this.venta.productos[i].descuento = 0;
+                this.venta.productos[i].total_pos = this.venta.productos[i].precio * this.venta.productos[i].cantidad;
+              }
+  
+              const nuevoProd = {
+                id: this.venta.productos[i].id,
+                pos_venta_clase_id: '2',
+                material_id: materialProd.id,
+                descripcion: materialProd.descripcion,
+                medida_id: materialProd.medida.id,
+                precio: this.venta.productos[i].precio,
+                cantidad: this.venta.productos[i].cantidad,
+                bonificacion: this.venta.productos[i].bonificacion,
+                material_tipo_id: materialProd.material_tipo_id,
+                es_muestra: this.venta.productos[i].es_muestra,
+                promo_aplicada: this.venta.productos[i].promo_aplicada,
+                promo_asociada: this.venta.productos[i].promo_asociada,
+                cod_pos: this.venta.productos[i].cod_pos,
+                descuento: this.venta.productos[i].descuento,
+                _destroy: destruir
+              };
+  
+              this.pos_venta_attributes.push(nuevoProd);
+            }
+  
+            this.findAndRemove(this.venta.productos, 'id', itemId);
+            this.aplicarPromopacks();
+  
+            const today = new Date().toISOString().slice(0, 10);
+  
+            if (this.idSucursal === 0) {
+              const alertPopup = await this.alertCtrl.create({
+                header: 'Error',
+                message: "Debe seleccionar sucursal facturación",
+                buttons: ['OK']
+              });
+              await alertPopup.present();
+              return;
+            }
+  
+            if (this.idFormaPago === 0) {
+              const alertPopup = await this.alertCtrl.create({
+                header: 'Error',
+                message: "Debe seleccionar Forma de Pago",
+                buttons: ['OK']
+              });
+              await alertPopup.present();
+              return;
+            }
+  
+            const idUsr = this.userService.getId();
+  
+            const data = {
+              pedido_venta: {
+                doc_venta_clase_id: '1',
+                sociedad_id: '1',
+                sociedad_sucursal_id: this.idSucursal,
+                forma_pago_id: this.idFormaPago,
+                type: 'PedidoVenta',
+                user_id: idUsr,
+                pais_id: '65',
+                cliente_id: this.venta.cliente.id,
+                moneda_id: '29',
+                despacho_clase_id: '1',
+                observaciones: this.venta.observaciones,
+                pos_ventas_attributes: this.pos_venta_attributes
+              }
+            };
+  
+            if (this.venta.id) {
+              this.ventaService.updateVenta(data, this.venta.id).then(resp => {
+                // console.log(resp);
+              }).catch(async error => {
+                const alertPopup = await this.alertCtrl.create({
+                  header: 'Error',
+                  message: error,
+                  buttons: ['OK']
+                });
+                await alertPopup.present();
+              });
+            }
+          }
+        }
+      ]
+    });
+  
+    await confirmPopup.present();
   }
+  
+  async aplicarPromopacks() {
+    await this.ventaService.aplicarPromopacks(this.venta,this.promopacks);
+  }
+
+  findAndRemove(array: any[], property: string, value: any): void {
+    const index = array.findIndex(result => result[property] === value);
+    if (index !== -1) {
+      array.splice(index, 1);
+    }
+    this.updateProductos();
+  }
+  
 
   async despacho() {
     this.navCtrl.navigateForward('/despacho/' + this.idVenta);
@@ -332,15 +467,6 @@ export class VentasPage implements OnInit {
     });
 
     await confirmPopup.present();
-  }
-
-
-  getMaterialByCodigo(arr: any[], codigo: string) {
-    for (let d = 0, len = arr.length; d < len; d += 1) {
-      if (arr[d].codigo === codigo) {
-        return arr[d];
-      }
-    }
   }
 
 
@@ -404,7 +530,7 @@ export class VentasPage implements OnInit {
     this.subtotal_pos = 0;
     this.niva = 0;
     this.total_pos = 0;
-  
+    console.log("promociones: "+ Object.values(this.promociones) );
     // Abre el modal
     const modal = await this.modalController.create({
       component: AgregarProductosComponent,
@@ -420,7 +546,11 @@ export class VentasPage implements OnInit {
         niva: this.niva,
         nbruto: this.nbruto,
         subtotal_pos: this.subtotal_pos,
-        total_pos: this.total_pos
+        total_pos: this.total_pos,
+        venta: this.venta,
+        idVenta: this.idVenta,
+        promopacks: this.promopacks,
+        creaVenta: this.creaVenta
       }
     });
 
@@ -502,7 +632,7 @@ export class VentasPage implements OnInit {
   
     for (let i = 0; i < this.venta.productos.length; i++) {
       let destruir = false;
-      const materialProd = this.getMaterialByCodigo(this.materiales, this.venta.productos[i].material.codigo);
+      const materialProd = this.ventaService.getMaterialByCodigo(this.materiales, this.venta.productos[i].material.codigo);
   
       const nuevoProd = {
         pos_venta_clase_id: '2',
