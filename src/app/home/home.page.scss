@@ -8,6 +8,13 @@
   height: auto; /* Permite que la altura se ajuste automáticamente para mantener la proporción */
   margin-top: 10px;
   margin-bottom: 20px;
+  filter: drop-shadow(0px 0px 50px
+  white);
+}
+/* Estilos para el header */
+.header {
+  background-color: #ffffff; /* Color de fondo del header */
+  box-shadow: 10px 20px 19px rgba(216, 214, 214, 0.1); /* Sombra en el borde inferior */
 }
 
   h1 {

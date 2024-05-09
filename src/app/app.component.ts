@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { NavigationStart,Router } from '@angular/router';
-import { UserService } from 'src/app/login/services/user.service'; // Asegúrate de que la ruta sea correcta
+import { UserService } from 'src/app/login/services/user.service';
+import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -10,7 +11,12 @@ import { UserService } from 'src/app/login/services/user.service'; // Asegúrate
 })
 export class AppComponent {
   showSidebar = false; 
-  constructor(private router: Router, private menu: MenuController, private userService: UserService) {
+  constructor(
+    private router: Router, 
+    private menu: MenuController, 
+    private userService: UserService,
+    private themeService: ThemeService
+  ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
         this.showSidebar = this.userService.isLoggedIn();
@@ -24,6 +30,10 @@ export class AppComponent {
 
     // Navega a la ruta especificada
     this.router.navigateByUrl(route);
+  }
+
+  toggleTheme() {
+    this.themeService.toggleTheme();
   }
   
   logout() {

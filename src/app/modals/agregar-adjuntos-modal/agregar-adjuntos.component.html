@@ -1,31 +1,26 @@
 <ion-header>
   <ion-toolbar color="primary">
+    <ion-title>Adjuntar Archivos</ion-title>
     <ion-buttons slot="start">
-      <ion-button (click)="closeModalVerAdjuntos()">
-        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      <ion-button (click)="openFilePicker()">
+        <ion-icon slot="icon-only" name="attach"></ion-icon>
       </ion-button>
     </ion-buttons>
-    <ion-title>Archivos Adjuntos</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-item>
-      <ion-img [src]="pictureUrl" style="width: 80%;"></ion-img>
-    </ion-item>
-
-    <ion-item>
-      <ion-button expand="full" color="primary" (click)="openModalAdjuntos()">Adjuntar Archivos</ion-button>
-    </ion-item>
-
     <ion-item *ngFor="let archivo of archivos">
-      <ion-label (click)="isImage(archivo.content_type) ? openVerFoto(archivo.arch_url) : descargarArchivo(archivo.arch_url, archivo.nombre_archivo, archivo.content_type)">
-        {{ truncFilename(archivo.nombre_archivo) }}
+      <ion-label (click)="previewArchivo(archivo)">
+        {{ archivo.nombre_archivo }}
       </ion-label>
       <ion-buttons slot="end">
-        <ion-button color="danger" (click)="eliminarArchivo2(venta_id, archivo.id)">
-          <ion-icon name="close-circle"></ion-icon>
+        <ion-button color="success" (click)="descargarArchivo(archivo.adjunto.url,archivo.nombre_archivo,archivo.content_type)">
+          <ion-icon name="download-outline"></ion-icon>
+        </ion-button>
+        <ion-button color="danger" (click)="eliminarArchivo2(archivo)">
+          <ion-icon name="trash"></ion-icon>
         </ion-button>
       </ion-buttons>
     </ion-item>

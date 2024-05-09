@@ -1,5 +1,5 @@
 {
-  "name": "abbott_app",
+  "name": "abbott-pedidos",
   "version": "0.0.1",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "^17.0.2",
     "@angular/router": "^17.0.2",
     "@awesome-cordova-plugins/camera": "^6.6.0",
+    "@awesome-cordova-plugins/file": "^6.7.0",
     "@awesome-cordova-plugins/file-chooser": "^6.6.0",
     "@awesome-cordova-plugins/file-opener": "^6.6.0",
     "@awesome-cordova-plugins/file-path": "^6.6.0",
@@ -77,8 +78,6 @@
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {}
     },
-    "platforms": [
-      "android"
-    ]
+    "platforms": []
   }
 }

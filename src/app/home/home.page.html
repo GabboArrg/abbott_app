@@ -1,4 +1,4 @@
-<app-header [tituloVar]="tituloVarLocal"></app-header>
+<app-header [tituloVar]="tituloVarLocal" class="header"></app-header>
 
 <ion-content class="ion-padding">
   <div class="home-container">
@@ -14,6 +14,10 @@
 
 <ion-footer>
   <ion-toolbar>
-    <p>© 2024 Todos los derechos reservados</p>
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+      <p style="max-width: 75%; margin-left: 10px;">© 2024 Todos los derechos reservados</p>
+      <img src="assets/img/logo_easysoft.png" width="150px" style="max-width: 25%;">
+    </div>
   </ion-toolbar>
 </ion-footer>
+

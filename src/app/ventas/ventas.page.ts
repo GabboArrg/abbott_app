@@ -8,6 +8,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AgregarProductosComponent } from 'src/app/modals/agregar-productos-modal/agregar-productos.component';
 import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
+import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.component';
 import { environment } from 'src/environments/environment';//aqui está el service, la url
 import { forkJoin } from 'rxjs';
 
@@ -134,7 +135,6 @@ export class VentasPage implements OnInit {
         this.creaVenta = false;
         this.ventaService.getVenta(this.idVenta).subscribe((venta: any) => {
           this.venta = venta.venta;
-          console.log("venta: "+this.venta.cliente.nombre);
 
           const fechaVenta = new Date(this.venta.fecha);
           this.fechaFormateada = fechaVenta.toLocaleDateString();
@@ -154,17 +154,22 @@ export class VentasPage implements OnInit {
           }, (error: any) => {
             console.log("Error en getFormaPago = " + error);
           });
-
+          
           this.archivos = [];
-          if (venta.archivos !== undefined && Array.isArray(venta.archivos)) {
+          this.archivos = Object.values(this.venta.archivos)
+          console.log("archivos1: "+venta.archivos !== undefined);
+
+          if (venta.archivos !== undefined ) {
             this.archivos = venta.archivos;
             let cont = 1;
+            console.log("archivos2: "+this.archivos);
             this.archivos.forEach((archivo: any) => {
               archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
               archivo.arch_url = archivo.adjunto.url;
               archivo.number = cont;
               archivo._destroy = 'false';
               cont++;
+              console.log("archivos3: "+archivo.adjunto.url);
             });
           }
         }, (error: any) => {
@@ -541,7 +546,8 @@ export class VentasPage implements OnInit {
     const modal = await this.modalController.create({
       component: AgregarAdjuntosComponent,
       componentProps: {
-        venta_id: ventaId
+        venta_id: ventaId,
+        archivos: this.archivos
       }
     });
     await modal.present();

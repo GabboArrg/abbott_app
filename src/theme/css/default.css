@@ -40,6 +40,7 @@ a:active {
 .container > header {
 	margin: 0 auto;
 	padding: 2em;
+	box-shadow: 10px 20px 19px rgba(216, 214, 214, 0.1); /* Sombra en el borde inferior */
 }
 
 .container > header {

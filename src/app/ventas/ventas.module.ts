@@ -9,6 +9,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { AgregarProductosComponent } from 'src/app/modals/agregar-productos-modal/agregar-productos.component';
 import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
+import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.component';
 import { FormatDatePipe } from 'src/app/pipes/FormatDate.pipe';
 
 @NgModule({
@@ -19,7 +20,7 @@ import { FormatDatePipe } from 'src/app/pipes/FormatDate.pipe';
     VentasPageRoutingModule,
     SharedModule // Asegúrate de importar SharedModule aquí
   ],
-  declarations: [VentasPage, AgregarProductosComponent, AgregarAdjuntosComponent, FormatDatePipe],
+  declarations: [VentasPage, AgregarProductosComponent, AgregarAdjuntosComponent, FormatDatePipe, VerFotoComponent],
   providers: [FileTransfer, FileOpener, DatePipe]
 })
 export class VentasPageModule {}

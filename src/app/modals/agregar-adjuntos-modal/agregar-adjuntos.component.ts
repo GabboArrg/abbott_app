@@ -1,8 +1,13 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, AlertController } from '@ionic/angular';
+import { Component, Input, OnInit, Injectable } from '@angular/core';
+import { ModalController, AlertController,LoadingController  } from '@ionic/angular';
 import { VentaService } from 'src/app/services/venta.service';
 import { environment } from 'src/environments/environment';
-import { Observable } from 'rxjs';
+import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.component';
+import { HttpClient } from '@angular/common/http';
+import { File } from '@awesome-cordova-plugins/file/ngx';
+import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
+import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+
 
 @Component({
   selector: 'app-agregar-adjuntos',
@@ -18,13 +23,16 @@ export class AgregarAdjuntosComponent implements OnInit {
   constructor(
     private modalController: ModalController,
     private ventaService: VentaService,
-    private alertCtrl: AlertController
+    private alertCtrl: AlertController,
+    private http: HttpClient,
+    private loadingCtrl: LoadingController,
+    private file: File,
+    private fileOpener: FileOpener,
+    private transfer: FileTransfer
   ) { }
 
   ngOnInit() {
-    this.ventaService.getArchivos().subscribe((archivos: any[]) => {
-      this.archivos = archivos;
-    });
+    console.log("archivos: "+this.archivos);
   }
 
   closeModalVerAdjuntos() {
@@ -35,20 +43,37 @@ export class AgregarAdjuntosComponent implements OnInit {
     // Implementa la lógica para abrir el modal de adjuntos si es necesario
   }
 
-  isImage(contentType: string): boolean {
-    return contentType.startsWith('image');
-  }
+
 
   openVerFoto(archUrl: string) {
     // Implementa la lógica para abrir la foto si es necesario
   }
 
-  descargarArchivo(archUrl: string, nombreArchivo: string, contentType: string) {
-    // Implementa la lógica para descargar el archivo si es necesario
+  async previewArchivo(archivo: any) {
+    if (this.isImage(archivo.content_type)) {
+      const modal = await this.modalController.create({
+        component: VerFotoComponent,
+        componentProps: {
+          archivo_url: environment.BASE_URL + archivo.adjunto.url
+        }
+      });
+      return await modal.present();
+    } else {
+      // Mostrar una alerta indicando que el archivo no es una imagen
+      const alert = await this.alertCtrl.create({
+        header: 'Vista previa no disponible',
+        message: 'No es posible mostrar una vista previa de este tipo de archivo.',
+        buttons: ['Aceptar']
+      });
+      await alert.present();
+    }
   }
 
+  isImage(contentType: string): boolean {
+    return contentType.startsWith('image');
+  }
 
-  async eliminarArchivo2(venta_id: any, archivo_id: any) {
+  async eliminarArchivo2(archivo_id: any) {
     const confirm = await this.alertCtrl.create({
       header: 'Eliminar Archivo',
       message: '¿Está seguro de eliminar este Archivo?',
@@ -64,8 +89,8 @@ export class AgregarAdjuntosComponent implements OnInit {
           text: 'Eliminar',
           handler: async () => {
             try {
-              const response = await this.ventaService.deleteArchivo(venta_id, archivo_id);
-              const venta = await this.ventaService.getVenta(venta_id).toPromise(); // Convertir el Observable a promesa
+              const response = await this.ventaService.deleteArchivo(this.venta_id, archivo_id);
+              const venta = await this.ventaService.getVenta(this.venta_id).toPromise(); // Convertir el Observable a promesa
               
               // Verificar si venta.archivos es un arreglo
               if (Array.isArray(venta.archivos)) {
@@ -99,7 +124,6 @@ export class AgregarAdjuntosComponent implements OnInit {
     await confirm.present();
 }
 
-
   
   truncFilename(nombreArchivo: string): string {
     return nombreArchivo.length > 20 ? nombreArchivo.substr(0, 20) + '...' : nombreArchivo;
@@ -113,4 +137,37 @@ export class AgregarAdjuntosComponent implements OnInit {
     });
     await alert.present();
   }
+
+  openFilePicker(){}
+
+
+  async descargarArchivo(url: string, nombre: string, contentType: string) {
+    const loading = await this.loadingCtrl.create({
+      message: 'Descargando archivo...'
+    });
+    await loading.present();
+  
+    try {
+      const targetPath = this.file.externalRootDirectory + '/Download/' + nombre;
+      const fileTransfer: FileTransferObject = this.transfer.create();
+  
+      fileTransfer.download(environment.BASE_URL + url.substring(1), targetPath).then(entry => {
+        console.log('Archivo descargado en: ' + entry.toURL());
+        this.fileOpener.open(entry.toURL(), contentType).then(() => {
+          console.log('Archivo abierto correctamente');
+        }).catch(error => {
+          console.error('Error al abrir archivo:', error);
+        });
+      }).catch(error => {
+        console.error('Error al descargar archivo:', error);
+      });
+    } catch (error) {
+      console.error('Error al descargar y abrir archivo:', error);
+    } finally {
+      await loading.dismiss();
+    }
+  }
+  
+
+
 }

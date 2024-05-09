@@ -235,10 +235,23 @@
   }
 }
 
-html {
-  /* 
-   * For more information on dynamic font scaling, visit the documentation:
-   * https://ionicframework.com/docs/layout/dynamic-font-scaling
-   */
-  --ion-dynamic-font: var(--ion-default-dynamic-font);
+/* Agregado para el modo claro */
+@media (prefers-color-scheme: light) {
+  body {
+    background-color: #ffffff;
+    color: #3880ff; /* azul */
+  }
+
+  /* Contenedores azules con letras blancas */
+  .blue-container {
+    background-color: #3dc2ff; /* azul claro */
+    color: #ffffff; /* blanco */
+  }
+
+  /* Estilo para las letras dentro de los contenedores azules */
+  .blue-container p {
+    color: #ffffff; /* blanco */
+  }
+
+  /* Otros estilos para el modo claro */
 }

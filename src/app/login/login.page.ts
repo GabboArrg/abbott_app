@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { UserService } from 'src/app/login/services/user.service';
 import { LoginService } from 'src/app/login/services/login.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ export class LoginPage {
   loginData: any = {};
   mail: string = '';
   visible: boolean = false;
+  mode: string = environment.MODE;
 
   constructor(
     private userService: UserService,
