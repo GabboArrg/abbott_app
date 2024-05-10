@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ModalController, NavParams } from '@ionic/angular';
+import { ModalController, NavParams, AlertController } from '@ionic/angular';
 
 @Component({
   selector: 'app-agregar-direccion',
@@ -8,21 +8,39 @@ import { ModalController, NavParams } from '@ionic/angular';
 })
 export class AgregarDireccionComponent implements OnInit {
 
-  @Input() comunas: any[] | undefined;
-  @Input() regiones: any[] | undefined;
-  @Input() sucursal: any;
+  comunas: any[] | undefined;
+  regiones: any[] | undefined;
+  sucursal: any = {
+    cliente_id: '',
+    nombre: '',
+    recibe: '',
+    pais_id: '41',
+    ciudad: '',
+    region: '',
+    comuna: '',
+    direccion: '',
+    telefono: '',
+    movil: '',
+    email: '',
+    codpostal: '',
+    req_adicionales: '',
+    selectedData:{
+      region: { id: '', nombre: '' },
+      comuna: { id: '', nombre: '' }
+    },
+    is_new: true
+  };
+  
+  comunasCliente: any[] = [];
 
-  selectedDataModal: any = {}; // Agrega esta línea para inicializar selectedDataModal
-
-  // Falta definir la propiedad comunasCliente
-  comunasCliente: any[] = []; // Debes agregar esta línea
-
-  constructor(private modalController: ModalController, private navParams: NavParams) { }
+  constructor(
+    private modalController: ModalController,
+    private navParams: NavParams,
+    private alertController: AlertController
+  ) { }
 
   ngOnInit() {
-    this.comunas = this.navParams.get('comunas') || [];
-    this.regiones = this.navParams.get('regiones') || [];
-    this.sucursal = this.navParams.get('sucursal');
+
   }
 
   closeModalDireccion() {
@@ -30,21 +48,61 @@ export class AgregarDireccionComponent implements OnInit {
   }
 
   actualizarComunas() {
-    this.comunasCliente = []; // Inicializa comunasCliente
-    
-    if (this.comunas) { // Verifica si this.comunas no es undefined
+    this.comunasCliente = []; 
+    if (this.comunas) { 
       this.comunas.forEach((comuna: any) => {
-        if (comuna.region === this.selectedDataModal.region) {
+        if (comuna.region === this.sucursal.selectedData.region.id) {
           this.comunasCliente.push(comuna);
         }
       });
     }
   }
+
   agregarDireccion() {
-    // Aquí puedes procesar los datos del formulario
-    // Lógica para guardar los datos o realizar otras acciones
-    this.modalController.dismiss();
+    if (!this.validarCampos()) {
+      return;
+    }
+    this.modalController.dismiss({
+      sucursal: this.sucursal
+    });
   }
-  
+
+  validarCampos() {
+    if (!this.sucursal.nombre) {
+      this.mostrarAlerta('Error', 'Debe agregar el Nombre de la Sucursal.');
+      return false;
+    } else if (!this.sucursal.recibe) {
+      this.mostrarAlerta('Error', 'Debe agregar el nombre de quien Recibe.');
+      return false;
+    } else if (!this.sucursal.selectedData.region) {
+      this.mostrarAlerta('Error', 'Debe Seleccionar una Región.');
+      return false;
+    } else if (!this.sucursal.selectedData.comuna) {
+      this.mostrarAlerta('Error', 'Debe Seleccionar una Comuna.');
+      return false;
+    } else if (!this.sucursal.ciudad) {
+      this.mostrarAlerta('Error', 'Debe agregar una Ciudad.');
+      return false;
+    } else if (!this.sucursal.direccion) {
+      this.mostrarAlerta('Error', 'Debe agregar una Dirección.');
+      return false;
+    } else if (!this.sucursal.telefono) {
+      this.mostrarAlerta('Error', 'Debe agregar un Teléfono.');
+      return false;
+    } else if (!this.sucursal.email) {
+      this.mostrarAlerta('Error', 'Debe agregar un Email válido (ejemplo@email.cl).');
+      return false;
+    }
+    return true;
+  }
+
+  async mostrarAlerta(titulo: string, mensaje: string) {
+    const alert = await this.alertController.create({
+      header: titulo,
+      message: mensaje,
+      buttons: ['OK']
+    });
+    await alert.present();
+  }
 
 }

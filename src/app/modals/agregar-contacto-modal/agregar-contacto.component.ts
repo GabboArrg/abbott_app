@@ -12,7 +12,8 @@ export class AgregarContactoComponent implements OnInit {
     nombre: '',
     email: '',
     telefono: '',
-    especialidad: ''
+    especialidad: '',
+    is_new: true
   };
 
   constructor(private modalController: ModalController) { }
@@ -26,9 +27,11 @@ export class AgregarContactoComponent implements OnInit {
 
   agregarContacto() {
     // Aquí puedes procesar los datos del formulario
-    console.log('Contacto:', this.contacto);
+    //console.log('Contacto:', this.contacto);
     // Lógica para guardar los datos o realizar otras acciones
-    this.modalController.dismiss();
+    this.modalController.dismiss({
+      contacto: this.contacto
+    });
   }
 
 }

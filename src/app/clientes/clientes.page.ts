@@ -104,7 +104,6 @@ export class ClientesPage implements OnInit{
   }
 
   ngOnInit() {
-    
     this.route.paramMap.subscribe(params => {
       this.idCliente = params.get('idCliente');
     });
@@ -555,8 +554,15 @@ this.loadingCtrl.create({
       component: AgregarDireccionComponent,
       componentProps: {
         comunas: this.comunas,
-        regiones: this.regiones,
-        sucursal: this.sucursal
+        regiones: this.regiones
+      }
+    });
+    modal.onDidDismiss().then((data) => {
+      if (data && data.data) {
+        // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
+        const { sucursal } = data.data;
+        this.sucursales.push(sucursal);
+        console.log('Sucursal:', sucursal);
       }
     });
     return await modal.present();
@@ -569,6 +575,15 @@ this.loadingCtrl.create({
         comunas: this.comunas,
         regiones: this.regiones,
         sucursal: this.sucursal
+      }
+    });
+    modal.onDidDismiss().then((data) => {
+      if (data && data.data) {
+        // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
+        const { contacto } = data.data;
+        this.contactos.push(contacto);
+        console.log('Contacto:', contacto);
+
       }
     });
     return await modal.present();

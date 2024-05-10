@@ -95,7 +95,7 @@ export class VentaService {
   }
 
   getMateriales(): Observable<any> {
-    this.presentLoading();
+    //this.presentLoading(); //revisar, se queda pegado en local
     const url = environment.API_ABBOTT + 'materiales/';
     return this.http.get(url).pipe(
       catchError((error: any) => {
