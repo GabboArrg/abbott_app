@@ -10,13 +10,23 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
+  <!-- Sección para mostrar el archivo seleccionado -->
+  <ion-item *ngIf="archivoSeleccionado">
+    <ion-label>{{ archivoSeleccionado.nombre }}</ion-label>
+    <ion-buttons slot="end">
+      <ion-button color="primary" (click)="cargarArchivo()">Cargar</ion-button>
+      <ion-button color="danger" (click)="eliminarSeleccion()">Eliminar</ion-button>
+    </ion-buttons>
+  </ion-item>
+
+  <!-- Lista de archivos cargados -->
+  <ion-list *ngIf="archivos && archivos.length > 0">
     <ion-item *ngFor="let archivo of archivos">
       <ion-label (click)="previewArchivo(archivo)">
         {{ archivo.nombre_archivo }}
       </ion-label>
       <ion-buttons slot="end">
-        <ion-button color="success" (click)="descargarArchivo(archivo.adjunto.url,archivo.nombre_archivo,archivo.content_type)">
+        <ion-button color="success" (click)="descargarArchivo(archivo.adjunto.url, archivo.nombre_archivo, archivo.content_type)">
           <ion-icon name="download-outline"></ion-icon>
         </ion-button>
         <ion-button color="danger" (click)="eliminarArchivo2(archivo)">

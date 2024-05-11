@@ -26,14 +26,13 @@ export class UserService {
     const token = data.usuario.access_token;
     const id = data.usuario.id;
     const mail = data.usuario.email;
-
-    console.log('Token:', token);
-    console.log('ID:', id);
-    console.log('Email:', mail);
+    const nombre = data.usuario.nombre;
+    console.log("usuario: " + data.usuario.nombre);
 
     localStorage.setItem("token", token);
     localStorage.setItem("id", id);
     localStorage.setItem("mail", mail);
+    localStorage.setItem("nombre", nombre);
   }
 
   getToken(): string | null {
@@ -46,5 +45,9 @@ export class UserService {
 
   getMail(): string | null {
     return localStorage.getItem("mail");
+  }
+
+  getNombre(): string | null {
+    return localStorage.getItem("nombre");
   }
 }

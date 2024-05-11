@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { NavigationStart,Router } from '@angular/router';
 import { UserService } from 'src/app/login/services/user.service';
@@ -9,8 +9,10 @@ import { ThemeService } from 'src/app/services/theme.service';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss']
 })
-export class AppComponent {
-  showSidebar = false; 
+export class AppComponent implements OnInit{
+  showSidebar = false;
+  nombre: string = '';
+
   constructor(
     private router: Router, 
     private menu: MenuController, 
@@ -24,6 +26,15 @@ export class AppComponent {
     });
   }
   
+  ngOnInit() {
+    // Obtener el correo electrónico del usuario del almacenamiento local
+    const userNombre = this.userService.getNombre();
+    console.log("nombre: "+userNombre);
+    if (userNombre) {
+      this.nombre = userNombre;
+    }
+  }
+
   closeSidebarAndNavigate(route: string) {
     // Cierra el sidebar
     this.menu.close('sidebar');

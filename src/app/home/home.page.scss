@@ -11,11 +11,6 @@
   filter: drop-shadow(0px 0px 50px
   white);
 }
-/* Estilos para el header */
-.header {
-  background-color: #ffffff; /* Color de fondo del header */
-  box-shadow: 10px 20px 19px rgba(216, 214, 214, 0.1); /* Sombra en el borde inferior */
-}
 
   h1 {
     font-size: 24px;
@@ -23,11 +18,11 @@
   }
 
   .info {
-    background-color: #5D99FF;
+    background-color: #5d98ffad;
     border-radius: 8px;
     padding: 15px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0px 0px 10px rgb(70, 69, 69);
 
     p {
       margin: 0;

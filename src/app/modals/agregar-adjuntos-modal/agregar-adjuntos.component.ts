@@ -7,6 +7,7 @@ import { HttpClient } from '@angular/common/http';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
+import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 
 
 @Component({
@@ -28,7 +29,8 @@ export class AgregarAdjuntosComponent implements OnInit {
     private loadingCtrl: LoadingController,
     private file: File,
     private fileOpener: FileOpener,
-    private transfer: FileTransfer
+    private transfer: FileTransfer,
+    private filePath: FilePath
   ) { }
 
   ngOnInit() {
@@ -138,7 +140,15 @@ export class AgregarAdjuntosComponent implements OnInit {
     await alert.present();
   }
 
-  openFilePicker(){}
+  filePicker(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      this.file.pickFile().then(uri => {
+        resolve(uri);
+      }).catch(error => {
+        reject(error);
+      });
+    });
+  }
 
 
   async descargarArchivo(url: string, nombre: string, contentType: string) {
