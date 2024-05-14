@@ -1,0 +1,15 @@
+#image_uploads {
+    display: none;
+  }
+  
+  #icon {
+    width: 100px;
+    cursor: pointer;
+  }
+
+  .file-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra horizontalmente */
+    margin: 20px 0; /* Margen superior e inferior de 20px */
+  }

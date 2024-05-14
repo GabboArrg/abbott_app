@@ -1,14 +1,14 @@
-import { Component, Input, OnInit, Injectable } from '@angular/core';
-import { ModalController, AlertController,LoadingController  } from '@ionic/angular';
+import { Component, Input, OnInit } from '@angular/core';
+import { ModalController, AlertController, LoadingController  } from '@ionic/angular';
 import { VentaService } from 'src/app/services/venta.service';
 import { environment } from 'src/environments/environment';
 import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.component';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { File } from '@awesome-cordova-plugins/file/ngx';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
-
+import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 
 @Component({
   selector: 'app-agregar-adjuntos',
@@ -16,10 +16,10 @@ import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
   styleUrls: ['./agregar-adjuntos.component.scss'],
 })
 export class AgregarAdjuntosComponent implements OnInit {
-  pictureUrl: string | undefined;
   @Input() venta_id: any;
   @Input() archivos: any[] = [];
-
+  archivoSeleccionado: any;
+  previewFiles: any[] = [];
 
   constructor(
     private modalController: ModalController,
@@ -30,26 +30,18 @@ export class AgregarAdjuntosComponent implements OnInit {
     private file: File,
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
-    private filePath: FilePath
+    private filePath: FilePath,
+    private fileChooser: FileChooser
   ) { }
 
   ngOnInit() {
-    console.log("archivos: "+this.archivos);
+    console.log("archivos: " + this.archivos);
   }
 
   closeModalVerAdjuntos() {
     this.modalController.dismiss();
   }
 
-  openModalAdjuntos() {
-    // Implementa la lógica para abrir el modal de adjuntos si es necesario
-  }
-
-
-
-  openVerFoto(archUrl: string) {
-    // Implementa la lógica para abrir la foto si es necesario
-  }
 
   async previewArchivo(archivo: any) {
     if (this.isImage(archivo.content_type)) {
@@ -124,11 +116,6 @@ export class AgregarAdjuntosComponent implements OnInit {
       ]
     });
     await confirm.present();
-}
-
-  
-  truncFilename(nombreArchivo: string): string {
-    return nombreArchivo.length > 20 ? nombreArchivo.substr(0, 20) + '...' : nombreArchivo;
   }
 
   async presentAlert(header: string, message: string) {
@@ -140,44 +127,134 @@ export class AgregarAdjuntosComponent implements OnInit {
     await alert.present();
   }
 
-  filePicker(): Promise<any> {
-    return new Promise((resolve, reject) => {
-      this.file.pickFile().then(uri => {
-        resolve(uri);
-      }).catch(error => {
-        reject(error);
-      });
-    });
-  }
-
-
   async descargarArchivo(url: string, nombre: string, contentType: string) {
     const loading = await this.loadingCtrl.create({
-      message: 'Descargando archivo...'
+      message: 'Descargando archivo...',
+      spinner: 'bubbles',
+      translucent: true,
+      cssClass: 'spinner-energized'
     });
     await loading.present();
   
     try {
-      const targetPath = this.file.externalRootDirectory + '/Download/' + nombre;
-      const fileTransfer: FileTransferObject = this.transfer.create();
+      // Solicitar permisos de almacenamiento externo antes de descargar el archivo
+      const hasPermission = await this.ventaService.requestExternalStoragePermissions();
   
-      fileTransfer.download(environment.BASE_URL + url.substring(1), targetPath).then(entry => {
-        console.log('Archivo descargado en: ' + entry.toURL());
-        this.fileOpener.open(entry.toURL(), contentType).then(() => {
-          console.log('Archivo abierto correctamente');
+      if (hasPermission) {
+        // Continuar con la lógica de descarga de archivos aquí
+        const targetPath = this.file.externalRootDirectory + '/Download/' + nombre;
+        const fileTransfer: FileTransferObject = this.transfer.create();
+        const download_url = environment.BASE_URL + url;
+  
+        console.log("url: " + url);
+        console.log("url corregida: " + download_url);
+        console.log("targetPath: " + targetPath);
+        fileTransfer.download(download_url, targetPath).then(entry => {
+          console.log('Archivo descargado en: ' + entry.toURL());
+          this.fileOpener.open(entry.toURL(), contentType).then(() => {
+            console.log('Archivo abierto correctamente');
+            loading.dismiss(); // Cerrar el mensaje de carga después de abrir el archivo
+          }).catch(error => {
+            console.error('Error al abrir archivo:', error);
+            loading.dismiss(); // Cerrar el mensaje de carga si hay un error al abrir el archivo
+          });
         }).catch(error => {
-          console.error('Error al abrir archivo:', error);
+          console.error('Error al descargar archivo:', error);
+          loading.dismiss(); // Cerrar el mensaje de carga si hay un error al descargar el archivo
         });
-      }).catch(error => {
-        console.error('Error al descargar archivo:', error);
-      });
+      } else {
+        // Manejar el caso en el que los permisos sean denegados
+        console.log('Los permisos de almacenamiento externo fueron denegados');
+        // Muestra un mensaje de error al usuario o toma alguna otra acción apropiada
+        loading.dismiss(); // Cerrar el mensaje de carga si los permisos fueron denegados
+      }
     } catch (error) {
       console.error('Error al descargar y abrir archivo:', error);
-    } finally {
-      await loading.dismiss();
+      loading.dismiss(); // Cerrar el mensaje de carga si hay un error general
     }
   }
   
 
+  async submitForm() {
+    if (!this.previewFiles.length) {
+        this.presentAlert('Error', 'No se ha seleccionado ningún archivo.');
+        return;
+    }
+  
+    const loading = await this.loadingCtrl.create({
+        message: 'Subiendo archivo...',
+        spinner: 'bubbles',
+        translucent: true,
+        cssClass: 'spinner-energized'
+    });
+    await loading.present();
+  
+    try {
+        for (const archivo of this.previewFiles) {
+            const formData = new FormData();
+            formData.append('file', archivo.file, archivo.file.name);
+
+            // Configurar encabezados
+            const headers = new HttpHeaders({
+                'headerName': 'headerValue', // Ajusta los encabezados según sea necesario
+                // Agrega más encabezados si es necesario
+            });
+
+            // Configurar parámetros
+            const params = {
+                'venta_id': this.venta_id,
+                // Ajusta los parámetros según sea necesario
+            };
+
+            const upload_url = environment.API_ABBOTT + "archivos/";
+            
+            // Realizar la solicitud POST con encabezados y parámetros  + archivo.file.name
+            const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
+        }
+
+        // Limpiar la vista previa y cerrar el modal después de una carga exitosa
+        this.previewFiles = [];
+        await this.loadingCtrl.dismiss();
+        await this.modalController.dismiss(); // Cerrar el modal después de cargar exitosamente
+        this.presentAlert('Éxito', 'Archivo(s) subido(s) exitosamente.');
+    } catch (error) {
+        console.error('Error al subir archivo:', error);
+        this.presentAlert('Error', 'Ocurrió un error al subir el archivo.');
+    } finally {
+        await loading.dismiss();
+    }
+  }
+
+  async onFileChange(event: any) {
+    const files = event.target.files;
+    this.previewFiles = [];
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      const reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        this.previewFiles.push({ file: file, url: e.target.result });
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  returnFileSize(size: number): string {
+    if (size < 1024) {
+      return `${size} bytes`;
+    } else if (size >= 1024 && size < 1048576) {
+      return `${(size / 1024).toFixed(1)} KB`;
+    } else if (size >= 1048576) {
+      return `${(size / 1048576).toFixed(1)} MB`;
+    } else {
+      return '';
+    }
+  }
 
 }
+function archivo(value: any, index: number, array: any[]): void {
+  throw new Error('Function not implemented.');
+}
+

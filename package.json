@@ -21,9 +21,10 @@
     "@angular/platform-browser": "^17.0.2",
     "@angular/platform-browser-dynamic": "^17.0.2",
     "@angular/router": "^17.0.2",
+    "@awesome-cordova-plugins/android-permissions": "^6.7.0",
     "@awesome-cordova-plugins/camera": "^6.6.0",
     "@awesome-cordova-plugins/file": "^6.7.0",
-    "@awesome-cordova-plugins/file-chooser": "^6.6.0",
+    "@awesome-cordova-plugins/file-chooser": "^6.7.0",
     "@awesome-cordova-plugins/file-opener": "^6.6.0",
     "@awesome-cordova-plugins/file-path": "^6.6.0",
     "@awesome-cordova-plugins/file-transfer": "^6.6.0",
@@ -50,6 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "cordova-android": "^12.0.1",
+    "cordova-plugin-android-permissions": "^1.1.5",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
     "cordova-plugin-ionic-webview": "^5.0.0",
@@ -76,7 +78,8 @@
       "cordova-plugin-device": {},
       "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-webview": {},
-      "cordova-plugin-ionic-keyboard": {}
+      "cordova-plugin-ionic-keyboard": {},
+      "cordova-plugin-android-permissions": {}
     },
     "platforms": [
       "android"

@@ -5,7 +5,7 @@ import { catchError, finalize } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { UserService } from '../login/services/user.service';
-
+declare var cordova: any;
 @Injectable({
   providedIn: 'root'
 })
@@ -339,6 +339,25 @@ export class VentaService {
     }
   }
   
-
+  requestExternalStoragePermissions(): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      cordova.plugins.permissions.requestPermission(
+        cordova.plugins.permissions.WRITE_EXTERNAL_STORAGE,
+        (status: { hasPermission: any; }) => {
+          if (status.hasPermission) {
+            console.log('Permisos de almacenamiento externo concedidos');
+            resolve(true);
+          } else {
+            console.log('Permisos de almacenamiento externo denegados');
+            resolve(false);
+          }
+        },
+        (error: any) => {
+          console.error('Error al solicitar permisos de almacenamiento externo', error);
+          reject(error);
+        }
+      );
+    });
+  }
 
 }

@@ -2,7 +2,7 @@
   <ion-toolbar color="primary">
     <ion-title>Adjuntar Archivos</ion-title>
     <ion-buttons slot="start">
-      <ion-button (click)="openFilePicker()">
+      <ion-button>
         <ion-icon slot="icon-only" name="attach"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -10,16 +10,33 @@
 </ion-header>
 
 <ion-content>
-  <!-- Sección para mostrar el archivo seleccionado -->
-  <ion-item *ngIf="archivoSeleccionado">
-    <ion-label>{{ archivoSeleccionado.nombre }}</ion-label>
-    <ion-buttons slot="end">
-      <ion-button color="primary" (click)="cargarArchivo()">Cargar</ion-button>
-      <ion-button color="danger" (click)="eliminarSeleccion()">Eliminar</ion-button>
-    </ion-buttons>
-  </ion-item>
+  <form method="post" enctype="multipart/form-data">
+    <div class="file-upload-container">
+      <input type="file" #fileInput id="image_uploads" name="image_uploads" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif" multiple (change)="onFileChange($event)" style="display: none;" />
+      <ion-button>
+        <img src="ruta/a/la/imagen.png" alt="Adjuntar archivos" (click)="fileInput.click()">
+      </ion-button>
+    </div>
+  </form>
+  
+  
 
-  <!-- Lista de archivos cargados -->
+  <div class="preview">
+    <div *ngFor="let file of previewFiles">
+      <img *ngIf="isImage(file.file.type)" [src]="file.url" alt="Preview" style="max-height: 200px; max-width: 100%; display: block; margin-left: auto;margin-right: auto;" />
+      <p>{{ file.file.name }} - {{ returnFileSize(file.file.size) }}</p>
+    </div>
+  </div>
+  <ion-button color="primary" expand="full" (click)="submitForm()">Subir archivo</ion-button>
+</ion-content>
+
+<ion-content>
+
+    <ion-item-divider>
+      <ion-label class="input-label" style="text-align: right; font-size: 1.2em;"><b>ARCHIVOS CARGADOS</b></ion-label>
+      <div style="flex-grow: 1;"></div>
+    </ion-item-divider>
+
   <ion-list *ngIf="archivos && archivos.length > 0">
     <ion-item *ngFor="let archivo of archivos">
       <ion-label (click)="previewArchivo(archivo)">
