@@ -265,25 +265,40 @@ export class AgregarAdjuntosComponent implements OnInit {
             const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
             numArchivosCargados++;
         }
+        
 
         let numFotosCargadas = 0;
         for (const photo of this.photos) {
           const formData = new FormData();
-          formData.append('picture', photo.url);
-          formData.append('name', photo.name); // Agregar el nombre del archivo al FormData si es necesario
-          formData.append('size', photo.size); // Agregar el tamaño del archivo al FormData si es necesario
+          // Esto no está correcto
+          // formData.append('file', photo.url, photo.name);
+      
+          // Debes crear un Blob a partir de la URL de la foto
+          const base64Data = photo.url.split(',')[1]; // Obtener solo los datos base64
+          const byteCharacters = atob(base64Data);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+              byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: 'image/jpeg' });
+      
+          // Ahora puedes pasar el Blob como segundo parámetro
+          formData.append('file', blob, photo.name);
+      
           const headers = new HttpHeaders({
-            'headerName': 'headerValue',
+              'headerName': 'headerValue',
           });
           const params = {
-            'venta_id': this.venta_id,
+              'venta_id': this.venta_id,
           };
           // Enviar la foto al servidor
           const upload_url = environment.API_ABBOTT + "archivos/";
           const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
           numFotosCargadas++;
           console.log('Foto enviada al servidor:', response);
-        }
+      }
+      
 
         // Limpiar la vista previa y cerrar el modal después de una carga exitosa
         this.previewFiles = [];
