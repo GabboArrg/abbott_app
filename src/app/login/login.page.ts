@@ -5,7 +5,6 @@ import { UserService } from 'src/app/login/services/user.service';
 import { LoginService } from 'src/app/login/services/login.service';
 import { environment } from 'src/environments/environment';
 import {AndroidPermissions} from "@awesome-cordova-plugins/android-permissions/ngx"
-declare var cordova: any;
 
 @Component({
   selector: 'app-login',
@@ -27,31 +26,30 @@ export class LoginPage {
     private androidPermissions: AndroidPermissions
   ) {}
 
-  //ionViewDidEnter() {
-  //  const hasPermissions = this.checkAndRequestPermissions();
-  //  if (this.userService.isLoggedIn()) {
-  //    this.mail = this.userService.getMail() || '';
-  //    this.router.navigate(['/home']);
-  //  } else {
-  //    this.visible = true;
-  //  }
-  //}
-
   ionViewDidEnter() {
-    this.checkAndRequestPermissions().then(hasPermissions => {
-      if (hasPermissions) {
-        if (this.userService.isLoggedIn()) {
-          this.mail = this.userService.getMail() || '';
-          this.router.navigate(['/home']);
-        } else {
-          this.visible = true;
-        }
-     } else {
-        // Mostrar alerta de que los permisos no fueron concedidos
-        this.presentAlert('Permisos no concedidos', 'No se han otorgado los permisos necesarios para continuar.');
-      }
-    });
+    if (this.userService.isLoggedIn()) {
+      this.mail = this.userService.getMail() || '';
+      this.router.navigate(['/home']);
+    } else {
+      this.visible = true;
+    }
   }
+
+  //ionViewDidEnter() {
+  //  this.checkAndRequestPermissions().then(hasPermissions => {
+  //    if (hasPermissions) {
+  //      if (this.userService.isLoggedIn()) {
+  //        this.mail = this.userService.getMail() || '';
+  //        this.router.navigate(['/home']);
+  //      } else {
+  //        this.visible = true;
+  //      }
+  //   } else {
+  //      // Mostrar alerta de que los permisos no fueron concedidos
+  //      this.presentAlert('Permisos no concedidos', 'No se han otorgado los permisos necesarios para continuar.');
+  //    }
+  //  });
+  //}
 
   doLogin() {
     this.loadingCtrl.create({

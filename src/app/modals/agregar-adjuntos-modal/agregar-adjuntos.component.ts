@@ -9,17 +9,20 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import { Camera,CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
 
 @Component({
   selector: 'app-agregar-adjuntos',
   templateUrl: './agregar-adjuntos.component.html',
   styleUrls: ['./agregar-adjuntos.component.scss'],
 })
+
 export class AgregarAdjuntosComponent implements OnInit {
   @Input() venta_id: any;
   @Input() archivos: any[] = [];
   archivoSeleccionado: any;
   previewFiles: any[] = [];
+  photos: any[] = [];
 
   constructor(
     private modalController: ModalController,
@@ -31,17 +34,13 @@ export class AgregarAdjuntosComponent implements OnInit {
     private fileOpener: FileOpener,
     private transfer: FileTransfer,
     private filePath: FilePath,
-    private fileChooser: FileChooser
+    private fileChooser: FileChooser,
+    private camera: Camera
   ) { }
 
   ngOnInit() {
     console.log("archivos: " + this.archivos);
   }
-
-  closeModalVerAdjuntos() {
-    this.modalController.dismiss();
-  }
-
 
   async previewArchivo(archivo: any) {
     if (this.isImage(archivo.content_type)) {
@@ -83,7 +82,7 @@ export class AgregarAdjuntosComponent implements OnInit {
           text: 'Eliminar',
           handler: async () => {
             try {
-              const response = await this.ventaService.deleteArchivo(this.venta_id, archivo_id);
+              const response = this.ventaService.deleteArchivo(this.venta_id, archivo_id);
               const venta = await this.ventaService.getVenta(this.venta_id).toPromise(); // Convertir el Observable a promesa
               
               // Verificar si venta.archivos es un arreglo
@@ -174,57 +173,6 @@ export class AgregarAdjuntosComponent implements OnInit {
     }
   }
   
-
-  async submitForm() {
-    if (!this.previewFiles.length) {
-        this.presentAlert('Error', 'No se ha seleccionado ningún archivo.');
-        return;
-    }
-  
-    const loading = await this.loadingCtrl.create({
-        message: 'Subiendo archivo...',
-        spinner: 'bubbles',
-        translucent: true,
-        cssClass: 'spinner-energized'
-    });
-    await loading.present();
-  
-    try {
-        for (const archivo of this.previewFiles) {
-            const formData = new FormData();
-            formData.append('file', archivo.file, archivo.file.name);
-
-            // Configurar encabezados
-            const headers = new HttpHeaders({
-                'headerName': 'headerValue', // Ajusta los encabezados según sea necesario
-                // Agrega más encabezados si es necesario
-            });
-
-            // Configurar parámetros
-            const params = {
-                'venta_id': this.venta_id,
-                // Ajusta los parámetros según sea necesario
-            };
-
-            const upload_url = environment.API_ABBOTT + "archivos/";
-            
-            // Realizar la solicitud POST con encabezados y parámetros  + archivo.file.name
-            const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
-        }
-
-        // Limpiar la vista previa y cerrar el modal después de una carga exitosa
-        this.previewFiles = [];
-        await this.loadingCtrl.dismiss();
-        await this.modalController.dismiss(); // Cerrar el modal después de cargar exitosamente
-        this.presentAlert('Éxito', 'Archivo(s) subido(s) exitosamente.');
-    } catch (error) {
-        console.error('Error al subir archivo:', error);
-        this.presentAlert('Error', 'Ocurrió un error al subir el archivo.');
-    } finally {
-        await loading.dismiss();
-    }
-  }
-
   async onFileChange(event: any) {
     const files = event.target.files;
     this.previewFiles = [];
@@ -253,8 +201,104 @@ export class AgregarAdjuntosComponent implements OnInit {
     }
   }
 
-}
-function archivo(value: any, index: number, array: any[]): void {
-  throw new Error('Function not implemented.');
-}
+  closeModalAdjuntos() {
+    // Devolvemos los datos actualizados al cerrar el modal
+    this.modalController.dismiss({
 
+    });
+  }
+
+// En el método takePhoto()
+  async takePhoto() {
+    const options: CameraOptions = {
+      quality: 70,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.JPEG,
+      mediaType: this.camera.MediaType.PICTURE,
+      sourceType: this.camera.PictureSourceType.CAMERA
+    };
+
+    try {
+      const imageData = await this.camera.getPicture(options);
+      const fileName = `photo_${new Date().getTime()}.jpeg`;
+      const fileSize = imageData.length;
+      const base64Image = 'data:image/jpeg;base64,' + imageData;
+
+      // Almacenar la foto temporalmente
+      this.photos.push({ url: base64Image, name: fileName, size: this.returnFileSize(fileSize) });
+    } catch (error) {
+      console.error('Error al tomar la foto:', error);
+    }
+  }
+
+  // En el método submitForm()
+  async submitForm() {
+    if (!this.previewFiles.length && !this.photos.length) {
+        this.presentAlert('Error', 'No se ha seleccionado ningún archivo ni foto.');
+        return;
+    }
+
+    const loading = await this.loadingCtrl.create({
+        message: 'Subiendo archivo...',
+        spinner: 'bubbles',
+        translucent: true,
+        cssClass: 'spinner-energized'
+    });
+    
+    try {
+        await loading.present();
+
+        let numArchivosCargados = 0;
+        for (const archivo of this.previewFiles) {
+            const formData = new FormData();
+            formData.append('file', archivo.file, archivo.file.name);
+
+            const headers = new HttpHeaders({
+                'headerName': 'headerValue',
+            });
+
+            // Configurar parámetros
+            const params = {
+                'venta_id': this.venta_id,
+            };
+            const upload_url = environment.API_ABBOTT + "archivos/";
+            const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
+            numArchivosCargados++;
+        }
+
+        let numFotosCargadas = 0;
+        for (const photo of this.photos) {
+          const formData = new FormData();
+          formData.append('picture', photo.url);
+          formData.append('name', photo.name); // Agregar el nombre del archivo al FormData si es necesario
+          formData.append('size', photo.size); // Agregar el tamaño del archivo al FormData si es necesario
+          const headers = new HttpHeaders({
+            'headerName': 'headerValue',
+          });
+          const params = {
+            'venta_id': this.venta_id,
+          };
+          // Enviar la foto al servidor
+          const upload_url = environment.API_ABBOTT + "archivos/";
+          const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
+          numFotosCargadas++;
+          console.log('Foto enviada al servidor:', response);
+        }
+
+        // Limpiar la vista previa y cerrar el modal después de una carga exitosa
+        this.previewFiles = [];
+        this.photos = [];
+        const mensajeExito = `Archivos cargados correctamente: ${numArchivosCargados}\nFotos cargadas correctamente: ${numFotosCargadas}`;
+        this.presentAlert('Éxito', mensajeExito);
+
+    } catch (error) {
+        console.error('Error al subir archivo:', error);
+        this.presentAlert('Error', 'Ocurrió un error al subir el archivo.');
+    } finally {
+        if (loading) {
+            await loading.dismiss();
+        }
+    }
+  }
+
+}

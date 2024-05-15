@@ -13,6 +13,7 @@ import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.compone
 import { FormatDatePipe } from 'src/app/pipes/FormatDate.pipe';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
+import {Camera} from '@awesome-cordova-plugins/camera/ngx';
 
 @NgModule({
   imports: [
@@ -23,6 +24,6 @@ import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
     SharedModule // Asegúrate de importar SharedModule aquí
   ],
   declarations: [VentasPage, AgregarProductosComponent, AgregarAdjuntosComponent, FormatDatePipe, VerFotoComponent],
-  providers: [FileTransfer, FileOpener, DatePipe,FilePath,FileChooser]
+  providers: [FileTransfer, FileOpener, DatePipe,FilePath,FileChooser, Camera]
 })
 export class VentasPageModule {}

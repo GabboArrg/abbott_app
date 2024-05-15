@@ -2,8 +2,8 @@
   <ion-toolbar color="primary">
     <ion-title>Adjuntar Archivos</ion-title>
     <ion-buttons slot="start">
-      <ion-button>
-        <ion-icon slot="icon-only" name="attach"></ion-icon>
+      <ion-button (click)="closeModalAdjuntos()">
+        <ion-icon name="close"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -13,30 +13,49 @@
   <form method="post" enctype="multipart/form-data">
     <div class="file-upload-container">
       <input type="file" #fileInput id="image_uploads" name="image_uploads" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif" multiple (change)="onFileChange($event)" style="display: none;" />
-      <ion-button>
-        <img src="ruta/a/la/imagen.png" alt="Adjuntar archivos" (click)="fileInput.click()">
-      </ion-button>
+      <div class="button-container">
+        <ion-button class="half-width" fill="outline" (click)="fileInput.click()">
+          <ion-icon name="attach"></ion-icon> Desde Galería
+        </ion-button>
+        <ion-button class="half-width" fill="outline" (click)="takePhoto()">
+          <ion-icon slot="start" name="camera"></ion-icon> Desde Cámara
+        </ion-button>
+      </div>
     </div>
   </form>
+
   
   
 
-  <div class="preview">
-    <div *ngFor="let file of previewFiles">
-      <img *ngIf="isImage(file.file.type)" [src]="file.url" alt="Preview" style="max-height: 200px; max-width: 100%; display: block; margin-left: auto;margin-right: auto;" />
-      <p>{{ file.file.name }} - {{ returnFileSize(file.file.size) }}</p>
+<!-- Div para mostrar imagenes subidas de galería -->
+<div class="preview">
+  <div *ngFor="let file of previewFiles" class="preview-item">
+    <div class="image-container">
+      <img *ngIf="isImage(file.file.type)" [src]="file.url" alt="Preview" class="image" />
     </div>
+    <p>{{ file.file.name }} - {{ returnFileSize(file.file.size) }}</p>
   </div>
+</div>
+
+<!-- Div para mostrar fotos tomadas desde la cámara -->
+<div class="preview">
+  <div *ngFor="let photo of photos" class="preview-item">
+    <div class="image-container">
+      <img [src]="photo.url" alt="Photo" class="image" />
+    </div>
+    <p>{{ photo.name }} - {{ photo.size }}</p>
+  </div>
+</div>
+
   <ion-button color="primary" expand="full" (click)="submitForm()">Subir archivo</ion-button>
 </ion-content>
 
+<ion-item-divider>
+  <ion-label class="input-label" style="text-align: right; font-size: 1.2em;"><b>ARCHIVOS CARGADOS</b></ion-label>
+  <div style="flex-grow: 1;"></div>
+</ion-item-divider>
+
 <ion-content>
-
-    <ion-item-divider>
-      <ion-label class="input-label" style="text-align: right; font-size: 1.2em;"><b>ARCHIVOS CARGADOS</b></ion-label>
-      <div style="flex-grow: 1;"></div>
-    </ion-item-divider>
-
   <ion-list *ngIf="archivos && archivos.length > 0">
     <ion-item *ngFor="let archivo of archivos">
       <ion-label (click)="previewArchivo(archivo)">
@@ -53,3 +72,4 @@
     </ion-item>
   </ion-list>
 </ion-content>
+
