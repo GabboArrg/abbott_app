@@ -62,10 +62,10 @@
         {{ archivo.nombre_archivo }}
       </ion-label>
       <ion-buttons slot="end">
-        <ion-button color="success" (click)="descargarArchivo(archivo.adjunto.url, archivo.nombre_archivo, archivo.content_type)">
+       <!-- <ion-button color="success" (click)="descargarArchivo(archivo.adjunto.url, archivo.nombre_archivo, archivo.content_type)">
           <ion-icon name="download-outline"></ion-icon>
-        </ion-button>
-        <ion-button color="danger" (click)="eliminarArchivo2(archivo)">
+        </ion-button>-->
+        <ion-button color="danger" (click)="eliminarArchivo2(archivo.id)">
           <ion-icon name="trash"></ion-icon>
         </ion-button>
       </ion-buttons>

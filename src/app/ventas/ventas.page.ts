@@ -8,9 +8,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AgregarProductosComponent } from 'src/app/modals/agregar-productos-modal/agregar-productos.component';
 import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
-import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.component';
-import { environment } from 'src/environments/environment';//aqui está el service, la url
-import { forkJoin } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-ventas',
@@ -550,11 +548,14 @@ export class VentasPage implements OnInit {
         archivos: this.archivos
       }
     });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.data && data.data.archivos) {
+        this.archivos = data.data.archivos;
+      }
+    });
+
     await modal.present();
-  }
-  
-  closeModalVerAdjuntos() {
-    this.ver_adjuntos.hide();
   }
   
   async confirmarPedido() {

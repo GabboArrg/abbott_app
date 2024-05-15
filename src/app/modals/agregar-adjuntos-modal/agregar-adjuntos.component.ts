@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { ModalController, AlertController, LoadingController  } from '@ionic/angular';
+import { ModalController, AlertController, LoadingController } from '@ionic/angular';
 import { VentaService } from 'src/app/services/venta.service';
 import { environment } from 'src/environments/environment';
 import { VerFotoComponent } from 'src/app/modals/ver-foto-modal/ver-foto.component';
@@ -9,18 +9,16 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer, FileTransferObject } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
-import { Camera,CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
+import { Camera, CameraOptions } from '@awesome-cordova-plugins/camera/ngx';
 
 @Component({
   selector: 'app-agregar-adjuntos',
   templateUrl: './agregar-adjuntos.component.html',
   styleUrls: ['./agregar-adjuntos.component.scss'],
 })
-
 export class AgregarAdjuntosComponent implements OnInit {
   @Input() venta_id: any;
   @Input() archivos: any[] = [];
-  archivoSeleccionado: any;
   previewFiles: any[] = [];
   photos: any[] = [];
 
@@ -39,7 +37,7 @@ export class AgregarAdjuntosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("archivos: " + this.archivos);
+    
   }
 
   async previewArchivo(archivo: any) {
@@ -52,7 +50,6 @@ export class AgregarAdjuntosComponent implements OnInit {
       });
       return await modal.present();
     } else {
-      // Mostrar una alerta indicando que el archivo no es una imagen
       const alert = await this.alertCtrl.create({
         header: 'Vista previa no disponible',
         message: 'No es posible mostrar una vista previa de este tipo de archivo.',
@@ -82,32 +79,11 @@ export class AgregarAdjuntosComponent implements OnInit {
           text: 'Eliminar',
           handler: async () => {
             try {
-              const response = this.ventaService.deleteArchivo(this.venta_id, archivo_id);
-              const venta = await this.ventaService.getVenta(this.venta_id).toPromise(); // Convertir el Observable a promesa
-              
-              // Verificar si venta.archivos es un arreglo
-              if (Array.isArray(venta.archivos)) {
-                const archivosActualizados = venta.archivos.map((archivo: any, index: number) => {
-                  const archUrl = environment.BASE_URL + archivo.adjunto.url.substring(1);
-                  return {
-                    ...archivo,
-                    arch_url: archUrl,
-                    number: index + 1,
-                    _destroy: 'false'
-                  };
-                });
-
-                // Actualizar 'archivos' en la clase
-                this.archivos = archivosActualizados;
-
-                // Mostrar alerta
-                this.presentAlert('Atención', 'Archivo eliminado exitósamente');
-              } else {
-                // Mostrar alerta si no se encontraron archivos en la respuesta
-                this.presentAlert('Atención', 'No se encontraron archivos en la respuesta');
-              }
+              const response = await this.ventaService.deleteArchivo(this.venta_id, archivo_id);
+              this.presentAlert('Atención', 'Archivo eliminado exitósamente');
+              await this.cargarArchivos(); // Actualizar la lista de archivos
             } catch (error) {
-              // Mostrar alerta de error
+              console.error("Error: ", error);
               this.presentAlert('Atención', 'Error al actualizar la lista de adjuntos');
             }
           }
@@ -115,6 +91,21 @@ export class AgregarAdjuntosComponent implements OnInit {
       ]
     });
     await confirm.present();
+  }
+
+  async cargarArchivos() {
+    try {
+      const venta = await this.ventaService.getVenta(this.venta_id).toPromise();
+      this.archivos = venta.venta.archivos;
+      this.archivos.forEach((archivo: any, index: number) => {
+        archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1);
+        archivo.arch_url = archivo.adjunto.url;
+        archivo.number = index + 1;
+        archivo._destroy = 'false';
+      });
+    } catch (error) {
+      console.error('Error al cargar los archivos: ', error);
+    }
   }
 
   async presentAlert(header: string, message: string) {
@@ -136,22 +127,15 @@ export class AgregarAdjuntosComponent implements OnInit {
     await loading.present();
   
     try {
-      // Solicitar permisos de almacenamiento externo antes de descargar el archivo
       const hasPermission = await this.ventaService.requestExternalStoragePermissions();
   
       if (hasPermission) {
-        // Continuar con la lógica de descarga de archivos aquí
         const targetPath = this.file.externalRootDirectory + '/Download/' + nombre;
         const fileTransfer: FileTransferObject = this.transfer.create();
         const download_url = environment.BASE_URL + url;
-  
-        console.log("url: " + url);
-        console.log("url corregida: " + download_url);
-        console.log("targetPath: " + targetPath);
+
         fileTransfer.download(download_url, targetPath).then(entry => {
-          console.log('Archivo descargado en: ' + entry.toURL());
           this.fileOpener.open(entry.toURL(), contentType).then(() => {
-            console.log('Archivo abierto correctamente');
             loading.dismiss(); // Cerrar el mensaje de carga después de abrir el archivo
           }).catch(error => {
             console.error('Error al abrir archivo:', error);
@@ -162,9 +146,7 @@ export class AgregarAdjuntosComponent implements OnInit {
           loading.dismiss(); // Cerrar el mensaje de carga si hay un error al descargar el archivo
         });
       } else {
-        // Manejar el caso en el que los permisos sean denegados
         console.log('Los permisos de almacenamiento externo fueron denegados');
-        // Muestra un mensaje de error al usuario o toma alguna otra acción apropiada
         loading.dismiss(); // Cerrar el mensaje de carga si los permisos fueron denegados
       }
     } catch (error) {
@@ -172,7 +154,7 @@ export class AgregarAdjuntosComponent implements OnInit {
       loading.dismiss(); // Cerrar el mensaje de carga si hay un error general
     }
   }
-  
+
   async onFileChange(event: any) {
     const files = event.target.files;
     this.previewFiles = [];
@@ -204,11 +186,10 @@ export class AgregarAdjuntosComponent implements OnInit {
   closeModalAdjuntos() {
     // Devolvemos los datos actualizados al cerrar el modal
     this.modalController.dismiss({
-
+      archivos: this.archivos
     });
   }
 
-// En el método takePhoto()
   async takePhoto() {
     const options: CameraOptions = {
       quality: 70,
@@ -224,96 +205,84 @@ export class AgregarAdjuntosComponent implements OnInit {
       const fileSize = imageData.length;
       const base64Image = 'data:image/jpeg;base64,' + imageData;
 
-      // Almacenar la foto temporalmente
       this.photos.push({ url: base64Image, name: fileName, size: this.returnFileSize(fileSize) });
     } catch (error) {
       console.error('Error al tomar la foto:', error);
     }
   }
 
-  // En el método submitForm()
   async submitForm() {
     if (!this.previewFiles.length && !this.photos.length) {
-        this.presentAlert('Error', 'No se ha seleccionado ningún archivo ni foto.');
-        return;
+      this.presentAlert('Error', 'No se ha seleccionado ningún archivo ni foto.');
+      return;
     }
 
     const loading = await this.loadingCtrl.create({
-        message: 'Subiendo archivo...',
-        spinner: 'bubbles',
-        translucent: true,
-        cssClass: 'spinner-energized'
+      message: 'Subiendo archivo...',
+      spinner: 'bubbles',
+      translucent: true,
+      cssClass: 'spinner-energized'
     });
     
     try {
-        await loading.present();
+      await loading.present();
 
-        let numArchivosCargados = 0;
-        for (const archivo of this.previewFiles) {
-            const formData = new FormData();
-            formData.append('file', archivo.file, archivo.file.name);
+      let numArchivosCargados = 0;
+      for (const archivo of this.previewFiles) {
+        const formData = new FormData();
+        formData.append('file', archivo.file, archivo.file.name);
 
-            const headers = new HttpHeaders({
-                'headerName': 'headerValue',
-            });
+        const headers = new HttpHeaders({
+          'headerName': 'headerValue',
+        });
 
-            // Configurar parámetros
-            const params = {
-                'venta_id': this.venta_id,
-            };
-            const upload_url = environment.API_ABBOTT + "archivos/";
-            const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
-            numArchivosCargados++;
-        }
-        
-
-        let numFotosCargadas = 0;
-        for (const photo of this.photos) {
-          const formData = new FormData();
-          // Esto no está correcto
-          // formData.append('file', photo.url, photo.name);
-      
-          // Debes crear un Blob a partir de la URL de la foto
-          const base64Data = photo.url.split(',')[1]; // Obtener solo los datos base64
-          const byteCharacters = atob(base64Data);
-          const byteNumbers = new Array(byteCharacters.length);
-          for (let i = 0; i < byteCharacters.length; i++) {
-              byteNumbers[i] = byteCharacters.charCodeAt(i);
-          }
-          const byteArray = new Uint8Array(byteNumbers);
-          const blob = new Blob([byteArray], { type: 'image/jpeg' });
-      
-          // Ahora puedes pasar el Blob como segundo parámetro
-          formData.append('file', blob, photo.name);
-      
-          const headers = new HttpHeaders({
-              'headerName': 'headerValue',
-          });
-          const params = {
-              'venta_id': this.venta_id,
-          };
-          // Enviar la foto al servidor
-          const upload_url = environment.API_ABBOTT + "archivos/";
-          const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
-          numFotosCargadas++;
-          console.log('Foto enviada al servidor:', response);
+        const params = {
+          'venta_id': this.venta_id,
+        };
+        const upload_url = environment.API_ABBOTT + "archivos/";
+        const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
+        numArchivosCargados++;
       }
-      
 
-        // Limpiar la vista previa y cerrar el modal después de una carga exitosa
-        this.previewFiles = [];
-        this.photos = [];
-        const mensajeExito = `Archivos cargados correctamente: ${numArchivosCargados}\nFotos cargadas correctamente: ${numFotosCargadas}`;
-        this.presentAlert('Éxito', mensajeExito);
-
-    } catch (error) {
-        console.error('Error al subir archivo:', error);
-        this.presentAlert('Error', 'Ocurrió un error al subir el archivo.');
-    } finally {
-        if (loading) {
-            await loading.dismiss();
+      let numFotosCargadas = 0;
+      for (const photo of this.photos) {
+        const formData = new FormData();
+        
+        const base64Data = photo.url.split(',')[1];
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
         }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: 'image/jpeg' });
+        
+        formData.append('file', blob, photo.name);
+        
+        const headers = new HttpHeaders({
+          'headerName': 'headerValue',
+        });
+        const params = {
+          'venta_id': this.venta_id,
+        };
+        const upload_url = environment.API_ABBOTT + "archivos/";
+        const response = await this.http.post(upload_url, formData, { headers, params }).toPromise();
+        numFotosCargadas++;
+      }
+
+      this.previewFiles = [];
+      this.photos = [];
+      const mensajeExito = `Archivos cargados correctamente: ${numArchivosCargados}\nFotos cargadas correctamente: ${numFotosCargadas}`;
+      this.presentAlert('Éxito', mensajeExito);
+
+      await this.cargarArchivos(); // Recargar los archivos después de subir nuevos
+    } catch (error) {
+      console.error('Error al subir archivo:', error);
+      this.presentAlert('Error', 'Ocurrió un error al subir el archivo.');
+    } finally {
+      if (loading) {
+        await loading.dismiss();
+      }
     }
   }
-
 }

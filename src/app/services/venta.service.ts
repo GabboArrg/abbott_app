@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -174,14 +174,30 @@ export class VentaService {
     });
   }
 
-  deleteArchivo(ventaId: any, id: any): Observable<any> {
-    const url = environment.API_ABBOTT + 'archivos?venta_id=' + ventaId + '&id=' + id;
-    return this.http.delete(url).pipe(
-      catchError((error) => {
-        throw error;
-      })
-    );
+
+
+
+  async deleteArchivo(idVenta: any, idArchivo: string): Promise<any> {
+    const req = {
+      method: 'DELETE',
+      url: `${environment.API_ABBOTT}archivos?venta_id=${idVenta}&id=${idArchivo}`,
+      headers: new HttpHeaders({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }),
+      responseType: 'text' as 'json' // Añadir esta línea para manejar respuestas de texto
+    };
+
+    try {
+      const respuesta = await this.http.request(req.method, req.url, { headers: req.headers, responseType: 'text' }).toPromise();
+      return respuesta;
+    } catch (error) {
+      throw error;
+    }
   }
+
+
+
 
   getFormaPago(idCliente: number): Observable<any> {
     const url = environment.API_ABBOTT + 'forma_pagos?cliente_id=' + idCliente;
