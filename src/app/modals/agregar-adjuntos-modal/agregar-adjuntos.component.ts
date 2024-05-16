@@ -42,13 +42,12 @@ export class AgregarAdjuntosComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    console.log("is_venta: "+ this.is_venta);
+    
   }
 
   async previewArchivo(archivo: any) {
     if (this.isImage(archivo.content_type)) {
       const archivo_url2= environment.BASE_URL + archivo.adjunto.url
-      console.log("url archivo: "+ archivo_url2);
       const modal = await this.modalController.create({
         component: VerFotoComponent,
         componentProps: {
@@ -112,7 +111,6 @@ export class AgregarAdjuntosComponent implements OnInit {
   
 
   async cargarArchivos() {
-    console.log("entra al cargarArchivos");
     try {
       if (this.is_venta) {
         const venta = await this.ventaService.getVenta(this.venta_id).toPromise();
@@ -129,7 +127,7 @@ export class AgregarAdjuntosComponent implements OnInit {
           this.archivos = cliente.cliente.archivos;
           // Procesar los archivos
           this.archivos.forEach((archivo: any, index: number) => {
-            archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1);
+            //archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1);
             archivo.arch_url = archivo.adjunto.url;
             archivo.number = index + 1;
             archivo._destroy = 'false';
