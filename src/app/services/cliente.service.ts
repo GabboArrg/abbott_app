@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -29,13 +29,25 @@ export class ClienteService {
     );
   }
 
-  deleteArchivo(clienteId: string, id: string): Observable<any> {
-    const url = `${environment.API_ABBOTT}archivos?cliente_id=${clienteId}&id=${id}`;
-    return this.http.delete(url).pipe(
-      catchError(error => {
-        throw error;
-      })
-    );
+
+
+  async deleteArchivo(clienteId: any, idArchivo: string): Promise<any> {
+    const req = {
+      method: 'DELETE',
+      url: `${environment.API_ABBOTT}archivos?cliente_id=${clienteId}&id=${idArchivo}`,
+      headers: new HttpHeaders({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }),
+      responseType: 'text' as 'json' // Añadir esta línea para manejar respuestas de texto
+    };
+
+    try {
+      const respuesta = await this.http.request(req.method, req.url, { headers: req.headers, responseType: 'text' }).toPromise();
+      return respuesta;
+    } catch (error) {
+      throw error;
+    }
   }
 
   getCliente(id: string): Observable<any> {

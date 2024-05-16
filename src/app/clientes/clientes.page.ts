@@ -15,6 +15,7 @@ import { Observable, map } from 'rxjs';
 import { ModalController } from '@ionic/angular';
 import { AgregarDireccionComponent } from 'src/app/modals/agregar-direccion-modal/agregar-direccion.component';
 import { AgregarContactoComponent } from 'src/app/modals/agregar-contacto-modal/agregar-contacto.component';
+import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
 
 
 interface ClienteContacto {
@@ -117,7 +118,6 @@ export class ClientesPage implements OnInit{
   }
 ///      COMIENZA AGREGAR CLIENTES      ///
 agregarCliente(): void {
-  console.log("entra al AGREGAR CLIENTE");
   if (this.contactos.length === 0) {
     this.mostrarAlerta('Error', 'Debe ingresar al menos un contacto');
     return;
@@ -369,7 +369,6 @@ this.loadingCtrl.create({
             this.contactos.push(tmp);
           });
         }
-  
         if (this.cliente.cliente_sucursales !== undefined) {
           this.cliente.cliente_sucursales.forEach((sucursal: any) => {
             var tmp = sucursal;
@@ -386,22 +385,25 @@ this.loadingCtrl.create({
               nombre: tmp.comuna
             };
             this.sucursales.push(tmp);
-            console.log("region suc "+ tmp.selectedData.region.id);
           });
         }
   
-        if (this.cliente.archivos !== undefined) {
-          if (Array.isArray(this.cliente.archivos)) {
-            this.archivos = this.cliente.archivos.map((archivo: any, index: number) => {
-              archivo.adjunto.url = environment.API_ABBOTT + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
-              archivo.arch_url = archivo.adjunto.url;
-              archivo.number = index + 1;
-              archivo._destroy = 'false';
-              return archivo;
-              
-            });
-          }
+
+        if (this.cliente.archivos !== undefined ) {
+          this.archivos = this.cliente.archivos;
+          let cont = 1;
+          //console.log("cliente: "+ JSON.stringify(this.cliente));
+          this.archivos.forEach((archivo: any) => {
+            //archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
+            archivo.arch_url = archivo.adjunto.url;
+            archivo.number = cont;
+            archivo._destroy = 'false';
+            cont++;
+          });
         }
+
+
+
       }
   
       // Ahora que todas las operaciones asíncronas han terminado, llamamos a actualizarComunas()
@@ -419,7 +421,6 @@ this.loadingCtrl.create({
   
 
   actualizarComunas() {
-    console.log("entra al actualizar");
     const comunasCliente = () => {
       this.comunasCliente = [];
       this.comunas.forEach((comuna: any) => {
@@ -562,7 +563,6 @@ this.loadingCtrl.create({
         // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
         const { sucursal } = data.data;
         this.sucursales.push(sucursal);
-        console.log('Sucursal:', sucursal);
       }
     });
     return await modal.present();
@@ -582,11 +582,31 @@ this.loadingCtrl.create({
         // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
         const { contacto } = data.data;
         this.contactos.push(contacto);
-        console.log('Contacto:', contacto);
 
       }
     });
     return await modal.present();
+  }
+
+  async openModalVerAdjuntos(ventaId: any) {
+    const modal = await this.modalController.create({
+      component: AgregarAdjuntosComponent,
+      componentProps: {
+        venta_id: ventaId,
+        archivos: this.archivos,
+        is_venta: false,
+        cliente_id: this.idCliente,
+        cliente_estado: this.cliente.estado
+      }
+    });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.data && data.data.archivos) {
+        this.archivos = data.data.archivos;
+      }
+    });
+
+    await modal.present();
   }
 
 }

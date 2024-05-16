@@ -545,7 +545,8 @@ export class VentasPage implements OnInit {
       component: AgregarAdjuntosComponent,
       componentProps: {
         venta_id: ventaId,
-        archivos: this.archivos
+        archivos: this.archivos,
+        is_venta: true
       }
     });
 

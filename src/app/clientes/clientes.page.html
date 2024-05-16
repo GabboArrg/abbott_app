@@ -188,6 +188,8 @@
       </ion-item>
     </ng-container>
 
+    <ion-button *ngIf="editarCliente" expand="full" (click)="openModalVerAdjuntos(cliente.id)">Archivos Adjuntos</ion-button>
+
     <ion-button expand="block" color="primary" (click)="abrirModalAgregarContacto()">
       <ion-icon name="accessibility-outline" slot="start"></ion-icon>
       Agregar Contacto
