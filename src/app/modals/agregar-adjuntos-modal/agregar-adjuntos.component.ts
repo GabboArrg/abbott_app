@@ -116,7 +116,6 @@ export class AgregarAdjuntosComponent implements OnInit {
         const venta = await this.ventaService.getVenta(this.venta_id).toPromise();
         this.archivos = venta.venta.archivos;
         this.archivos.forEach((archivo: any, index: number) => {
-          archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1);
           archivo.arch_url = archivo.adjunto.url;
           archivo.number = index + 1;
           archivo._destroy = 'false';
@@ -128,7 +127,6 @@ export class AgregarAdjuntosComponent implements OnInit {
           // Procesar los archivos
           this.archivos.forEach((archivo: any, index: number) => {
             //archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1);
-            archivo.arch_url = archivo.adjunto.url;
             archivo.number = index + 1;
             archivo._destroy = 'false';
           });

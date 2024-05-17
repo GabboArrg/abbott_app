@@ -24,14 +24,6 @@
             <ion-icon slot="start" name="person-add-outline"></ion-icon>
             <ion-label>Agregar cliente</ion-label>
           </ion-item>
-          <!--<ion-item (click)="closeSidebarAndNavigate('/encuestas')" routerDirection="root">
-            <ion-icon slot="start" name="newspaper-outline"></ion-icon>
-            <ion-label>Encuestas</ion-label>
-          </ion-item>
-          <ion-item (click)="toggleTheme()">
-            <ion-icon slot="start" name="exit-outline"></ion-icon>
-            <ion-label>Cambiar Tema</ion-label>
-          </ion-item>-->
           <ion-item (click)="logout()">
             <ion-icon slot="start" name="exit-outline"></ion-icon>
             <ion-label>Salir</ion-label>
@@ -40,8 +32,9 @@
       </ion-content>
       <ion-footer>
         <ion-toolbar>
-          <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
-            <p style="max-width: 75%; text-align: center;"><span class="subtitle">Bienvenido {{ nombre }}!</span></p>
+          <div style="display: flex; align-items: center; justify-content: center; width: 100%; flex-direction: column;">
+            <p style="max-width: 75%; text-align: center; margin-bottom: 2px;"><span class="subtitle">Bienvenido {{ nombre }}!</span></p>
+            <p style="max-width: 75%; text-align: center; margin-top: 2px;"><span class="subtitle">{{ saludo }}</span></p>
           </div>
         </ion-toolbar>
       </ion-footer>      
