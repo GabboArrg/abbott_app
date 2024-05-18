@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, AlertController, LoadingController } from '@ionic/angular';
 import { UserService } from 'src/app/login/services/user.service';
 import { VentaService } from 'src/app/services/venta.service';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-crear-despacho-modal',
@@ -33,6 +34,9 @@ export class CrearDespachoComponent implements OnInit {
   despacho_clase: any;
   direccion_despacho: any;
   posiciones: any;
+  idCliente!: number;
+  idVenta!: number;
+  estado: any;
   
 
   constructor(
@@ -40,10 +44,19 @@ export class CrearDespachoComponent implements OnInit {
     private alertController: AlertController,
     private userService: UserService,
     private ventaService: VentaService,
-    public loadingCtrl: LoadingController
-  ) {}
+    public loadingCtrl: LoadingController,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    this.route.params.subscribe(params => {
+      this.idCliente = +params['idCliente'];
+      this.idVenta = +params['idVenta'];
+    });
+  }
 
   ngOnInit() {
+    //this.estado = this.venta.estado; REVISAR ESTO Y EL ELIMINAR ENTREGA
+    console.log("estado: "+ this.venta);
     this.loadDespachoClases();
     this.loadVariables();
     console.log("entregas: "+ JSON.stringify(this.entregas));
@@ -235,6 +248,60 @@ export class CrearDespachoComponent implements OnInit {
       loading.dismiss();
     }
   }
+
+  async eliminarEntrega(numero: number) {
+    if (this.idCliente === undefined || this.idVenta === undefined) {
+      console.error('idCliente o idVenta no están definidos');
+      return;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Eliminar Entrega',
+      message: '¿Está seguro de eliminar esta entrega?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          handler: () => {
+            console.log('Cancelar');
+          },
+        },
+        {
+          text: 'Eliminar',
+          handler: async () => {
+            const loading = await this.loadingCtrl.create({
+              message: 'Eliminando entrega...',
+              spinner: 'bubbles',
+            });
+            await loading.present();
+  
+            this.ventaService.deleteDespacho(this.idVenta, numero).then((respuesta) => {
+              console.log('Eliminar Entrega', respuesta);
+              loading.dismiss();
+              // Redireccionar a la ruta de ventas con idCliente y idVenta
+              this.router.navigate([`/ventas/${this.idCliente}/${this.idVenta}`]);
+            }).catch((error) => {
+              console.log(error);
+              loading.dismiss();
+              this.showErrorAlert(error.message || 'Error al eliminar');
+            });
+          },
+        },
+      ],
+    });
+  
+    await alert.present();
+  }
+  async showErrorAlert(message: string) {
+    const alert = await this.alertController.create({
+      header: 'Error al eliminar',
+      message,
+      buttons: ['OK'],
+    });
+  
+    await alert.present();
+  }
+  
 
   closeModal() {
     this.modalController.dismiss();

@@ -109,6 +109,22 @@
           <ion-label position="stacked">Cantidad</ion-label>
           <ion-input type="number" min="0" [(ngModel)]="item.cantidad" (ionChange)="updCantidad(item.cantidad, item.id)"></ion-input>
         </ion-item>
+
+
+
+        <ion-button
+          *ngIf="estado !== 'confirmado'"
+          expand="block"
+          color="danger"
+          (click)="eliminarEntrega(item.numero)"
+        >
+          <ion-icon name="close-circle" slot="start"></ion-icon>
+          Eliminar Entrega
+        </ion-button>
+
+
+
+
       </ng-container>
     </div>
     <div *ngIf="!es_nuevo">

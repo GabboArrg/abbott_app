@@ -225,7 +225,24 @@ export class VentaService {
     }
   }
 
+  async deleteDespacho(idVenta: number, numero: number): Promise<any> {
+    const req = {
+      method: 'DELETE',
+      url: `${environment.API_ABBOTT}entregas?venta_id=${idVenta}&numero=${numero}`,
+      headers: new HttpHeaders({
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      }),
+      responseType: 'text' as 'json' // Añadir esta línea para manejar respuestas de texto
+    };
 
+    try {
+      const respuesta = await this.http.request(req.method, req.url, { headers: req.headers, responseType: 'text' }).toPromise();
+      return respuesta;
+    } catch (error) {
+      throw error;
+    }
+  }
 
 
   getFormaPago(idCliente: number): Observable<any> {
