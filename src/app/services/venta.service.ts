@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
-import { catchError, finalize } from 'rxjs/operators';
+import { catchError, finalize, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { LoadingController, AlertController } from '@ionic/angular';
 import { UserService } from '../login/services/user.service';
@@ -150,7 +150,7 @@ export class VentaService {
   }
 
   confirmarPedido(idVenta: number): Promise<any> {
-    const idUsr = this.userService.getId(); // Suponiendo que getId() es un método del servicio UserService para obtener el ID de usuario
+    const idUsr = this.userService.getId();
 
     const url = `${environment.API_ABBOTT}confirmar_entregas?venta_id=${idVenta}&user_id=${idUsr}`;
     const req = {
@@ -174,8 +174,37 @@ export class VentaService {
     });
   }
 
+  getDespachoClases(): Promise<any> {
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+    const url = `${environment.API_ABBOTT}despacho_clases/`;
+    return this.http.get<any>(url, { headers })
+      .pipe(
+        catchError(error => {
+          return Promise.reject(error);
+        })
+      )
+      .toPromise()
+      .then(response => response.despacho_clases);
+  }
 
+  postDespacho(data: any): Observable<any> {
+    const apiUrl = `${environment.API_ABBOTT}entregas/`;
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
 
+    return this.http.post<any>(apiUrl, data, { headers })
+      .pipe(
+        map(response => response.entrega),
+        catchError(error => {
+          return throwError(error);
+        })
+      );
+  }
 
   async deleteArchivo(idVenta: any, idArchivo: string): Promise<any> {
     const req = {

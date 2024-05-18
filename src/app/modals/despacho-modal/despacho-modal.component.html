@@ -1,0 +1,59 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Entregas</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <!--<ion-scroll padding="true" direction="y" scrollEvents="true">-->
+    <ion-list>
+      <ion-item>
+        <ion-label>Nº Pedido</ion-label>
+        <ion-text>{{ idVenta }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Cliente</ion-label>
+        <ion-text>{{ venta.cliente.nombre }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Total Productos</ion-label>
+        <ion-text>{{ total_productos }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Total Entregado</ion-label>
+        <ion-text>{{ total_entregado }}</ion-text>
+      </ion-item>
+      <ion-item>
+        <ion-label>Cantidad de Entregas</ion-label>
+        <ion-text>{{ entregas.length }}</ion-text>
+      </ion-item>
+    </ion-list>
+
+    <ion-button *ngIf="!hideEntrega" expand="full" color="success" (click)="openModalCrearEntrega(idVenta)">
+      Nueva Entrega
+    </ion-button>
+
+    <ion-list *ngIf="entregas.length > 0">
+      <ion-item>
+        <div class="row">
+          <div class="col">Nº Entrega</div>
+          <div class="col">Fecha</div>
+          <div class="col">Ver</div>
+        </div>
+      </ion-item>
+
+      <ion-item *ngFor="let item of entregas | slice:0:pageSize" (click)="entregaSeleccionada(item.numero)">
+        <div class="row">
+          <div class="col">{{ item.numero }}</div>
+          <div class="col">{{ item.fecha_entrega | date:'dd-MM-yyyy' }}</div>
+          <div class="col ion-android-calendar">&nbsp;</div>
+        </div>
+      </ion-item>
+    </ion-list>
+  <!--</ion-scroll>-->
+</ion-content>

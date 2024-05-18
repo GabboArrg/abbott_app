@@ -1,0 +1,13 @@
+ion-datetime {
+    --min-height: auto;
+  }
+  
+  ion-item {
+    --inner-padding-bottom: 10px;
+    --inner-padding-top: 10px;
+  }
+  
+  ion-input, ion-select, ion-datetime {
+    width: 100%;
+  }
+  

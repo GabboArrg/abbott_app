@@ -8,6 +8,7 @@ import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AgregarProductosComponent } from 'src/app/modals/agregar-productos-modal/agregar-productos.component';
 import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
+import { DespachoComponent } from 'src/app/modals/despacho-modal/despacho-modal.component';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -155,19 +156,16 @@ export class VentasPage implements OnInit {
           
           this.archivos = [];
           this.archivos = Object.values(this.venta.archivos)
-          console.log("archivos1: "+venta.archivos !== undefined);
 
           if (venta.archivos !== undefined ) {
             this.archivos = venta.archivos;
             let cont = 1;
-            console.log("archivos2: "+this.archivos);
             this.archivos.forEach((archivo: any) => {
               archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
               archivo.arch_url = archivo.adjunto.url;
               archivo.number = cont;
               archivo._destroy = 'false';
               cont++;
-              console.log("archivos3: "+archivo.adjunto.url);
             });
           }
         }, (error: any) => {
@@ -383,10 +381,6 @@ export class VentasPage implements OnInit {
   }
   
 
-  async despacho() {
-    this.navCtrl.navigateForward('/despacho/' + this.idVenta);
-  }
-
   async verProductos(idVenta: number) {
     this.navCtrl.navigateForward('/productos-venta/' + idVenta);
   }
@@ -547,6 +541,24 @@ export class VentasPage implements OnInit {
         venta_id: ventaId,
         archivos: this.archivos,
         is_venta: true
+      }
+    });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.data && data.data.archivos) {
+        this.archivos = data.data.archivos;
+      }
+    });
+
+    await modal.present();
+  }
+
+  async openModalDespacho(ventaId: any) {
+    const modal = await this.modalController.create({
+      component: DespachoComponent,
+      componentProps: {
+        idVenta: ventaId,
+        venta: this.venta
       }
     });
 

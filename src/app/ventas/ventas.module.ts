@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { VentasPageRoutingModule } from './ventas-routing.module';
 import { VentasPage } from './ventas.page';
@@ -14,16 +14,20 @@ import { FormatDatePipe } from 'src/app/pipes/FormatDate.pipe';
 import { FilePath } from '@awesome-cordova-plugins/file-path/ngx';
 import { FileChooser } from '@awesome-cordova-plugins/file-chooser/ngx';
 import {Camera} from '@awesome-cordova-plugins/camera/ngx';
+import { DespachoComponent } from 'src/app/modals/despacho-modal/despacho-modal.component';
+import { CrearDespachoComponent } from 'src/app/modals/crear-despacho-modal/crear-despacho-modal.component';
 
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     IonicModule,
     VentasPageRoutingModule,
     SharedModule // Asegúrate de importar SharedModule aquí
   ],
-  declarations: [VentasPage, AgregarProductosComponent, AgregarAdjuntosComponent, FormatDatePipe, VerFotoComponent],
+  declarations: [VentasPage, AgregarProductosComponent, AgregarAdjuntosComponent, 
+      FormatDatePipe, VerFotoComponent, DespachoComponent,CrearDespachoComponent],
   providers: [FileTransfer, FileOpener, DatePipe,FilePath,FileChooser, Camera]
 })
 export class VentasPageModule {}

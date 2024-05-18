@@ -155,7 +155,7 @@
 
     <ion-button *ngIf="setEstadoPedido2(venta.estado) && (venta.entregas === 'Sin entregas realizadas.' || venta.id === undefined )" expand="full" (click)="openModalProducto()">Agregar Producto</ion-button>
 
-    <ion-button *ngIf="!creaVenta" expand="full" (click)="despacho()">Entregas Pedido</ion-button>
+    <ion-button *ngIf="!creaVenta" expand="full" (click)="openModalDespacho(venta.id)">Entregas Pedido</ion-button>
 
     <ion-button *ngIf="!creaVenta" expand="full" (click)="openModalVerAdjuntos(venta.id)">Archivos Adjuntos</ion-button>
 
@@ -165,7 +165,7 @@
 
     <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas === 'Sin entregas realizadas.' && !creaVenta" expand="full" (click)="eliminarVenta()">Eliminar Pedido</ion-button>
 
-    <ion-button *ngIf="venta.productos != undefined && creaVenta" color="success" expand="full" (click)="confirmarGuardarPedido()">Crear Pedido</ion-button>
+    <ion-button *ngIf="creaVenta && venta.productos != undefined" color="success" expand="full" (click)="confirmarGuardarPedido()">Crear Pedido</ion-button>
 
   </ion-list>
 </ion-content>

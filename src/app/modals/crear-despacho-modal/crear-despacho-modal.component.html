@@ -1,0 +1,91 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Nueva Entrega</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModal()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <ion-list>
+    <ion-item>
+      <ion-label>Tipo Despacho</ion-label>
+      <ion-select [(ngModel)]="seldespacho" (ionChange)="seleccionaDespacho(seldespacho.id)">
+        <ion-select-option *ngFor="let despacho_clase of despacho_clases" [value]="despacho_clase.id">{{despacho_clase.nombre}}</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ng-container *ngIf="tiene_despacho">
+      <ion-item>
+        <ion-label>Dirección de despacho</ion-label>
+        <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)">
+          <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.id">{{sucursal.direccion}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ng-container>
+
+    <ng-container *ngIf="tipo_despacho">
+      <ion-item>
+        <ion-label>Contacto</ion-label>
+        <ion-select [(ngModel)]="selcontacto" (ionChange)="seleccionaContacto(selcontacto.id)">
+          <ion-select-option *ngFor="let contacto of contactos" [value]="contacto.id">{{contacto.nombre}}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ng-container>
+
+    <ion-item>
+      <ion-label>Fecha</ion-label>
+      <ion-datetime-button datetime="datetime"></ion-datetime-button>
+    
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime
+            id="datetime"
+            presentation="date"
+            value="2023-11-02"
+            [formatOptions]="{
+              date: {
+                weekday: 'short',
+                month: 'long',
+                day: '2-digit',
+              },
+            }"
+          ></ion-datetime>
+          <ion-button slot="start" (click)="closeModal()">Aceptar</ion-button>
+        </ng-template>
+      </ion-modal>
+    </ion-item>
+    
+
+    <ion-item>
+      <ion-label>Observación</ion-label>
+      <ion-input type="text" [(ngModel)]="observacion" required></ion-input>
+    </ion-item>
+    <ion-item-divider class="titulo_tabla">
+      <ion-label><b>Productos</b></ion-label>
+    </ion-item-divider>
+    <ion-item *ngFor="let item of nuevaEntrega">
+      <ion-label>Codigo</ion-label>
+      <ion-input type="text" [(ngModel)]="item.codigo" disabled></ion-input>
+    </ion-item>
+
+    <ion-item *ngFor="let item of nuevaEntrega">
+      <ion-label>Bonificación</ion-label>
+      <ion-input type="text" [(ngModel)]="item.es_muestra" disabled></ion-input>
+    </ion-item>
+
+    <ion-item *ngFor="let item of nuevaEntrega">
+      <ion-label>Cantidad</ion-label>
+      <ion-input type="number" min="0" [(ngModel)]="item.cantidad" (ionChange)="updCantidad(item.cantidad, item.id)"></ion-input>
+    </ion-item>
+
+    <ion-button *ngIf="!hideDespacho" expand="block" color="primary" (click)="agregaEntrega()">
+      <ion-icon name="archive" slot="start"></ion-icon>
+      Agregar Entrega
+    </ion-button>
+
+  </ion-list>
+</ion-content>

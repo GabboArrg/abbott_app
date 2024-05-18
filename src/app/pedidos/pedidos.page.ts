@@ -69,8 +69,6 @@ export class PedidosPage implements OnInit {
   }
 
   ventaSeleccionada(idCliente: number, idVenta: number) {
-    console.log("Venta.id = " + idVenta);
-    console.log("cliente.id = " + idCliente);
     if (Number(idVenta) <= 0) {
       this.mostrarAlerta('Atención', 'Debe seleccionar una venta');
       return;
