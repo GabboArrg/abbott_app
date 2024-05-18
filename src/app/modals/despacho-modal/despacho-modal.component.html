@@ -12,10 +12,16 @@
 <ion-content>
   <!--<ion-scroll padding="true" direction="y" scrollEvents="true">-->
     <ion-list>
-      <ion-item>
-        <ion-label>Nº Pedido</ion-label>
-        <ion-text>{{ idVenta }}</ion-text>
-      </ion-item>
+      <ion-item-divider class="titulo_tabla">
+        <ion-label class="input-label" style="text-align: right; font-size: 1.2em;"><b>Nº Pedido</b></ion-label>
+        <div style="flex-grow: 1;"></div>
+        <ng-container>
+          <ion-icon style="font-size: 1.2em;"></ion-icon>
+          <span style="font-size: 1.2em;">{{ idVenta }}</span>
+        </ng-container>
+      </ion-item-divider>
+
+
       <ion-item>
         <ion-label>Cliente</ion-label>
         <ion-text>{{ venta.cliente.nombre }}</ion-text>
@@ -34,25 +40,23 @@
       </ion-item>
     </ion-list>
 
-    <ion-button *ngIf="!hideEntrega" expand="full" color="success" (click)="openModalCrearEntrega(idVenta)">
+    <ion-button *ngIf="!hideEntrega" expand="full" color="success" (click)="openModalCrearEntrega(idVenta,true)">
       Nueva Entrega
     </ion-button>
 
     <ion-list *ngIf="entregas.length > 0">
-      <ion-item>
-        <div class="row">
-          <div class="col">Nº Entrega</div>
-          <div class="col">Fecha</div>
-          <div class="col">Ver</div>
-        </div>
-      </ion-item>
-
-      <ion-item *ngFor="let item of entregas | slice:0:pageSize" (click)="entregaSeleccionada(item.numero)">
-        <div class="row">
-          <div class="col">{{ item.numero }}</div>
-          <div class="col">{{ item.fecha_entrega | date:'dd-MM-yyyy' }}</div>
-          <div class="col ion-android-calendar">&nbsp;</div>
-        </div>
+      <!-- Encabezado de la tabla -->
+      <ion-item-divider class="titulo_tabla header">
+        <ion-label style="font-size: 1.2em;" class="col">Nº Entrega</ion-label>
+        <ion-label style="font-size: 1.2em;" class="col">Fecha</ion-label>
+        <ion-label style="font-size: 1.2em;" class="col">Ver</ion-label>
+      </ion-item-divider>
+    
+      <!-- Elementos de la tabla -->
+      <ion-item *ngFor="let item of entregas | slice:0:pageSize" (click)="entregaSeleccionada(item.numero)" lines="full">
+        <ion-label class="col">{{ item.numero }}</ion-label>
+        <ion-label class="col">{{ item.fecha_entrega | date:'dd-MM-yyyy' }}</ion-label>
+        <ion-icon class="col" name="calendar"></ion-icon>
       </ion-item>
     </ion-list>
   <!--</ion-scroll>-->

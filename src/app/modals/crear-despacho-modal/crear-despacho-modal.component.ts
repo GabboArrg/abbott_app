@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, AlertController, LoadingController } from '@ionic/angular';
 import { UserService } from 'src/app/login/services/user.service';
 import { VentaService } from 'src/app/services/venta.service';
@@ -9,9 +9,13 @@ import { VentaService } from 'src/app/services/venta.service';
   styleUrls: ['./crear-despacho-modal.component.scss'],
 })
 export class CrearDespachoComponent implements OnInit {
-  despacho_clases: any[] = []; // Esto debe ser llenado con los datos adecuados
-  sucursales: any[] = []; // Esto debe ser llenado con los datos adecuados
-  contactos: any[] = []; // Esto debe ser llenado con los datos adecuados
+  despacho_clases: any[] = [];
+  @Input() sucursales: any;
+  @Input() contactos: any;
+  @Input() es_nuevo: any;
+  @Input() entregas: any;
+  @Input() venta_id: any;
+  entrega: any;
   tiene_despacho = false;
   tipo_despacho = true;
   hideDespacho = false;
@@ -26,7 +30,9 @@ export class CrearDespachoComponent implements OnInit {
   seldespacho: any;
   selsucursal: any;
   selcontacto: any;
-  
+  despacho_clase: any;
+  direccion_despacho: any;
+  posiciones: any;
   
 
   constructor(
@@ -38,9 +44,36 @@ export class CrearDespachoComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.loadDespachoClases();
+    this.loadVariables();
+    console.log("entregas: "+ JSON.stringify(this.entregas));
+    
+  }
+
+  loadVariables(){
+    if(!this.es_nuevo){
+
+    this.entrega = this.entregas[this.venta_id-1]
+    this.posiciones = this.entrega.posiciones;
+    this.seldespacho = this.entrega.despacho_clase;
+    this.selsucursal = this.entrega.cliente_sucursal_id;
+    this.selcontacto = this.entrega.cliente_contacto;
+    this.fecha_entrega = this.entrega.fecha_entrega;
+    this.observacion = this.entrega.observacion
+
+    }
+  }
+  
+  async loadDespachoClases() {
+    try {
+      this.despacho_clases = await this.ventaService.getDespachoClases();
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   seleccionaDespacho(idDespacho: number) {
+    console.log("id despacho: "+ idDespacho);
     this.idDespacho = idDespacho;
     if (idDespacho === 1 || idDespacho === 2) {
       this.tiene_despacho = false;
@@ -51,6 +84,16 @@ export class CrearDespachoComponent implements OnInit {
     this.tipo_despacho = idDespacho !== 2;
   }
 
+
+  getTipoDespacho(tipo_despacho: string, id: number) {
+    this.tiene_despacho = !(
+      tipo_despacho === 'Retirado por Cliente' || 
+      tipo_despacho === 'Retirado por Representante de Ventas'
+    );
+  }
+
+
+  
   seleccionaSucursal(idSucursal: number) {
     this.idSucursal = idSucursal;
   }

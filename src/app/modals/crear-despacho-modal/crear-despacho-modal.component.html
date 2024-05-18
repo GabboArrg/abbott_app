@@ -1,6 +1,6 @@
 <ion-header>
   <ion-toolbar color="primary">
-    <ion-title>Nueva Entrega</ion-title>
+    <ion-title>{{ es_nuevo ? 'Nueva Entrega' : 'Ver Entrega' }}</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="closeModal()">
         <ion-icon slot="icon-only" name="close"></ion-icon>
@@ -11,34 +11,61 @@
 
 <ion-content fullscreen>
   <ion-list>
-    <ion-item>
-      <ion-label>Tipo Despacho</ion-label>
-      <ion-select [(ngModel)]="seldespacho" (ionChange)="seleccionaDespacho(seldespacho.id)">
-        <ion-select-option *ngFor="let despacho_clase of despacho_clases" [value]="despacho_clase.id">{{despacho_clase.nombre}}</ion-select-option>
-      </ion-select>
-    </ion-item>
+
+    
+
+
+    <ng-container *ngIf="es_nuevo; else viewMode">
+      <ion-item>
+        <ion-label position="stacked">Tipo Despacho</ion-label>
+        <ion-select [(ngModel)]="seldespacho" (ionChange)="seleccionaDespacho(seldespacho.id)">
+          <ion-select-option *ngFor="let despacho_clase of despacho_clases" [value]="despacho_clase.id">{{ despacho_clase.nombre }}</ion-select-option>
+        </ion-select>
+      </ion-item>
+    </ng-container>
+    <ng-template #viewMode>
+      <ion-item>
+        <ion-label position="stacked">Tipo Despacho</ion-label>
+        <ion-input readonly>{{ seldespacho }}</ion-input>
+      </ion-item>
+    </ng-template>
+
+
+
+
+
+
+
+
 
     <ng-container *ngIf="tiene_despacho">
       <ion-item>
-        <ion-label>Dirección de despacho</ion-label>
-        <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)">
-          <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.id">{{sucursal.direccion}}</ion-select-option>
+        <ion-label position="stacked">Dirección de despacho</ion-label>
+        <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)" [disabled]="!es_nuevo">
+          <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.id">{{ sucursal.direccion }}</ion-select-option>
         </ion-select>
       </ion-item>
     </ng-container>
-
-    <ng-container *ngIf="tipo_despacho">
+    
+    <ng-container *ngIf="es_nuevo; else viewMode2">
       <ion-item>
-        <ion-label>Contacto</ion-label>
+        <ion-label position="stacked">Contacto</ion-label>
         <ion-select [(ngModel)]="selcontacto" (ionChange)="seleccionaContacto(selcontacto.id)">
-          <ion-select-option *ngFor="let contacto of contactos" [value]="contacto.id">{{contacto.nombre}}</ion-select-option>
+          <ion-select-option *ngFor="let contacto of contactos" [value]="contacto.id">{{ contacto.nombre }}</ion-select-option>
         </ion-select>
       </ion-item>
     </ng-container>
+    <ng-template #viewMode2>
+      <ion-item>
+        <ion-label position="stacked">Contacto</ion-label>
+        <ion-input readonly>{{ selcontacto }}</ion-input>
+      </ion-item>
+    </ng-template>
 
     <ion-item>
-      <ion-label>Fecha</ion-label>
-      <ion-datetime-button datetime="datetime"></ion-datetime-button>
+      <ion-label position="stacked">Fecha</ion-label>
+      <ion-datetime-button datetime="datetime" *ngIf="es_nuevo"></ion-datetime-button>
+      <ion-input *ngIf="!es_nuevo" readonly>{{ fecha_entrega | date: 'dd-MM-yyyy' }}</ion-input>
     
       <ion-modal [keepContentsMounted]="true">
         <ng-template>
@@ -59,33 +86,47 @@
       </ion-modal>
     </ion-item>
     
-
     <ion-item>
-      <ion-label>Observación</ion-label>
-      <ion-input type="text" [(ngModel)]="observacion" required></ion-input>
+      <ion-label position="stacked">Observación</ion-label>
+      <ion-input type="text" [(ngModel)]="observacion" [readonly]="!es_nuevo" required></ion-input>
     </ion-item>
+
     <ion-item-divider class="titulo_tabla">
       <ion-label><b>Productos</b></ion-label>
     </ion-item-divider>
-    <ion-item *ngFor="let item of nuevaEntrega">
-      <ion-label>Codigo</ion-label>
-      <ion-input type="text" [(ngModel)]="item.codigo" disabled></ion-input>
-    </ion-item>
 
-    <ion-item *ngFor="let item of nuevaEntrega">
-      <ion-label>Bonificación</ion-label>
-      <ion-input type="text" [(ngModel)]="item.es_muestra" disabled></ion-input>
-    </ion-item>
+    <div *ngIf="es_nuevo">
+      <ng-container *ngFor="let item of nuevaEntrega">
+        <ion-item>
+          <ion-label position="stacked">Código</ion-label>
+          <ion-input type="text" [(ngModel)]="item.codigo" [readonly]="true"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Bonificación</ion-label>
+          <ion-input type="text" [(ngModel)]="item.es_muestra" [readonly]="true"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Cantidad</ion-label>
+          <ion-input type="number" min="0" [(ngModel)]="item.cantidad" (ionChange)="updCantidad(item.cantidad, item.id)"></ion-input>
+        </ion-item>
+      </ng-container>
+    </div>
+    <div *ngIf="!es_nuevo">
+      <ng-container *ngFor="let item of posiciones">
+        <ion-item>
+          <ion-label position="stacked">Código</ion-label>
+          <ion-input type="text" readonly>{{ item.codigo }}</ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Cantidad</ion-label>
+          <ion-input type="text" readonly>{{ item.cantidad_entregada | comma2decimal }}</ion-input>
+        </ion-item>
+      </ng-container>
+    </div>
 
-    <ion-item *ngFor="let item of nuevaEntrega">
-      <ion-label>Cantidad</ion-label>
-      <ion-input type="number" min="0" [(ngModel)]="item.cantidad" (ionChange)="updCantidad(item.cantidad, item.id)"></ion-input>
-    </ion-item>
-
-    <ion-button *ngIf="!hideDespacho" expand="block" color="primary" (click)="agregaEntrega()">
+    <ion-button *ngIf="es_nuevo" expand="block" color="primary" (click)="agregaEntrega()">
       <ion-icon name="archive" slot="start"></ion-icon>
       Agregar Entrega
     </ion-button>
-
   </ion-list>
 </ion-content>

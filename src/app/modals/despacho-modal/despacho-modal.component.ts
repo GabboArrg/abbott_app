@@ -1,10 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ModalController, AlertController, LoadingController } from '@ionic/angular';
-import { UserService } from 'src/app/login/services/user.service';
 import { VentaService } from 'src/app/services/venta.service';
 import { ClienteService } from 'src/app/services/cliente.service';
-import { Router, ActivatedRoute } from '@angular/router';
-import { formatDate } from '@angular/common';
 import { CrearDespachoComponent } from 'src/app/modals/crear-despacho-modal/crear-despacho-modal.component';
 
 @Component({
@@ -49,12 +46,9 @@ export class DespachoComponent implements OnInit {
 
   constructor(
     private modalController: ModalController,
-    private userService: UserService,
     private ventaService: VentaService,
     private alertController: AlertController,
     private clienteService: ClienteService,
-    private router: Router,
-    private route: ActivatedRoute,
     public loadingCtrl: LoadingController,
   ) {}
 
@@ -124,27 +118,6 @@ export class DespachoComponent implements OnInit {
     }
   }
 
-  getTipoDespacho(tipo_despacho: string, id: number) {
-    this.tiene_despacho = !(
-      tipo_despacho === 'Retirado por Cliente' || 
-      tipo_despacho === 'Retirado por Representante de Ventas'
-    );
-  }
-
-  setEstadoPedido2(estado: string) {
-    return estado === 'espera_confirmacion';
-  }
-
-
-
-
-
-
-
-  seleccionaDireccion(idDireccion: number) {
-    this.idDireccion = idDireccion;
-  }
-
   findAndRemove(array: any[], property: string, value: any) {
     const index = array.findIndex(item => item[property] === value);
     if (index !== -1) {
@@ -152,42 +125,8 @@ export class DespachoComponent implements OnInit {
     }
   }
 
-
-
-  updCantidad(cantidad: number, id: number) {
-    if (cantidad > (this.venta.productos[id].cantidad - this.maxEntrega[id].acumulado)) {
-      this.presentAlert('Error no puede ser mayor a la cantidad pendiente por entregar');
-    }
-  }
-
-  //direccionC(direccion_despacho: string) {
-  //  this.direccion_despacho = direccion_despacho;
-  //}
-
-  //updDescuento(descuento: number) { // mirada rapida, funcion innecesaria
-  //  this.descuento = descuento;
-  //}
-
-  async openModalCrearEntrega(ventaId: any) {
-    const modal = await this.modalController.create({
-      component: CrearDespachoComponent,
-      componentProps: {
-        venta_id: ventaId
-      }
-    });
-
-    modal.onDidDismiss().then((data) => {
-      if (data.data && data.data.archivos) {
-        //this.archivos = data.data.archivos;
-      }
-    });
-
-    await modal.present();
-  }
-
-  openModal() {
-    console.log("cliente: "+JSON.stringify(this.venta.cliente));
-    console.log("contactos: "+JSON.stringify(this.venta.cliente.cliente_contactos));
+  async openModalCrearEntrega(id: any, es_nuevo: any) {
+  if (es_nuevo){
     if (!this.cliente.cliente_contactos) {
       this.presentAlert('El cliente no tiene contactos ingresados.');
       return;
@@ -202,16 +141,35 @@ export class DespachoComponent implements OnInit {
       this.presentAlert('Ya no hay más productos por despachar');
       return;
     }
-
-    this.router.navigate(['app.nuevoDespacho', { keyUrl: this.idVenta }]);
   }
+
+  const modal = await this.modalController.create({
+    component: CrearDespachoComponent,
+    componentProps: {
+      venta_id: id,
+      sucursales: this.sucursales,
+      contactos: this.contactos,
+      entregas: this.entregas,
+      es_nuevo: es_nuevo
+    }
+  });
+
+    modal.onDidDismiss().then((data) => {
+      if (data.data && data.data.archivos) {
+        //this.archivos = data.data.archivos;
+      }
+    });
+
+    await modal.present();
+  }
+
 
   dismiss() {
     this.modalController.dismiss();
   }
 
   entregaSeleccionada(numero: number) {
-    this.router.navigate(['app.verDespacho', { keyUrl: this.idVenta, numero }]);
+    this.openModalCrearEntrega(numero,false);
   }
 
   async presentLoading() {

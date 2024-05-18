@@ -10,4 +10,6 @@ ion-datetime {
   ion-input, ion-select, ion-datetime {
     width: 100%;
   }
-  
+  ion-datetime-button::part(native) {
+    background: #ffffff00;
+}
