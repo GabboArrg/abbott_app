@@ -16,18 +16,18 @@ export class CrearDespachoComponent implements OnInit {
   @Input() es_nuevo: any;
   @Input() entregas: any;
   @Input() venta_id: any;
+  @Input() venta: any;
   entrega: any;
   tiene_despacho = false;
   tipo_despacho = true;
   hideDespacho = false;
-  nuevaEntrega: any[] = []; // Esto debe ser llenado con los datos adecuados
+  @Input() nuevaEntrega: any[] = []; // Esto debe ser llenado con los datos adecuados
   idDespacho: number = 0;
   idSucursal: number = 0;
   idContacto: number | undefined;
   fecha_entrega: any;
-  venta: any;
   observacion: any;
-  maxEntrega: any[] = [];
+  @Input() maxEntrega: any[] = [];
   seldespacho: any;
   selsucursal: any;
   selcontacto: any;
@@ -37,6 +37,7 @@ export class CrearDespachoComponent implements OnInit {
   idCliente!: number;
   idVenta!: number;
   estado: any;
+  numero!: number;
   
 
   constructor(
@@ -56,16 +57,18 @@ export class CrearDespachoComponent implements OnInit {
 
   ngOnInit() {
     //this.estado = this.venta.estado; REVISAR ESTO Y EL ELIMINAR ENTREGA
-    console.log("estado: "+ this.venta);
+    console.log("entra a crea despacho, numero: "+ this.venta_id);
+    console.log("estado: "+ this.venta.estado);
     this.loadDespachoClases();
     this.loadVariables();
     console.log("entregas: "+ JSON.stringify(this.entregas));
+    
     
   }
 
   loadVariables(){
     if(!this.es_nuevo){
-
+    this.numero = this.venta_id //si no es nuevo, a través de venta_id se pasa el numero de entrega
     this.entrega = this.entregas[this.venta_id-1]
     this.posiciones = this.entrega.posiciones;
     this.seldespacho = this.entrega.despacho_clase;
@@ -115,9 +118,53 @@ export class CrearDespachoComponent implements OnInit {
     this.idContacto = idContacto;
   }
 
+  calcularMaximo(itemId: number): number {
+    const maxEntregaObj = this.maxEntrega.find(item => item.id === itemId);
+    const producto = this.venta.productos.find((prod: { id: number; }) => prod.id === itemId);
+    if (maxEntregaObj && producto) {
+      return producto.cantidad - maxEntregaObj.acumulado;
+    }
+    return 0;
+  }
+  
+
   async updCantidad(cantidad: number, id: number) {
-    if (cantidad > (this.venta.productos[id].cantidad - this.maxEntrega[id].acumulado)) {
+    // Buscar el objeto correspondiente en maxEntrega usando el id del producto
+    const maxEntregaObj = this.maxEntrega.find(item => item.id === id);
+  
+    if (!maxEntregaObj) {
+      console.log("Error: no se encontró la entrega correspondiente para el id proporcionado");
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Error: no se encontró la entrega correspondiente para el id proporcionado',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+  
+    console.log("acumulado: " + maxEntregaObj.acumulado);
+  
+    const producto = this.venta.productos.find((prod: { id: number; }) => prod.id === id);
+    if (!producto) {
+      console.log("Error: no se encontró el producto correspondiente para el id proporcionado");
+      const alert = await this.alertController.create({
+        header: 'Error',
+        message: 'Error: no se encontró el producto correspondiente para el id proporcionado',
+        buttons: ['OK']
+      });
+      await alert.present();
+      return;
+    }
+  
+    const cantidadPendiente = producto.cantidad - maxEntregaObj.acumulado;
+  
+    if (cantidad > cantidadPendiente) {
       console.log("Error: no puede ser mayor a la cantidad pendiente por entregar");
+  
+      // Actualizar el valor del input con la cantidad pendiente
+      cantidad = cantidadPendiente;
+  
       const alert = await this.alertController.create({
         header: 'Error',
         message: 'Error: no puede ser mayor a la cantidad pendiente por entregar',
@@ -127,6 +174,8 @@ export class CrearDespachoComponent implements OnInit {
       return;
     }
   }
+  
+  
 
   async agregaEntrega() {
     let entregas_attributes = {};
@@ -249,7 +298,7 @@ export class CrearDespachoComponent implements OnInit {
     }
   }
 
-  async eliminarEntrega(numero: number) {
+  async eliminarEntrega() {
     if (this.idCliente === undefined || this.idVenta === undefined) {
       console.error('idCliente o idVenta no están definidos');
       return;
@@ -275,7 +324,7 @@ export class CrearDespachoComponent implements OnInit {
             });
             await loading.present();
   
-            this.ventaService.deleteDespacho(this.idVenta, numero).then((respuesta) => {
+            this.ventaService.deleteDespacho(this.idVenta, this.numero).then((respuesta) => {
               console.log('Eliminar Entrega', respuesta);
               loading.dismiss();
               // Redireccionar a la ruta de ventas con idCliente y idVenta

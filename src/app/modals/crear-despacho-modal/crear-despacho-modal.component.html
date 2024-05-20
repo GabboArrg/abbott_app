@@ -96,37 +96,40 @@
     </ion-item-divider>
 
     <div *ngIf="es_nuevo">
-      <ng-container *ngFor="let item of nuevaEntrega">
-        <ion-item>
-          <ion-label position="stacked">Código</ion-label>
-          <ion-input type="text" [(ngModel)]="item.codigo" [readonly]="true"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Bonificación</ion-label>
-          <ion-input type="text" [(ngModel)]="item.es_muestra" [readonly]="true"></ion-input>
-        </ion-item>
-        <ion-item>
-          <ion-label position="stacked">Cantidad</ion-label>
-          <ion-input type="number" min="0" [(ngModel)]="item.cantidad" (ionChange)="updCantidad(item.cantidad, item.id)"></ion-input>
-        </ion-item>
-
-
-
-        <ion-button
-          *ngIf="estado !== 'confirmado'"
-          expand="block"
-          color="danger"
-          (click)="eliminarEntrega(item.numero)"
-        >
-          <ion-icon name="close-circle" slot="start"></ion-icon>
-          Eliminar Entrega
-        </ion-button>
-
-
-
-
+      <ng-container *ngFor="let item of nuevaEntrega; let i = index">
+        <ng-container *ngIf="i !== 0">
+          <ion-row style="border-top: 1px solid #ccc;"></ion-row>
+        </ng-container>
+        <ion-row>
+          <ion-col>
+            <ion-item>
+              <ion-label position="stacked">Código</ion-label>
+              <ion-input type="text" [(ngModel)]="item.codigo" [readonly]="true"></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Cantidad</ion-label>
+              <ion-input type="number" min="0" [(ngModel)]="item.cantidad" (ionChange)="updCantidad(item.cantidad, item.id)"></ion-input>
+            </ion-item>
+          </ion-col>
+          <ion-col size="6">
+            <ion-item>
+              <ion-label position="stacked">Máximo Disponible</ion-label>
+              <ion-input type="text" [value]="calcularMaximo(item.id)" disabled></ion-input>
+            </ion-item>
+          </ion-col>
+        </ion-row>
+        <ion-row style="border-bottom: 1px solid #ccc;"></ion-row>
       </ng-container>
     </div>
+    
+    
+    
+    
+
     <div *ngIf="!es_nuevo">
       <ng-container *ngFor="let item of posiciones">
         <ion-item>
@@ -138,6 +141,15 @@
           <ion-input type="text" readonly>{{ item.cantidad_entregada | comma2decimal }}</ion-input>
         </ion-item>
       </ng-container>
+      <ion-button
+        *ngIf="estado !== 'confirmado' && !es_nuevo"
+        expand="block"
+         color="danger"
+        (click)="eliminarEntrega()"
+        >
+        <ion-icon name="close-circle" slot="start"></ion-icon>
+        Eliminar Entrega
+      </ion-button>
     </div>
 
     <ion-button *ngIf="es_nuevo" expand="block" color="primary" (click)="agregaEntrega()">

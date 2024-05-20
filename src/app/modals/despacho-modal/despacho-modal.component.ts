@@ -22,7 +22,7 @@ export class DespachoComponent implements OnInit {
   contactos: any;
   sucursales: any;
   entregas: any[] = [];
-  nuevaentrega: any[] = [];
+  nuevaEntrega: any[] = [];
   fecha_entrega: any;
   observacion: string = '';
   despacho_clases: any = {};
@@ -59,64 +59,70 @@ export class DespachoComponent implements OnInit {
   async initData() {
     const loading = await this.presentLoading();
     this.fecha_entrega = new Date();
-
+  
     try {
       this.despacho_clases = await this.ventaService.getDespachoClases();
       this.entregas = this.venta.entregas;
-
+  
       this.maxEntrega = this.venta.productos.map((p: { id: any; cantidad: any; }) => ({
         id: p.id,
         acumulado: 0,
         cantidad_max: p.cantidad
       }));
-
+  
       this.total_entregado = 0;
       this.total_productos = 0;
-
+  
       if (typeof this.entregas === 'string') {
         this.entregas = [];
         this.hideEntrega = false;
       } else {
         this.hideEntrega = true;
-        console.log("entregas: "+ this.entregas);
-        console.log("entregas length: "+ this.entregas.length);
+        console.log("entregas: " + this.entregas);
+        console.log("entregas length: " + this.entregas.length);
         this.entregas.forEach(entrega => {
-          entrega.posiciones.forEach((posicion: { cantidad_entregada: string; }, j: number) => {
+          entrega.posiciones.forEach((posicion: { pos_venta_id: number; cantidad_entregada: string; }) => {
+            console.log("entregas en cuestion: " + JSON.stringify(posicion));
+            console.log("max entrega actual: " + JSON.stringify(this.maxEntrega));
             const entregado = parseInt(posicion.cantidad_entregada, 10);
-            this.maxEntrega[j].acumulado += entregado;
-            this.total_entregado += entregado;
+            // Buscar el objeto correspondiente en maxEntrega usando el pos_venta_id
+            const maxEntregaObj = this.maxEntrega.find(item => item.id === posicion.pos_venta_id);
+            if (maxEntregaObj) {
+              maxEntregaObj.acumulado += entregado;
+              this.total_entregado += entregado;
+            }
           });
         });
         this.venta.productos.forEach((producto: { cantidad_total: string; }) => {
           this.total_productos += parseInt(producto.cantidad_total, 10);
         });
       }
-
+  
       if (this.total_productos > this.total_entregado) {
         this.hideEntrega = false;
       }
-      this.nuevaentrega = this.venta.productos.map((producto: { id: number; material: { codigo: any; }; es_muestra: any; cantidad: any; bonificacion: any; }, d: number) => ({
-        id: d,
+      this.nuevaEntrega = this.venta.productos.map((producto: { id: number; material: { codigo: any; }; es_muestra: any; cantidad: any; bonificacion: any; }) => ({
+        id: producto.id,
         pos_venta_id: producto.id,
         codigo: producto.material.codigo,
         es_muestra: producto.es_muestra,
-        cantidad: producto.cantidad + producto.bonificacion - this.maxEntrega[d].acumulado
+        cantidad: producto.cantidad + producto.bonificacion - (this.maxEntrega.find(e => e.id === producto.id)?.acumulado || 0)
       }));
-
-      
+  
       this.clienteService.getCliente(this.venta.cliente.id.toString()).subscribe((data: any) => {
         this.cliente = data.cliente;
         this.txtDireccion = data.cliente.direccion;
         this.sucursales = data.cliente.cliente_sucursales;
         this.contactos = data.cliente.cliente_contactos;
       });
-
+  
       loading.dismiss();
     } catch (error: any) {
       console.error(error);
       loading.dismiss();
     }
   }
+  
 
   findAndRemove(array: any[], property: string, value: any) {
     const index = array.findIndex(item => item[property] === value);
@@ -150,7 +156,10 @@ export class DespachoComponent implements OnInit {
       sucursales: this.sucursales,
       contactos: this.contactos,
       entregas: this.entregas,
-      es_nuevo: es_nuevo
+      es_nuevo: es_nuevo,
+      venta: this.venta,
+      nuevaEntrega: this.nuevaEntrega,
+      maxEntrega: this.maxEntrega
     }
   });
 
