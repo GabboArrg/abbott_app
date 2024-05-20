@@ -83,7 +83,6 @@ export class VentaService {
     });
   }
 
-  // Otros métodos omitidos por brevedad...
 
   getSocSucursal(): Observable<any> {
     const url = environment.API_ABBOTT + 'sociedad_sucursales/';
@@ -94,23 +93,18 @@ export class VentaService {
     );
   }
 
-  getMateriales(): Observable<any> {
-    //this.presentLoading(); //revisar, se queda pegado en local
-    const url = environment.API_ABBOTT + 'materiales/';
+  getPromopacks(): Observable<any> {
+    const url = environment.API_ABBOTT + 'promopacks/';
     return this.http.get(url).pipe(
       catchError((error: any) => {
         return throwError(error.json().error || 'Server error');
-      }),
-      // Cierre del loading en la suscripción
-      finalize(() => {
-        this.dismissLoading();
       })
     );
   }
 
-  getPromopacks(): Observable<any> {
-    this.presentLoading();
-    const url = environment.API_ABBOTT + 'promopacks/';
+  getMateriales(): Observable<any> {
+    //this.presentLoading(); //revisar, se queda pegado en local
+    const url = environment.API_ABBOTT + 'materiales/';
     return this.http.get(url).pipe(
       catchError((error: any) => {
         return throwError(error.json().error || 'Server error');

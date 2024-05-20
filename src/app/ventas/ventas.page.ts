@@ -219,7 +219,8 @@ export class VentasPage implements OnInit {
         loading.dismiss();
       },
       error => {
-        console.log("error en getPromopacks"+error);
+        console.log("Error en getPromopacks:", error.message); // Imprime el mensaje de error específico
+        console.log("Error detallado:", error); // Imprime el objeto de error completo para obtener más detalles
         loading.dismiss();
       }
     );
