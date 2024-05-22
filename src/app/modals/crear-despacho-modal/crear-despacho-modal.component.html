@@ -11,14 +11,10 @@
 
 <ion-content fullscreen>
   <ion-list>
-
-    
-
-
     <ng-container *ngIf="es_nuevo; else viewMode">
       <ion-item>
         <ion-label position="stacked">Tipo Despacho</ion-label>
-        <ion-select [(ngModel)]="seldespacho" (ionChange)="seleccionaDespacho(seldespacho.id)">
+        <ion-select [(ngModel)]="seldespacho" (ionChange)="seleccionaDespacho(seldespacho)">
           <ion-select-option *ngFor="let despacho_clase of despacho_clases" [value]="despacho_clase.id">{{ despacho_clase.nombre }}</ion-select-option>
         </ion-select>
       </ion-item>
@@ -30,27 +26,19 @@
       </ion-item>
     </ng-template>
 
-
-
-
-
-
-
-
-
     <ng-container *ngIf="tiene_despacho">
       <ion-item>
         <ion-label position="stacked">Dirección de despacho</ion-label>
-        <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal.id)" [disabled]="!es_nuevo">
+        <ion-select [(ngModel)]="selsucursal" (ionChange)="seleccionaSucursal(selsucursal)" [disabled]="!es_nuevo">
           <ion-select-option *ngFor="let sucursal of sucursales" [value]="sucursal.id">{{ sucursal.direccion }}</ion-select-option>
         </ion-select>
       </ion-item>
     </ng-container>
-    
+
     <ng-container *ngIf="es_nuevo; else viewMode2">
       <ion-item>
         <ion-label position="stacked">Contacto</ion-label>
-        <ion-select [(ngModel)]="selcontacto" (ionChange)="seleccionaContacto(selcontacto.id)">
+        <ion-select [(ngModel)]="selcontacto" (ionChange)="seleccionaContacto(selcontacto)">
           <ion-select-option *ngFor="let contacto of contactos" [value]="contacto.id">{{ contacto.nombre }}</ion-select-option>
         </ion-select>
       </ion-item>
@@ -72,10 +60,11 @@
           <ion-datetime
             id="datetime"
             presentation="date"
-            value="2023-11-02"
+            [(ngModel)]="fecha_entrega"
+            [firstDayOfWeek]="1"
             [formatOptions]="{
               date: {
-                weekday: 'short',
+                weekday: 'long',
                 month: 'long',
                 day: '2-digit',
               },
@@ -125,10 +114,6 @@
         <ion-row style="border-bottom: 1px solid #ccc;"></ion-row>
       </ng-container>
     </div>
-    
-    
-    
-    
 
     <div *ngIf="!es_nuevo">
       <ng-container *ngFor="let item of posiciones">

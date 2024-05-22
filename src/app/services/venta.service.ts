@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, finalize, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
@@ -184,22 +184,61 @@ export class VentaService {
       .then(response => response.despacho_clases);
   }
 
-  postDespacho(data: any): Observable<any> {
-    const apiUrl = `${environment.API_ABBOTT}entregas/`;
+
+  postDespacho2(data: any): Observable<any> {
+    const apiURL = environment.API_ABBOTT + 'entregas/';
+    console.log("url post desp: " + apiURL);
+
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
     });
 
-    return this.http.post<any>(apiUrl, data, { headers })
+    return this.http.post<any>(apiURL, data, { headers })
       .pipe(
-        map(response => response.entrega),
+        map(response => {
+          console.log('Server response:', response); // Log detallado de la respuesta
+          if (response && response.entrega) {
+            return response.entrega;
+          } else {
+            throw new Error('Respuesta inesperada del servidor');
+          }
+        }),
         catchError(error => {
+          console.error('Error en la solicitud:', error);
           return throwError(error);
         })
       );
   }
 
+
+  postDespacho(data: any): Observable<any> {
+    const apiURL = environment.API_ABBOTT + 'entregas/';
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(apiURL, data, { headers })
+      .pipe(
+        map(response => response.entrega),
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('Error en la solicitud:', error);
+    let errorMsg = 'Ocurrió un error desconocido';
+    if (error.error instanceof ErrorEvent) {
+      errorMsg = `Error del cliente: ${error.error.message}`;
+    } else {
+      errorMsg = `Error del servidor: ${error.status} - ${error.message}`;
+    }
+    return throwError(errorMsg);
+  }
+
+ 
+  
   async deleteArchivo(idVenta: any, idArchivo: string): Promise<any> {
     const req = {
       method: 'DELETE',

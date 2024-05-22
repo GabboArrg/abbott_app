@@ -3,6 +3,7 @@ import { ModalController, AlertController, LoadingController } from '@ionic/angu
 import { UserService } from 'src/app/login/services/user.service';
 import { VentaService } from 'src/app/services/venta.service';
 import { Router, ActivatedRoute } from '@angular/router';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-crear-despacho-modal',
@@ -111,10 +112,12 @@ export class CrearDespachoComponent implements OnInit {
 
   
   seleccionaSucursal(idSucursal: number) {
+    console.log("sucursal: "+ idSucursal);
     this.idSucursal = idSucursal;
   }
 
   seleccionaContacto(idContacto: number) {
+    console.log("asd: "+ idContacto);
     this.idContacto = idContacto;
   }
 
@@ -178,125 +181,86 @@ export class CrearDespachoComponent implements OnInit {
   
 
   async agregaEntrega() {
-    let entregas_attributes = {};
-    let fecha_entrega = this.fecha_entrega;
-    let observacion = this.observacion;
-    let booleanError = false;
-    let mError = '';
-
-    const hoy = new Date();
-    const fec = new Date(this.fecha_entrega.getFullYear(), this.fecha_entrega.getMonth(), this.fecha_entrega.getDate());
-
-    if ((this.idDespacho > 2) && (this.idSucursal == 0 || this.idSucursal == undefined)) { //(this.idSucursal == 0 || this.idSucursal == '')) {
-      mError = "Debe Ingresar la dirección de despacho";
-      booleanError = true;
+    if (this.idDespacho > 2 && !this.idSucursal) {
+      return this.presentAlert('Debe Ingresar la dirección de despacho');
     }
 
-    if (this.idDespacho == 0) {
-      mError = "Debe seleccionar tipo de despacho";
-      booleanError = true;
+    if (!this.idDespacho) {
+      return this.presentAlert('Debe seleccionar tipo de despacho');
+    }
+    console.log("id contacto: "+this.idContacto);
+    console.log("tipo contacto: "+ this.tipo_despacho);
+    if (!this.idContacto && this.tipo_despacho) {
+      return this.presentAlert('Debe seleccionar un contacto');
     }
 
-    if (this.idContacto == 0 && this.tipo_despacho == true) {
-      mError = "Debe seleccionar un contacto";
-      booleanError = true;
+
+    if (this.fecha_entrega !== undefined) {
+      const hoy = new Date();
+      const fechaEntrega = new Date(this.fecha_entrega);
+      if(fechaEntrega < hoy){
+        return this.presentAlert('Debe ingresar una fecha correcta');
+      }
+    }else{
+      return this.presentAlert('Debe ingresar una fecha correcta');
     }
 
-    if (fec < hoy) {
-      mError = "Debe ingresar una fecha correcta";
-      booleanError = true;
-    }
-
-    const strFec = this.fecha_entrega.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
-
-    if (booleanError) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: mError,
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
-    }
-
+    const strFec = formatDate(this.fecha_entrega, 'dd/MM/yyyy', 'en-US');
     let sumCant = 0;
 
-    this.nuevaEntrega.forEach((value, index) => {
+    const entregas_attributes = this.nuevaEntrega.map((value, index) => {
       const idaux = this.venta.productos[index].id;
       sumCant += value.cantidad;
 
       if (value.cantidad < 0) {
-        mError = "Debe ingresar una cantidad válida";
+        this.presentAlert('Debe ingresar una cantidad válida');
+        return;
       }
 
-      let entregas_attributes: any[] = [];      
-      entregas_attributes[index] = {
-        "pos_venta_id": idaux,
-        "fecha_entrega": strFec,
-        "cantidad": value.cantidad
+      return {
+        pos_venta_id: idaux,
+        fecha_entrega: strFec,
+        cantidad: value.cantidad
       };
     });
 
     if (sumCant < 1) {
-      mError = "La cantidad total debe ser mayor que 0.";
-      booleanError = true;
-    }
-
-    if (booleanError) {
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: mError,
-        buttons: ['OK']
-      });
-      await alert.present();
-      return;
+      return this.presentAlert('La cantidad total debe ser mayor que 0.');
     }
 
     const data = {
-      "type": "PedidoVenta",
-      "clase": "VOD",
-      "pedido_venta": {
-        "doc_venta_clase_id": "1", //$scope.doc_venta_clase_id
-        "entregas_attributes": entregas_attributes
+      type: 'PedidoVenta',
+      clase: 'VOD',
+      pedido_venta: {
+        doc_venta_clase_id: '1',
+        entregas_attributes
       },
-      "fecha_entrega": strFec,
-      "despacho_clase_id": this.idDespacho, //$scope.doc_venta_clase_id
-      "cliente_sucursal_id": this.idSucursal, // TODO $scope.cliente_sucursal_id,
-      "cliente_contacto_id": this.idContacto,
-      "venta_id": this.venta.id,
-      "observacion": this.observacion,
-      "user_id": this.userService.getId() + ""
+      fecha_entrega: strFec,
+      despacho_clase_id: this.idDespacho,
+      cliente_sucursal_id: this.idSucursal,
+      cliente_contacto_id: this.idContacto,
+      venta_id: this.venta.id,
+      observacion: this.observacion,
+      user_id: this.userService.getId() + ''
     };
 
+    console.log("DATA: "+ JSON.stringify(data));
+
     const loading = await this.presentLoading();
-    try {
-      const entrega = await this.ventaService.postDespacho(data);
-
-      const alert = await this.alertController.create({
-        header: 'Entrega',
-        message: 'Entrega agregada correctamente.',
-        buttons: ['OK']
-      });
-      await alert.present();
-
-      //this.closeModal();
-      //this.router.navigate(['app.despacho', { keyUrl: idVenta }]);
-      this.hideDespacho = false;
-      loading.dismiss();
-    } catch (error: any) {
-      console.log(error.data.error);
-
-      const alert = await this.alertController.create({
-        header: 'Error',
-        message: error.data.error,
-        buttons: ['OK']
-      });
-      await alert.present();
-
-      this.hideDespacho = false;
-      loading.dismiss();
-    }
+    this.ventaService.postDespacho(data).subscribe(
+      response => {
+        loading.dismiss();
+        this.presentAlert('Entrega agregada correctamente.', 'Entrega');
+        this.closeModal(); // Cierra el modal después de agregar la entrega
+      },
+      error => {
+        loading.dismiss();
+        this.presentAlert('Error al agregar entrega: ' + error.message);
+      }
+    );
   }
+  
+  
 
   async eliminarEntrega() {
     if (this.idCliente === undefined || this.idVenta === undefined) {
