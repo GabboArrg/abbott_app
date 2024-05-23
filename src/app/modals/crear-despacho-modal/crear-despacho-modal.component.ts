@@ -208,21 +208,22 @@ export class CrearDespachoComponent implements OnInit {
     const strFec = formatDate(this.fecha_entrega, 'dd/MM/yyyy', 'en-US');
     let sumCant = 0;
 
-    const entregas_attributes = this.nuevaEntrega.map((value, index) => {
+    const entregas_attributes = this.nuevaEntrega.reduce((acc, value, index) => {
       const idaux = this.venta.productos[index].id;
       sumCant += value.cantidad;
-
+    
       if (value.cantidad < 0) {
         this.presentAlert('Debe ingresar una cantidad válida');
-        return;
+        return acc;
       }
-
-      return {
+    
+      acc[index] = {
         pos_venta_id: idaux,
         fecha_entrega: strFec,
         cantidad: value.cantidad
       };
-    });
+      return acc;
+    }, {});
 
     if (sumCant < 1) {
       return this.presentAlert('La cantidad total debe ser mayor que 0.');

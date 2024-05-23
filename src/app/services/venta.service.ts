@@ -185,33 +185,6 @@ export class VentaService {
   }
 
 
-  postDespacho2(data: any): Observable<any> {
-    const apiURL = environment.API_ABBOTT + 'entregas/';
-    console.log("url post desp: " + apiURL);
-
-    const headers = new HttpHeaders({
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    });
-
-    return this.http.post<any>(apiURL, data, { headers })
-      .pipe(
-        map(response => {
-          console.log('Server response:', response); // Log detallado de la respuesta
-          if (response && response.entrega) {
-            return response.entrega;
-          } else {
-            throw new Error('Respuesta inesperada del servidor');
-          }
-        }),
-        catchError(error => {
-          console.error('Error en la solicitud:', error);
-          return throwError(error);
-        })
-      );
-  }
-
-
   postDespacho(data: any): Observable<any> {
     const apiURL = environment.API_ABBOTT + 'entregas/';
     const headers = new HttpHeaders({
@@ -221,7 +194,7 @@ export class VentaService {
 
     return this.http.post<any>(apiURL, data, { headers })
       .pipe(
-        map(response => response.entrega),
+        map(response => response),
         catchError(this.handleError)
       );
   }
