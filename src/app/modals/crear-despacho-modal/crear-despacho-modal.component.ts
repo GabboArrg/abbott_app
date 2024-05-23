@@ -252,7 +252,8 @@ export class CrearDespachoComponent implements OnInit {
       response => {
         loading.dismiss();
         this.presentAlert('Entrega agregada correctamente.', 'Entrega');
-        this.closeModal(); // Cierra el modal después de agregar la entrega
+        this.closeAllModals();
+        this.router.navigate(['/home']);
       },
       error => {
         loading.dismiss();
@@ -261,51 +262,89 @@ export class CrearDespachoComponent implements OnInit {
     );
   }
   
+  async closeAllModals() {
+    // Aquí llamamos al dismiss() y pasamos un objeto indicando que queremos cerrar el modal padre
+    await this.modalController.dismiss({
+      closeParentModal: true
+    });
+  }
+
+  async esUltimaEntrega(): Promise<boolean> {
+    try {
+      let mayorNumero = 0;
+      // Iterar sobre las entregas para encontrar el número mayor
+      this.entregas.forEach((entrega: any) => {
+        if (entrega.numero > mayorNumero) {
+          mayorNumero = entrega.numero;
+        }
+      });
+  
+      // Comparar el número mayor encontrado con this.numero
+      return mayorNumero === this.numero;
+    } catch (error) {
+      console.error('Error al determinar si es la última entrega: ', error);
+      return false; // En caso de error, retorna false
+    }
+  }
   
 
   async eliminarEntrega() {
-    if (this.idCliente === undefined || this.idVenta === undefined) {
+    if (this.idCliente === undefined || this.venta.id === undefined) {
       console.error('idCliente o idVenta no están definidos');
       return;
     }
-
-    const alert = await this.alertController.create({
-      header: 'Eliminar Entrega',
-      message: '¿Está seguro de eliminar esta entrega?',
-      buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-          handler: () => {
-            console.log('Cancelar');
-          },
-        },
-        {
-          text: 'Eliminar',
-          handler: async () => {
-            const loading = await this.loadingCtrl.create({
-              message: 'Eliminando entrega...',
-              spinner: 'bubbles',
-            });
-            await loading.present();
   
-            this.ventaService.deleteDespacho(this.idVenta, this.numero).then((respuesta) => {
-              console.log('Eliminar Entrega', respuesta);
-              loading.dismiss();
-              // Redireccionar a la ruta de ventas con idCliente y idVenta
-              this.router.navigate([`/ventas/${this.idCliente}/${this.idVenta}`]);
-            }).catch((error) => {
-              console.log(error);
-              loading.dismiss();
-              this.showErrorAlert(error.message || 'Error al eliminar');
-            });
-          },
-        },
-      ],
-    });
+    try {
+      const esUltima = await this.esUltimaEntrega(); // Verificar si es la última entrega
   
-    await alert.present();
+      if (!esUltima) {
+        this.showErrorAlert('No se puede eliminar esta entrega porque no es la última.');
+        return;
+      }
+  
+      const alert = await this.alertController.create({
+        header: 'Eliminar Entrega',
+        message: '¿Está seguro de eliminar esta entrega?',
+        buttons: [
+          {
+            text: 'Cancelar',
+            role: 'cancel',
+            handler: () => {
+              console.log('Cancelar');
+            },
+          },
+          {
+            text: 'Eliminar',
+            handler: async () => {
+              const loading = await this.loadingCtrl.create({
+                message: 'Eliminando entrega...',
+                spinner: 'bubbles',
+              });
+              await loading.present();
+    
+              this.ventaService.deleteDespacho(this.venta.id, this.numero).then((respuesta) => {
+                console.log('Eliminar Entrega', respuesta);
+                loading.dismiss();
+                this.closeAllModals();
+                this.router.navigate(['/home']);
+              }).catch((error) => {
+                console.log(error);
+                loading.dismiss();
+                this.showErrorAlert(error.message || 'Error al eliminar');
+              });
+            },
+          },
+        ],
+      });
+    
+      await alert.present();
+    } catch (error) {
+      console.error('Error al eliminar entrega: ', error);
+      this.showErrorAlert('Error al eliminar la entrega.');
+    }
   }
+  
+
   async showErrorAlert(message: string) {
     const alert = await this.alertController.create({
       header: 'Error al eliminar',

@@ -164,7 +164,9 @@ export class DespachoComponent implements OnInit {
   });
 
     modal.onDidDismiss().then((data) => {
-      this.initData();
+      if (data !== null && data.data && data.data.closeParentModal) {
+        this.modalController.dismiss(); // Cierra el modal padre si se recibe la señal
+      }
     });
 
     await modal.present();
