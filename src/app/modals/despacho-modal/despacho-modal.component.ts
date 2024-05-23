@@ -63,7 +63,8 @@ export class DespachoComponent implements OnInit {
     try {
       this.despacho_clases = await this.ventaService.getDespachoClases();
       this.entregas = this.venta.entregas;
-  
+      
+      console.log("entregas: "+ this.entregas);
       this.maxEntrega = this.venta.productos.map((p: { id: any; cantidad: any; }) => ({
         id: p.id,
         acumulado: 0,
@@ -78,12 +79,8 @@ export class DespachoComponent implements OnInit {
         this.hideEntrega = false;
       } else {
         this.hideEntrega = true;
-        console.log("entregas: " + this.entregas);
-        console.log("entregas length: " + this.entregas.length);
         this.entregas.forEach(entrega => {
           entrega.posiciones.forEach((posicion: { pos_venta_id: number; cantidad_entregada: string; }) => {
-            console.log("entregas en cuestion: " + JSON.stringify(posicion));
-            console.log("max entrega actual: " + JSON.stringify(this.maxEntrega));
             const entregado = parseInt(posicion.cantidad_entregada, 10);
             // Buscar el objeto correspondiente en maxEntrega usando el pos_venta_id
             const maxEntregaObj = this.maxEntrega.find(item => item.id === posicion.pos_venta_id);
@@ -93,11 +90,14 @@ export class DespachoComponent implements OnInit {
             }
           });
         });
-        this.venta.productos.forEach((producto: { cantidad_total: string; }) => {
-          this.total_productos += parseInt(producto.cantidad_total, 10);
-        });
+
+
       }
-  
+      
+      this.venta.productos.forEach((producto: { cantidad_total: any; }) => {
+        this.total_productos += parseInt(producto.cantidad_total, 10);
+      });
+
       if (this.total_productos > this.total_entregado) {
         this.hideEntrega = false;
       }
