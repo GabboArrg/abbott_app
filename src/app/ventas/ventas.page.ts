@@ -564,9 +564,7 @@ export class VentasPage implements OnInit {
     });
 
     modal.onDidDismiss().then((data) => {
-      if (data.data && data.data.archivos) {
-        this.archivos = data.data.archivos;
-      }
+      this.ngOnInit();
     });
 
     await modal.present();

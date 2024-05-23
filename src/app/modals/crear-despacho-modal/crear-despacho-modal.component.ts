@@ -250,10 +250,11 @@ export class CrearDespachoComponent implements OnInit {
     const loading = await this.presentLoading();
     this.ventaService.postDespacho(data).subscribe(
       response => {
+        console.log('Crear Entrega', response);
         loading.dismiss();
-        this.presentAlert('Entrega agregada correctamente.', 'Entrega');
         this.closeAllModals();
-        this.router.navigate(['/home']);
+        this.presentAlert('Entrega creada correctamente.', 'Entrega');
+        this.router.navigate([`ventas/${this.idCliente}/${this.venta.id}`]);
       },
       error => {
         loading.dismiss();
@@ -326,7 +327,8 @@ export class CrearDespachoComponent implements OnInit {
                 console.log('Eliminar Entrega', respuesta);
                 loading.dismiss();
                 this.closeAllModals();
-                this.router.navigate(['/home']);
+                this.presentAlert('Entrega eliminada correctamente.', 'Entrega');
+                this.router.navigate([`ventas/${this.idCliente}/${this.venta.id}`]);
               }).catch((error) => {
                 console.log(error);
                 loading.dismiss();
