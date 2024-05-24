@@ -2,7 +2,6 @@
 
 <ion-content fullscreen padding>
   <ion-list>
-
     <!-- Datos del cliente -->
     <ion-item-divider class="titulo_tabla">
       <ion-label><b>Datos del cliente</b></ion-label>
@@ -45,46 +44,46 @@
       <ion-label><b>Dirección Principal</b></ion-label>
     </ion-item-divider>
 
-    <ion-item class="item item-input item-stacked-label">
+    <ion-item>
       <ion-label position="stacked">Dirección</ion-label>
       <ion-input type="text" [(ngModel)]="cliente.direccion" placeholder="Ej.: Avda. Apoquindo #123"></ion-input>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Región</ion-label>
       <ion-select [(ngModel)]="selectedData.region" (ionChange)="actualizarComunas()">
         <ion-select-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</ion-select-option>
       </ion-select>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Comuna</ion-label>
       <ion-select [(ngModel)]="selectedData.comuna">
         <ion-select-option *ngFor="let comuna of comunasCliente" [value]="comuna.id">{{ comuna.nombre }}</ion-select-option>
       </ion-select>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Ciudad</ion-label>
       <ion-input type="text" [(ngModel)]="cliente.ciudad" placeholder="Ej.: Santiago"></ion-input>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Código Postal</ion-label>
       <ion-input type="text" [(ngModel)]="cliente.codigopostal" placeholder="Ej.: 62000000"></ion-input>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Médico Responsable</ion-label>
       <ion-input type="text" [(ngModel)]="cliente.medico_responsable" placeholder="Ej.: Peter Perez"></ion-input>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Especialidad</ion-label>
       <ion-input type="text" [(ngModel)]="cliente.especialidad" placeholder="Ej.: Cardiología"></ion-input>
     </ion-item>
-    
-    <ion-item class="item item-input item-stacked-label">
+
+    <ion-item>
       <ion-label position="stacked">Observaciones</ion-label>
       <ion-input type="text" [(ngModel)]="cliente.observacion"></ion-input>
     </ion-item>
@@ -100,38 +99,36 @@
             </ion-item-divider>
             
             <!-- Contenido de la sucursal -->
-            <ion-item class="item item-input item-stacked-label">
+            <ion-item>
               <ion-label position="stacked">Dirección</ion-label>
               <ion-input type="text" [(ngModel)]="sucursal.direccion" readonly></ion-input>
             </ion-item>
-            <ion-item class="item item-input item-stacked-label">
+
+            <ion-item>
               <ion-label position="stacked">Recibe</ion-label>
               <ion-input type="text" [(ngModel)]="sucursal.recibe" readonly></ion-input>
             </ion-item>
             
-            <!-- Selección de Región -->
-            <ion-item class="item item-input item-stacked-label">
+            <ion-item>
               <ion-label position="stacked">Región</ion-label>
               <ion-select [(ngModel)]="sucursal.selectedData.region.id" disabled>
                 <ion-select-option *ngFor="let region of regiones" [value]="region.id">{{ region.nombre }}</ion-select-option>
-              </ion-select>              
-            </ion-item>
-            
-            <!-- Selección de Comuna -->
-            <ion-item class="item item-input item-stacked-label">
-              <ion-label position="stacked">Comuna</ion-label>
-              <ion-select [(ngModel)]="sucursal.selectedData.comuna.id" disabled>
-                <ion-select-option *ngFor="let comuna of comunas" [value]="comuna.id">
-                  {{ comuna.nombre }}
-                </ion-select-option>
               </ion-select>
             </ion-item>
             
-            <ion-item class="item item-input item-stacked-label">
+            <ion-item>
+              <ion-label position="stacked">Comuna</ion-label>
+              <ion-select [(ngModel)]="sucursal.selectedData.comuna.id" disabled>
+                <ion-select-option *ngFor="let comuna of comunas" [value]="comuna.id">{{ comuna.nombre }}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            
+            <ion-item>
               <ion-label position="stacked">Ciudad</ion-label>
               <ion-input type="text" [(ngModel)]="sucursal.ciudad" readonly></ion-input>
             </ion-item>
-            <ion-item class="item item-input item-stacked-label">
+
+            <ion-item>
               <ion-label position="stacked">Teléfono</ion-label>
               <ion-input type="text" [(ngModel)]="sucursal.telefono" readonly></ion-input>
             </ion-item>
@@ -145,8 +142,6 @@
         </ion-item>
       </ng-container>
     </ng-container>
-    
-    
 
     <ion-button expand="block" color="primary" (click)="abrirModalAgregarDireccion()">
       <ion-icon name="map" slot="start"></ion-icon>
@@ -155,37 +150,42 @@
 
     <!-- Contactos -->
     <ng-container *ngIf="contactos && contactos.length > 0">
-      <ion-item *ngFor="let contacto of contactos">
+      <ng-container *ngFor="let contacto of contactos">
         <ion-item *ngIf="contacto._destroy != 'true'">
           <div style="width: 100%;">
             <ion-item-divider class="titulo_tabla">
-              <ion-label><b>Contactos</b></ion-label>
+              <ion-label><b>Contacto: {{ contacto.nombre }}</b></ion-label>
             </ion-item-divider>
-            
+
             <!-- Contenido del contacto -->
-            <ion-item class="item item-input item-stacked-label">
+            <ion-item>
               <ion-label position="stacked">Nombre</ion-label>
               <ion-input type="text" [(ngModel)]="contacto.nombre"></ion-input>
             </ion-item>
-            <ion-item class="item item-input item-stacked-label">
+            
+            <ion-item>
               <ion-label position="stacked">Email</ion-label>
               <ion-input type="text" [(ngModel)]="contacto.email"></ion-input>
             </ion-item>
-            <ion-item class="item item-input item-stacked-label">
-              <ion-label position="stacked">Telefono</ion-label>
+            
+            <ion-item>
+              <ion-label position="stacked">Teléfono</ion-label>
               <ion-input type="text" [(ngModel)]="contacto.telefono"></ion-input>
             </ion-item>
-            <ion-item class="item item-input item-stacked-label">
+            
+            <ion-item>
               <ion-label position="stacked">Especialidad</ion-label>
               <ion-input type="text" [(ngModel)]="contacto.especialidad"></ion-input>
             </ion-item>
-            <ion-button expand="block" color="danger" (click)="eliminarContacto(contacto)">
-              <ion-icon name="accessibility-outline" slot="start"></ion-icon>
+            
+            <!-- Botón de eliminar contacto -->
+            <ion-button expand="full" color="danger" (click)="eliminarContacto(contacto)">
+              <ion-icon name="trash-outline" slot="start"></ion-icon>
               Eliminar Contacto
             </ion-button>
           </div>
         </ion-item>
-      </ion-item>
+      </ng-container>
     </ng-container>
 
     <ion-button *ngIf="editarCliente" expand="full" (click)="openModalVerAdjuntos(cliente.id)">Archivos Adjuntos</ion-button>
@@ -200,10 +200,9 @@
       Solicitar evaluación
     </ion-button>
 
-    <ion-button color="primary" expand="block" (click)="agregarCliente()" disabled>
+    <ion-button color="primary" expand="block" (click)="agregarCliente()">
       <ion-icon name="person-add" slot="start"></ion-icon>
       Guardar cliente
     </ion-button>
-
   </ion-list>
 </ion-content>

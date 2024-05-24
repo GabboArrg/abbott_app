@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient,HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { HttpClient,HttpErrorResponse,HttpHeaders } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/login/services/user.service';
 
@@ -111,13 +111,31 @@ export class ClienteService {
     );
   }
 
+
+
   postCliente(data: any): Observable<any> {
-    const url = `${environment.API_ABBOTT}clientes/`;
-    return this.http.post(url, data).pipe(
-      catchError(error => {
-        throw error;
-      })
-    );
+    const apiURL = environment.API_ABBOTT + 'clientes/';
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(apiURL, data, { headers })
+      .pipe(
+        map(response => response),
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(error: HttpErrorResponse) {
+    console.error('Error en la solicitud:', error);
+    let errorMsg = 'Ocurrió un error desconocido';
+    if (error.error instanceof ErrorEvent) {
+      errorMsg = `Error del cliente: ${error.error.message}`;
+    } else {
+      errorMsg = `Error del servidor: ${error.status} - ${error.message}`;
+    }
+    return throwError(errorMsg);
   }
 
   postSucursal(data: any): Observable<any> {

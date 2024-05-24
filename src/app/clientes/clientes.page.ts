@@ -19,11 +19,11 @@ import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/
 
 
 interface ClienteContacto {
-  // Definir las propiedades de los objetos de contacto
-  // por ejemplo:
   nombre: string;
   email: string;
-  // Otras propiedades
+  telefono: string;
+  especialidad: string;
+  _destroy: string;
 }
 interface Cliente {
   cliente_clase_id: string;
@@ -77,7 +77,6 @@ export class ClientesPage implements OnInit{
   archivos_elegidos: any[] = [];
   tituloVarLocal: string | undefined;
   editarCliente: boolean  = false;
-  //route: any;
   cliente_contactos: any = [];
   loadingController: any;
   alertController: any;
@@ -131,7 +130,7 @@ agregarCliente(): void {
 
   const tmpCliente = {
     cliente: {
-      id: this.getMember(this.cliente.id),
+      id: this.cliente.id || null,  // Agregar la propiedad 'id'
       cliente_clase_id: '1',
       rut: this.getMember(this.cliente.rut),
       nombre: this.getMember(this.cliente.nombre),
@@ -143,8 +142,8 @@ agregarCliente(): void {
       observacion: this.getMember(this.cliente.observacion),
       direccion: this.getMember(this.cliente.direccion),
       pais_id: '41',
-      region_id: this.getMember(this.selectedData.region.id),
-      comuna_id: this.getMember(this.selectedData.comuna.id),
+      region_id: this.getMember(this.selectedData.region),
+      comuna_id: this.getMember(this.selectedData.comuna),
       ciudad: this.getMember(this.cliente.ciudad),
       codigopostal: this.getMember(this.cliente.codigopostal),
       telefono: this.getMember(this.cliente.telefono),
@@ -158,7 +157,15 @@ agregarCliente(): void {
   };
 
   if (this.contactos.length > 0) {
-    tmpCliente.cliente.cliente_contactos_attributes = this.contactos.filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined));
+    tmpCliente.cliente.cliente_contactos_attributes = this.contactos
+      .filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined))
+      .map(contacto => {
+        const { is_new, ...contactoSinIsNew } = contacto;
+        return {
+          ...contactoSinIsNew,
+          _destroy: 'false'
+        };
+      });
   }
 
   const catch_response = (response: any) => {
@@ -168,7 +175,7 @@ agregarCliente(): void {
     this.sucursales.forEach((sucursal: any) => {
       const tmp = {
         cliente_sucursal: {
-          cliente_id: this.getMember(sucursal.cliente.id),
+          cliente_id: this.getMember(this.cliente.id),
           nombre: this.getMember(sucursal.nombre),
           recibe: this.getMember(sucursal.recibe),
           pais_id: '41',
@@ -189,6 +196,7 @@ agregarCliente(): void {
       if (sucursal._destroy === 'false') {
         if (sucursal.is_new === 'true') {
           tmp.cliente_sucursal.cliente_id = this.getMember(this.cliente.id);
+          console.log("POSTSUCURSAL: " + JSON.stringify(tmp));
           this.clienteService.postSucursal(tmp).subscribe(() => {
             console.log("ESTO PASO EL POST DE SUCURSALES");
           }, () => {
@@ -200,6 +208,8 @@ agregarCliente(): void {
             tmp.cliente_sucursal.region = sucursal.region;
             tmp.cliente_sucursal.comuna = sucursal.comuna;
             console.log("CLIENTE SUCURSAL PATCH JSON");
+            console.log(" patchSucursal tmp: " + JSON.stringify(tmp));
+            console.log("this.getMember(sucursal.id): " + this.getMember(sucursal.id));
             this.clienteService.patchSucursal(tmp, this.getMember(sucursal.id)).subscribe(() => {
               console.log("CLIENTE_SURCUSALES: PATCH");
             }, () => {
@@ -208,6 +218,7 @@ agregarCliente(): void {
           }
         }
       } else {
+        console.log("deleteSucursal this.getMember(sucursal.id): " + this.getMember(sucursal.id));
         this.clienteService.deleteSucursal(this.getMember(sucursal.id)).subscribe(() => {
           console.log("Delete sucursal");
         }, () => {
@@ -238,41 +249,43 @@ agregarCliente(): void {
     this.mostrarAlerta('Error', 'Uno o más campos se encuentran vacíos o con error' + msg);
   };
 
-this.loadingCtrl.create({
-  message: 'Cargando...',
-  spinner: 'bubbles',
-  translucent: true
-}).then((loading) => {
-  loading.present();
-  console.log("edita?" + this.editarCliente);
-  if (this.editarCliente === true) {
-    console.log("TMP Cliente: "+ tmpCliente);
-    this.clienteService.postCliente(tmpCliente).subscribe(
-      (response: any) => {
-        catch_response(response);
-        loading.dismiss();
-      },
-      (error: any) => {
-        catch_error(error);
-        loading.dismiss();
-      }
-    );
-  } else {
-    tmpCliente.cliente.id = this.getMember(this.cliente.id);
-    this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
-      (response: any) => {
-        catch_response(response);
-        loading.dismiss();
-      },
-      (error: any) => {
-        catch_error(error);
-        loading.dismiss();
-      }
-    );
-  }
-});
+  this.loadingCtrl.create({
+    message: 'Cargando...',
+    spinner: 'bubbles',
+    translucent: true
+  }).then((loading) => {
+    loading.present();
+    console.log("edita?" + this.editarCliente);
+    if (this.editarCliente === false) {
+      console.log("TMP Cliente: " + JSON.stringify(tmpCliente));
+      this.clienteService.postCliente(tmpCliente).subscribe(
+        (response: any) => {
+          catch_response(response);
+          loading.dismiss();
+        },
+        (error: any) => {
+          catch_error(error);
+          loading.dismiss();
+        }
+      );
+    } else {
+      console.log("patch cliente: " + JSON.stringify(tmpCliente));
+      this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
+        (response: any) => {
+          catch_response(response);
+          loading.dismiss();
+        },
+        (error: any) => {
+          catch_error(error);
+          loading.dismiss();
+        }
+      );
+    }
+  });
+}
 
-}//llave cliente
+
+
 
   ///      FINALIZA AGREGAR CLIENTES      ///
   mostrarAlerta(header: string, message: string): void {
