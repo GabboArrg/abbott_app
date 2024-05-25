@@ -1,52 +1,56 @@
-<div class="modal" scroll="true">
-  <header class="bar bar-header bar-positive">
-    <h1 class="title">Nueva dirección</h1>
-  </header>
-    <ion-list>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Nombre Sucursal</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.nombre" placeholder="Ej.: Sucursal Vitacura"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Recibe</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.recibe" placeholder="Ej.: Juan Pablo Perez Pereira"></ion-input>
-      </ion-item>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Nueva dirección</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModalDireccion()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Region</ion-label>
-        <ion-select [(ngModel)]="sucursal.selectedData.region" (ionChange)="actualizarComunas()">
-          <ion-select-option *ngFor="let region of regiones" [value]="region">{{ region.nombre }}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Comuna</ion-label>
-        <ion-select [(ngModel)]="sucursal.selectedData.comuna">
-          <ion-select-option *ngFor="let comuna of comunasCliente" [value]="comuna">{{ comuna.nombre }}</ion-select-option>
-        </ion-select>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Ciudad</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.ciudad" placeholder="Ej.: Santiago"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Dirección</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.direccion" placeholder="Ej.: Avda. Apoquindo #123"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Telefono</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.telefono" placeholder="Ej.: 987654321"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Email</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.email" placeholder="Ej.: cliente@servidor.com"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input item-stacked-label">
-        <ion-label class="input-ion-item">Requerimiento</ion-label>
-        <ion-input type="text" [(ngModel)]="sucursal.req_adicionales" placeholder="Ej.: Requerimientos adicionales del cliente"></ion-input>
-      </ion-item>
-    </ion-list>
-    <ion-button expand="full" color="primary" (click)="agregarDireccion()">Agregar</ion-button>
-    
-    <!-- Botón para cerrar el modal -->
-    <ion-button expand="full" color="secondary" (click)="closeModalDireccion()">Cerrar</ion-button>
-</div>
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Nombre Sucursal</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.nombre" placeholder="Ej.: Sucursal Vitacura"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Recibe</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.recibe" placeholder="Ej.: Juan Pablo Perez Pereira"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Region</ion-label>
+      <ion-select [(ngModel)]="sucursal.selectedData.region" (ionChange)="actualizarComunas()">
+        <ion-select-option *ngFor="let region of regiones" [value]="region">{{ region.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Comuna</ion-label>
+      <ion-select [(ngModel)]="sucursal.selectedData.comuna">
+        <ion-select-option *ngFor="let comuna of comunasCliente" [value]="comuna">{{ comuna.nombre }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Ciudad</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.ciudad" placeholder="Ej.: Santiago"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Dirección</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.direccion" placeholder="Ej.: Avda. Apoquindo #123"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Telefono</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.telefono" placeholder="Ej.: 987654321"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Email</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.email" placeholder="Ej.: cliente@servidor.com"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Requerimiento</ion-label>
+      <ion-input type="text" [(ngModel)]="sucursal.req_adicionales" placeholder="Ej.: Requerimientos adicionales del cliente"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="full" color="primary" (click)="agregarDireccion()">Agregar</ion-button>
+</ion-content>

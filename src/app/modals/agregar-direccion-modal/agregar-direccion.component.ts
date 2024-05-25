@@ -28,7 +28,8 @@ export class AgregarDireccionComponent implements OnInit {
       region: { id: '', nombre: '' },
       comuna: { id: '', nombre: '' }
     },
-    is_new: true
+    is_new: "true",
+    _destroy: "false"
   };
   
   comunasCliente: any[] = [];

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, LoadingController, AlertController, Platform } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router'; 
+import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { ClienteService } from 'src/app/services/cliente.service';
 import { VentaService } from 'src/app/services/venta.service';
@@ -97,6 +98,7 @@ export class ClientesPage implements OnInit{
     public filePath: FilePath,
     public fileChooser: FileChooser,
     private route: ActivatedRoute,
+    private router: Router,
     private modalController: ModalController
   ) {
     this.comunas = [];
@@ -115,7 +117,13 @@ export class ClientesPage implements OnInit{
       this.editarCliente = false;
     }
   }
+
+
+
+
+
 ///      COMIENZA AGREGAR CLIENTES      ///
+
 agregarCliente(): void {
   if (this.contactos.length === 0) {
     this.mostrarAlerta('Error', 'Debe ingresar al menos un contacto');
@@ -130,7 +138,7 @@ agregarCliente(): void {
 
   const tmpCliente = {
     cliente: {
-      id: this.cliente.id || null,  // Agregar la propiedad 'id'
+      id: this.cliente.id || null,
       cliente_clase_id: '1',
       rut: this.getMember(this.cliente.rut),
       nombre: this.getMember(this.cliente.nombre),
@@ -152,26 +160,24 @@ agregarCliente(): void {
       medico_responsable: this.getMember(this.cliente.medico_responsable),
       especialidad: this.getMember(this.cliente.especialidad),
       estado: this.getMember(this.cliente.estado),
-      cliente_contactos_attributes: [] as ClienteContacto[],
+      cliente_contactos_attributes: this.contactos
+        .filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined))
+        .map(contacto => {
+          const { is_new, ...contactoSinIsNew } = contacto;
+          return {
+            ...contactoSinIsNew,
+            _destroy: contacto._destroy || 'false'
+          };
+        })
     }
   };
 
-  if (this.contactos.length > 0) {
-    tmpCliente.cliente.cliente_contactos_attributes = this.contactos
-      .filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined))
-      .map(contacto => {
-        const { is_new, ...contactoSinIsNew } = contacto;
-        return {
-          ...contactoSinIsNew,
-          _destroy: 'false'
-        };
-      });
-  }
-
   const catch_response = (response: any) => {
-    if (response !== undefined) {
-      this.cliente.id = response.data.cliente.id;
+    console.log("Response received:", response);
+    if (response && response.cliente) {
+      this.cliente.id = response.cliente.id;
     }
+
     this.sucursales.forEach((sucursal: any) => {
       const tmp = {
         cliente_sucursal: {
@@ -193,52 +199,49 @@ agregarCliente(): void {
           comuna: this.getMember(sucursal.comuna)
         }
       };
+
       if (sucursal._destroy === 'false') {
         if (sucursal.is_new === 'true') {
-          tmp.cliente_sucursal.cliente_id = this.getMember(this.cliente.id);
           console.log("POSTSUCURSAL: " + JSON.stringify(tmp));
           this.clienteService.postSucursal(tmp).subscribe(() => {
-            console.log("ESTO PASO EL POST DE SUCURSALES");
+            console.log("Sucursal añadida exitosamente");
           }, () => {
-            console.log("ESTO NO PASO EL POST DE SUCURSALES");
+            console.log("Error al añadir la sucursal");
           });
         } else {
-          if (sucursal.casa_matriz !== true) {
-            tmp.cliente_sucursal.pais = 'Chile';
-            tmp.cliente_sucursal.region = sucursal.region;
-            tmp.cliente_sucursal.comuna = sucursal.comuna;
-            console.log("CLIENTE SUCURSAL PATCH JSON");
-            console.log(" patchSucursal tmp: " + JSON.stringify(tmp));
-            console.log("this.getMember(sucursal.id): " + this.getMember(sucursal.id));
+          if (!sucursal.casa_matriz) {
+            console.log("PATCH SUCURSAL: " + JSON.stringify(tmp));
             this.clienteService.patchSucursal(tmp, this.getMember(sucursal.id)).subscribe(() => {
-              console.log("CLIENTE_SURCUSALES: PATCH");
+              console.log("Sucursal actualizada exitosamente");
             }, () => {
-              console.log("CLIENTE_SUCURSALES: PATCH ERROR");
+              console.log("Error al actualizar la sucursal");
             });
           }
         }
       } else {
-        console.log("deleteSucursal this.getMember(sucursal.id): " + this.getMember(sucursal.id));
+        console.log("DELETE SUCURSAL ID: " + this.getMember(sucursal.id));
         this.clienteService.deleteSucursal(this.getMember(sucursal.id)).subscribe(() => {
-          console.log("Delete sucursal");
+          console.log("Sucursal eliminada");
         }, () => {
-          console.log("Delete sucursal error");
+          console.log("Error al eliminar la sucursal");
           const msg = 'La sucursal ' + sucursal.nombre + ' no se puede eliminar';
           this.mostrarAlerta('Atención', msg);
         });
       }
     });
+
     let msg = '';
-    if (this.statusCliente === 'agregar') {
-      msg = 'El cliente ha sido añadido exitósamente';
+    if (this.editarCliente === true) {
+      msg = 'El cliente ha sido añadido exitosamente';
     } else {
-      msg = 'El cliente ha sido actualizado exitósamente';
+      msg = 'El cliente ha sido actualizado exitosamente';
     }
     this.mostrarAlerta('Atención', msg);
-    this.navCtrl.navigateRoot('app/abbott');
+    this.router.navigate(['/home']);
   };
 
   const catch_error = (error: any) => {
+    console.log("Error response:", error);
     let msg = '<br>';
     for (const k in error.data) {
       let j = k;
@@ -255,9 +258,8 @@ agregarCliente(): void {
     translucent: true
   }).then((loading) => {
     loading.present();
-    console.log("edita?" + this.editarCliente);
     if (this.editarCliente === false) {
-      console.log("TMP Cliente: " + JSON.stringify(tmpCliente));
+      console.log("POST Cliente: " + JSON.stringify(tmpCliente));
       this.clienteService.postCliente(tmpCliente).subscribe(
         (response: any) => {
           catch_response(response);
@@ -269,7 +271,7 @@ agregarCliente(): void {
         }
       );
     } else {
-      console.log("patch cliente: " + JSON.stringify(tmpCliente));
+      console.log("PATCH Cliente: " + JSON.stringify(tmpCliente));
       this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
         (response: any) => {
           catch_response(response);
@@ -287,14 +289,17 @@ agregarCliente(): void {
 
 
 
+
   ///      FINALIZA AGREGAR CLIENTES      ///
-  mostrarAlerta(header: string, message: string): void {
-    this.alertController.create({
-      header,
-      message,
-      buttons: ['Aceptar']
-    }).then((alert: { present: () => any; }) => alert.present());
+
+  mostrarAlerta(titulo: string, mensaje: string) {
+    this.alertCtrl.create({
+      header: titulo,
+      message: mensaje,
+      buttons: ['OK']
+    }).then(alert => alert.present());
   }
+  
   
   getMember(member: any): string {
     return member !== null && member !== '' && member !== undefined && member.length !== 0 ? (typeof member !== 'string' ? member.toString() : member) : '';
@@ -576,6 +581,7 @@ agregarCliente(): void {
         // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
         const { sucursal } = data.data;
         this.sucursales.push(sucursal);
+        console.log("ondidmiss modal agregar direccion: "+ JSON.stringify(this.sucursales));
       }
     });
     return await modal.present();

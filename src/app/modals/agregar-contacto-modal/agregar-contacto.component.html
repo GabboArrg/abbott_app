@@ -1,34 +1,32 @@
-<div class="modal" scroll="true">
-  <header class="bar bar-header bar-positive">
-    <ion-buttons slot="start">
-      <!-- Utiliza el ion-back-button sin el atributo defaultHref -->
-      <ion-back-button (click)="closeModalDireccion()"></ion-back-button>
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-title>Nuevo Contacto</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="closeModalDireccion()">
+        <ion-icon slot="icon-only" name="close"></ion-icon>
+      </ion-button>
     </ion-buttons>
-    <h1 class="title">Nuevo contacto</h1>
-  </header>
-  <div class="modal-content">
+  </ion-toolbar>
+</ion-header>
 
-    <ion-list>
-      <ion-item class="item item-input">
-        <ion-label class="input-ion-item">Nombre</ion-label>
-        <ion-input type="text" [(ngModel)]="contacto.nombre" placeholder="Ej.: Juan Pablo Perez Pereira"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input">
-        <ion-label class="input-ion-item">E-Mail</ion-label>
-        <ion-input type="email" [(ngModel)]="contacto.email" placeholder="Ej.: cliente@servidor.com"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input">
-        <ion-label class="input-ion-item">Teléfono</ion-label>
-        <ion-input type="text" [(ngModel)]="contacto.telefono" placeholder="Ej.: 987654321"></ion-input>
-      </ion-item>
-      <ion-item class="item item-input">
-        <ion-label class="input-ion-item">Especialidad</ion-label>
-        <ion-input type="text" [(ngModel)]="contacto.especialidad" placeholder="Ej.: Cardiología"></ion-input>
-      </ion-item>
-    </ion-list>
-    <ion-button expand="full" color="primary" (click)="agregarContacto()">Agregar</ion-button>
-    
-    <!-- Botón para cerrar el modal -->
-    <ion-button expand="full" color="secondary" (click)="closeModalDireccion()">Cerrar</ion-button>
-  </div>
-</div>
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <ion-label position="stacked">Nombre</ion-label>
+      <ion-input type="text" [(ngModel)]="contacto.nombre" placeholder="Ej.: Juan Pablo Perez Pereira"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">E-Mail</ion-label>
+      <ion-input type="email" [(ngModel)]="contacto.email" placeholder="Ej.: cliente@servidor.com"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Teléfono</ion-label>
+      <ion-input type="text" [(ngModel)]="contacto.telefono" placeholder="Ej.: 987654321"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="stacked">Especialidad</ion-label>
+      <ion-input type="text" [(ngModel)]="contacto.especialidad" placeholder="Ej.: Cardiología"></ion-input>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="full" color="primary" (click)="agregarContacto()">Agregar</ion-button>
+</ion-content>

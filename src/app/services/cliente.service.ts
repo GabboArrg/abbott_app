@@ -111,10 +111,9 @@ export class ClienteService {
     );
   }
 
-
-
   postCliente(data: any): Observable<any> {
     const apiURL = environment.API_ABBOTT + 'clientes/';
+    console.log("entra al postcliente: "+apiURL);
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -125,6 +124,43 @@ export class ClienteService {
         map(response => response),
         catchError(this.handleError)
       );
+  }
+
+  postSucursal(data: any): Observable<any> {
+    const apiURL = environment.API_ABBOTT + 'cliente_sucursales/';
+    console.log("entra al postSucursal: "+apiURL);
+    const headers = new HttpHeaders({
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    });
+
+    return this.http.post<any>(apiURL, data, { headers })
+      .pipe(
+        map(response => response),
+        catchError(this.handleError)
+      );
+  }
+
+
+
+  patchCliente(data: any, id: string): Observable<any> {
+    const url = `${environment.API_ABBOTT}clientes/${id}`;
+    console.log("entra a patchcliente: "+url);
+    return this.http.patch(url, data).pipe(
+      catchError(error => {
+        throw error;
+      })
+    );
+  }
+
+  patchSucursal(data: any, id: string): Observable<any> {
+    const url = `${environment.API_ABBOTT}cliente_sucursales?id=${id}`;
+    console.log("entra al patchsucursal: "+ url);
+    return this.http.patch(url, data).pipe(
+      catchError(error => {
+        throw error;
+      })
+    );
   }
 
   private handleError(error: HttpErrorResponse) {
@@ -138,35 +174,9 @@ export class ClienteService {
     return throwError(errorMsg);
   }
 
-  postSucursal(data: any): Observable<any> {
-    const url = `${environment.API_ABBOTT}cliente_sucursales/`;
-    return this.http.post(url, data).pipe(
-      catchError(error => {
-        throw error;
-      })
-    );
-  }
-
-  patchCliente(data: any, id: string): Observable<any> {
-    const url = `${environment.API_ABBOTT}clientes/${id}`;
-    return this.http.patch(url, data).pipe(
-      catchError(error => {
-        throw error;
-      })
-    );
-  }
-
-  patchSucursal(data: any, id: string): Observable<any> {
-    const url = `${environment.API_ABBOTT}cliente_sucursales?id=${id}`;
-    return this.http.patch(url, data).pipe(
-      catchError(error => {
-        throw error;
-      })
-    );
-  }
-
   deleteSucursal(id: string): Observable<any> {
     const url = `${environment.API_ABBOTT}cliente_sucursales?id=${id}`;
+    console.log("entra al deletesurucusal: "+url);
     return this.http.delete(url).pipe(
       catchError(error => {
         throw error;
