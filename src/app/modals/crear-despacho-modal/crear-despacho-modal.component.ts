@@ -24,7 +24,7 @@ export class CrearDespachoComponent implements OnInit {
   hideDespacho = false;
   @Input() nuevaEntrega: any[] = []; // Esto debe ser llenado con los datos adecuados
   idDespacho: number = 0;
-  idSucursal: number = 0;
+  idSucursal: any = 0;
   idContacto: number | undefined;
   fecha_entrega: any;
   observacion: any;
@@ -94,7 +94,7 @@ export class CrearDespachoComponent implements OnInit {
     this.idDespacho = idDespacho;
     if (idDespacho === 1 || idDespacho === 2) {
       this.tiene_despacho = false;
-      this.idSucursal = 0;
+      this.idSucursal = '';
     } else {
       this.tiene_despacho = true;
     }
