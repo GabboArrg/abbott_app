@@ -183,4 +183,22 @@ export class ClienteService {
       })
     );
   }
+
+  solicitarEvaluacion(clienteId: string, token: string): Observable<any> {
+    const url = `${environment.API_ABBOTT}/solicitar_evaluacion`;
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+    const body = new FormData();
+    body.append('cliente_id', clienteId);
+    body.append('access_token', token);
+
+    return this.http.post(url, body, { headers }).pipe(
+      catchError(error => {
+        console.error('Error al solicitar evaluación:', error);
+        return throwError(error);
+      })
+    );
+  }
+
 }

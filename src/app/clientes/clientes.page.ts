@@ -18,7 +18,6 @@ import { AgregarDireccionComponent } from 'src/app/modals/agregar-direccion-moda
 import { AgregarContactoComponent } from 'src/app/modals/agregar-contacto-modal/agregar-contacto.component';
 import { AgregarAdjuntosComponent } from 'src/app/modals/agregar-adjuntos-modal/agregar-adjuntos.component';
 
-
 interface ClienteContacto {
   nombre: string;
   email: string;
@@ -80,9 +79,7 @@ export class ClientesPage implements OnInit{
   editarCliente: boolean  = false;
   cliente_contactos: any = [];
   loadingController: any;
-  alertController: any;
   
-
   constructor(
     public navCtrl: NavController,
     public loadingCtrl: LoadingController,
@@ -116,207 +113,6 @@ export class ClientesPage implements OnInit{
       this.tituloVarLocal = 'Crear Cliente';
       this.editarCliente = false;
     }
-  }
-
-
-
-
-
-///      COMIENZA AGREGAR CLIENTES      ///
-
-agregarCliente(): void {
-  if (this.contactos.length === 0) {
-    this.mostrarAlerta('Error', 'Debe ingresar al menos un contacto');
-    return;
-  }
-
-  const userId = this.userService.getId();
-  if (!userId) {
-    this.mostrarAlerta('Error', 'ID de usuario no encontrado');
-    return;
-  }
-
-  const tmpCliente = {
-    cliente: {
-      id: this.cliente.id || null,
-      cliente_clase_id: '1',
-      rut: this.getMember(this.cliente.rut),
-      nombre: this.getMember(this.cliente.nombre),
-      email: this.getMember(this.cliente.email),
-      web: this.getMember(this.cliente.web),
-      idioma_id: '40',
-      moneda_id: '29',
-      giro: this.getMember(this.cliente.giro),
-      observacion: this.getMember(this.cliente.observacion),
-      direccion: this.getMember(this.cliente.direccion),
-      pais_id: '41',
-      region_id: this.getMember(this.selectedData.region),
-      comuna_id: this.getMember(this.selectedData.comuna),
-      ciudad: this.getMember(this.cliente.ciudad),
-      codigopostal: this.getMember(this.cliente.codigopostal),
-      telefono: this.getMember(this.cliente.telefono),
-      tmobil: this.getMember(this.cliente.tmobil),
-      visitador_user_id: userId,
-      medico_responsable: this.getMember(this.cliente.medico_responsable),
-      especialidad: this.getMember(this.cliente.especialidad),
-      estado: this.getMember(this.cliente.estado),
-      cliente_contactos_attributes: this.contactos
-        .filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined))
-        .map(contacto => {
-          const { is_new, ...contactoSinIsNew } = contacto;
-          return {
-            ...contactoSinIsNew,
-            _destroy: contacto._destroy || 'false'
-          };
-        })
-    }
-  };
-
-  const catch_response = (response: any) => {
-    console.log("Response received:", response);
-    if (response && response.cliente) {
-      this.cliente.id = response.cliente.id;
-    }
-
-    this.sucursales.forEach((sucursal: any) => {
-      const tmp = {
-        cliente_sucursal: {
-          cliente_id: this.getMember(this.cliente.id),
-          nombre: this.getMember(sucursal.nombre),
-          recibe: this.getMember(sucursal.recibe),
-          pais_id: '41',
-          ciudad: this.getMember(sucursal.ciudad),
-          region_id: this.getMember(sucursal.selectedData.region.id),
-          comuna_id: this.getMember(sucursal.selectedData.comuna.id),
-          direccion: this.getMember(sucursal.direccion),
-          telefono: this.getMember(sucursal.telefono),
-          movil: this.getMember(sucursal.movil),
-          email: this.getMember(sucursal.email),
-          codpostal: this.getMember(sucursal.codpostal),
-          req_adicionales: this.getMember(sucursal.req_adicionales),
-          pais: this.getMember(sucursal.pais),
-          region: this.getMember(sucursal.region),
-          comuna: this.getMember(sucursal.comuna)
-        }
-      };
-
-      if (sucursal._destroy === 'false') {
-        if (sucursal.is_new === 'true') {
-          console.log("POSTSUCURSAL: " + JSON.stringify(tmp));
-          this.clienteService.postSucursal(tmp).subscribe(() => {
-            console.log("Sucursal añadida exitosamente");
-          }, () => {
-            console.log("Error al añadir la sucursal");
-          });
-        } else {
-          if (!sucursal.casa_matriz) {
-            console.log("PATCH SUCURSAL: " + JSON.stringify(tmp));
-            this.clienteService.patchSucursal(tmp, this.getMember(sucursal.id)).subscribe(() => {
-              console.log("Sucursal actualizada exitosamente");
-            }, () => {
-              console.log("Error al actualizar la sucursal");
-            });
-          }
-        }
-      } else {
-        console.log("DELETE SUCURSAL ID: " + this.getMember(sucursal.id));
-        this.clienteService.deleteSucursal(this.getMember(sucursal.id)).subscribe(() => {
-          console.log("Sucursal eliminada");
-        }, () => {
-          console.log("Error al eliminar la sucursal");
-          const msg = 'La sucursal ' + sucursal.nombre + ' no se puede eliminar';
-          this.mostrarAlerta('Atención', msg);
-        });
-      }
-    });
-
-    let msg = '';
-    if (this.editarCliente === true) {
-      msg = 'El cliente ha sido añadido exitosamente';
-    } else {
-      msg = 'El cliente ha sido actualizado exitosamente';
-    }
-    this.mostrarAlerta('Atención', msg);
-    this.router.navigate(['/home']);
-  };
-
-  const catch_error = (error: any) => {
-    console.log("Error response:", error);
-    let msg = '<br>';
-    for (const k in error.data) {
-      let j = k;
-      j = j.replace(/\w/, c => c.toUpperCase());
-      j = j.replace("_", " ");
-      msg += '<b>' + j + '</b><br>' + error.data[k] + '<br>';
-    }
-    this.mostrarAlerta('Error', 'Uno o más campos se encuentran vacíos o con error' + msg);
-  };
-
-  this.loadingCtrl.create({
-    message: 'Cargando...',
-    spinner: 'bubbles',
-    translucent: true
-  }).then((loading) => {
-    loading.present();
-    if (this.editarCliente === false) {
-      console.log("POST Cliente: " + JSON.stringify(tmpCliente));
-      this.clienteService.postCliente(tmpCliente).subscribe(
-        (response: any) => {
-          catch_response(response);
-          loading.dismiss();
-        },
-        (error: any) => {
-          catch_error(error);
-          loading.dismiss();
-        }
-      );
-    } else {
-      console.log("PATCH Cliente: " + JSON.stringify(tmpCliente));
-      this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
-        (response: any) => {
-          catch_response(response);
-          loading.dismiss();
-        },
-        (error: any) => {
-          catch_error(error);
-          loading.dismiss();
-        }
-      );
-    }
-  });
-}
-
-
-
-
-
-  ///      FINALIZA AGREGAR CLIENTES      ///
-
-  mostrarAlerta(titulo: string, mensaje: string) {
-    this.alertCtrl.create({
-      header: titulo,
-      message: mensaje,
-      buttons: ['OK']
-    }).then(alert => alert.present());
-  }
-  
-  
-  getMember(member: any): string {
-    return member !== null && member !== '' && member !== undefined && member.length !== 0 ? (typeof member !== 'string' ? member.toString() : member) : '';
-  }
-  
-
-  eliminarSucursal(sucursal: any) {
-    sucursal['_destroy'] = 'true';
-  }
-  
-  eliminarContacto(contacto: any) {
-    contacto['_destroy'] = 'true';
-  }
-  
-
-  solicitarEvaluacion(){
-
   }
 
   async ionViewDidEnter() {
@@ -407,21 +203,16 @@ agregarCliente(): void {
         }
   
 
-        if (this.cliente.archivos !== undefined ) {
+        if (this.cliente.archivos !== undefined &&  this.cliente.archivos !== "Sin Archivos Adjuntos") {
           this.archivos = this.cliente.archivos;
           let cont = 1;
-          //console.log("cliente: "+ JSON.stringify(this.cliente));
           this.archivos.forEach((archivo: any) => {
-            //archivo.adjunto.url = environment.BASE_URL + archivo.adjunto.url.substring(1, archivo.adjunto.url.length);
             archivo.arch_url = archivo.adjunto.url;
             archivo.number = cont;
             archivo._destroy = 'false';
             cont++;
           });
         }
-
-
-
       }
   
       // Ahora que todas las operaciones asíncronas han terminado, llamamos a actualizarComunas()
@@ -432,12 +223,267 @@ agregarCliente(): void {
       await loading.dismiss();
     }
   }
+
+  ///      COMIENZA AGREGAR CLIENTES      ///
+
+  agregarCliente(): void {
+    if (this.contactos.length === 0) {
+      this.mostrarAlerta('Error', 'Debe ingresar al menos un contacto');
+      return;
+    }
+
+    const userId = this.userService.getId();
+    if (!userId) {
+      this.mostrarAlerta('Error', 'ID de usuario no encontrado');
+      return;
+    }
+
+    const tmpCliente = {
+      cliente: {
+        id: this.cliente.id || null,
+        cliente_clase_id: '1',
+        rut: this.getMember(this.cliente.rut),
+        nombre: this.getMember(this.cliente.nombre),
+        email: this.getMember(this.cliente.email),
+        web: this.getMember(this.cliente.web),
+        idioma_id: '40',
+        moneda_id: '29',
+        giro: this.getMember(this.cliente.giro),
+        observacion: this.getMember(this.cliente.observacion),
+        direccion: this.getMember(this.cliente.direccion),
+        pais_id: '41',
+        region_id: this.getMember(this.selectedData.region),
+        comuna_id: this.getMember(this.selectedData.comuna),
+        ciudad: this.getMember(this.cliente.ciudad),
+        codigopostal: this.getMember(this.cliente.codigopostal),
+        telefono: this.getMember(this.cliente.telefono),
+        tmobil: this.getMember(this.cliente.tmobil),
+        visitador_user_id: userId,
+        medico_responsable: this.getMember(this.cliente.medico_responsable),
+        especialidad: this.getMember(this.cliente.especialidad),
+        estado: this.getMember(this.cliente.estado),
+        cliente_contactos_attributes: this.contactos
+          .filter(contacto => !(contacto._destroy === 'true' && contacto.id === undefined))
+          .map(contacto => {
+            const { is_new, ...contactoSinIsNew } = contacto;
+            return {
+              ...contactoSinIsNew,
+              _destroy: contacto._destroy || 'false'
+            };
+          })
+      }
+    };
+
+    const catch_response = (response: any) => {
+      console.log("Response received:", response);
+      if (response && response.cliente) {
+        this.cliente.id = response.cliente.id;
+      }
+
+      this.sucursales.forEach((sucursal: any) => {
+        const tmp = {
+          cliente_sucursal: {
+            cliente_id: this.getMember(this.cliente.id),
+            nombre: this.getMember(sucursal.nombre),
+            recibe: this.getMember(sucursal.recibe),
+            pais_id: '41',
+            ciudad: this.getMember(sucursal.ciudad),
+            region_id: this.getMember(sucursal.selectedData.region.id),
+            comuna_id: this.getMember(sucursal.selectedData.comuna.id),
+            direccion: this.getMember(sucursal.direccion),
+            telefono: this.getMember(sucursal.telefono),
+            movil: this.getMember(sucursal.movil),
+            email: this.getMember(sucursal.email),
+            codpostal: this.getMember(sucursal.codpostal),
+            req_adicionales: this.getMember(sucursal.req_adicionales),
+            pais: this.getMember(sucursal.pais),
+            region: this.getMember(sucursal.region),
+            comuna: this.getMember(sucursal.comuna)
+          }
+        };
+
+        if (sucursal._destroy === 'false') {
+          if (sucursal.is_new === 'true') {
+            console.log("POSTSUCURSAL: " + JSON.stringify(tmp));
+            this.clienteService.postSucursal(tmp).subscribe(() => {
+              console.log("Sucursal añadida exitosamente");
+            }, () => {
+              console.log("Error al añadir la sucursal");
+            });
+          } else {
+            if (!sucursal.casa_matriz) {
+              console.log("PATCH SUCURSAL: " + JSON.stringify(tmp));
+              this.clienteService.patchSucursal(tmp, this.getMember(sucursal.id)).subscribe(() => {
+                console.log("Sucursal actualizada exitosamente");
+              }, () => {
+                console.log("Error al actualizar la sucursal");
+              });
+            }
+          }
+        } else {
+          console.log("DELETE SUCURSAL ID: " + this.getMember(sucursal.id));
+          this.clienteService.deleteSucursal(this.getMember(sucursal.id)).subscribe(() => {
+            console.log("Sucursal eliminada");
+          }, () => {
+            console.log("Error al eliminar la sucursal");
+            const msg = 'La sucursal ' + sucursal.nombre + ' no se puede eliminar';
+            this.mostrarAlerta('Atención', msg);
+          });
+        }
+      });
+
+      let msg = '';
+      if (this.editarCliente === true) {
+        msg = 'El cliente ha sido añadido exitosamente';
+      } else {
+        msg = 'El cliente ha sido actualizado exitosamente';
+      }
+      this.mostrarAlerta('Atención', msg);
+      this.router.navigate(['/home']);
+    };
+
+    const catch_error = (error: any) => {
+      console.log("Error response:", error);
+      let msg = '<br>';
+      for (const k in error.data) {
+        let j = k;
+        j = j.replace(/\w/, c => c.toUpperCase());
+        j = j.replace("_", " ");
+        msg += '<b>' + j + '</b><br>' + error.data[k] + '<br>';
+      }
+      this.mostrarAlerta('Error', 'Uno o más campos se encuentran vacíos o con error' + msg);
+    };
+
+    this.loadingCtrl.create({
+      message: 'Cargando...',
+      spinner: 'bubbles',
+      translucent: true
+    }).then((loading) => {
+      loading.present();
+      if (this.editarCliente === false) {
+        console.log("POST Cliente: " + JSON.stringify(tmpCliente));
+        this.clienteService.postCliente(tmpCliente).subscribe(
+          (response: any) => {
+            catch_response(response);
+            loading.dismiss();
+          },
+          (error: any) => {
+            catch_error(error);
+            loading.dismiss();
+          }
+        );
+      } else {
+        console.log("PATCH Cliente: " + JSON.stringify(tmpCliente));
+        this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
+          (response: any) => {
+            catch_response(response);
+            loading.dismiss();
+          },
+          (error: any) => {
+            catch_error(error);
+            loading.dismiss();
+          }
+        );
+      }
+    });
+  }
+
+  ///      FINALIZA AGREGAR CLIENTES      ///
+
+  mostrarAlerta(titulo: string, mensaje: string) {
+    this.alertCtrl.create({
+      header: titulo,
+      message: mensaje,
+      buttons: ['OK']
+    }).then(alert => alert.present());
+  }
+  
+  getMember(member: any): string {
+    return member !== null && member !== '' && member !== undefined && member.length !== 0 ? (typeof member !== 'string' ? member.toString() : member) : '';
+  }
+
+  eliminarSucursal(sucursal: any) {
+    sucursal['_destroy'] = 'true';
+  }
+  
+  eliminarContacto(contacto: any) {
+    contacto['_destroy'] = 'true';
+  }
+  
+  async solicitarEvaluacion() {
+    const token = this.userService.getToken();
+    const clienteId = this.cliente.id ?? ''; // Proporciona un valor por defecto si es null
+
+    console.log("clienteid: " + clienteId);
+    console.log("token: " + token);
+
+    if (clienteId && token) { // Asegúrate de que ninguno de los dos sea null o vacío
+      try {
+        const confirmAlert = await this.alertCtrl.create({
+          header: 'Confirmación',
+          message: '¿Estás seguro de que deseas solicitar la evaluación?',
+          buttons: [
+            {
+              text: 'Cancelar',
+              role: 'cancel',
+            },
+            {
+              text: 'Confirmar',
+              handler: () => {
+                this.procesarSolicitudEvaluacion(clienteId, token);
+              }
+            }
+          ]
+        });
+        await confirmAlert.present();
+      } catch (error) {
+        console.error('Error al crear el alertController:', error);
+        this.mostrarAlerta('Error', 'Hubo un problema al mostrar la confirmación');
+      }
+    } else {
+      this.mostrarAlerta('Error', 'Hubo un problema');
+      return;
+    }
+  }
+
+  private async procesarSolicitudEvaluacion(clienteId: string, token: string) {
+    try {
+      this.clienteService.solicitarEvaluacion(clienteId, token).subscribe(
+        async response => {
+          const mensaje = response.mensaje;
+          const alert = await this.alertCtrl.create({
+            header: 'Atención',
+            message: mensaje,
+            buttons: ['OK']
+          });
+          await alert.present();
+        },
+        async error => {
+          console.error('Error al solicitar evaluación:', error);
+          let mensaje = 'Error al solicitar evaluación.';
+
+          if (error.status === 422 && error.error && error.error.mensaje) {
+            mensaje = error.error.mensaje;
+          }
+
+          const alert = await this.alertCtrl.create({
+            header: 'Atención',
+            message: mensaje,
+            buttons: ['OK']
+          });
+          await alert.present();
+        }
+      );
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+      this.mostrarAlerta('Error', 'Hubo un problema en la solicitud.');
+    }
+  }
   
   regionesResponse(regionesResponse: any) {
     throw new Error('Method not implemented.');
   }
   
-
   actualizarComunas() {
     const comunasCliente = () => {
       this.comunasCliente = [];
@@ -480,12 +526,6 @@ agregarCliente(): void {
       }
     }
   }
-
-
-
-
-
-
 
   takePicture() {
     const options: CameraOptions = {
