@@ -13,6 +13,7 @@ export class AppComponent implements OnInit {
   showSidebar = false;
   nombre: string = '';
   saludo: string = '';
+  darkMode = false;
 
   constructor(
     private router: Router, 
@@ -28,14 +29,11 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Obtener el nombre del usuario del servicio
     const userNombre = this.userService.getNombre();
-    console.log("nombre: " + userNombre);
     if (userNombre) {
       this.nombre = userNombre;
     }
-
-    // Calcular el saludo adecuado
+    this.checkAppMode();
     this.saludo = this.getSaludo();
   }
 
@@ -48,6 +46,25 @@ export class AppComponent implements OnInit {
     } else {
       return 'Que tenga una buena noche!';
     }
+  }
+
+  toggleDarkMode(){
+    this.darkMode = !this.darkMode;
+    document.body.classList.toggle('dark', this.darkMode);
+    if(this.darkMode){
+      localStorage.setItem('darkModeActivated', 'true');
+    }else{
+      localStorage.setItem('darkModeActivated', 'false');
+    }
+    console.log("variable local: "+ localStorage.getItem("darkModeActivated"));
+  }
+
+  checkAppMode(){
+    const checkIsDarkMode = localStorage.getItem('darkModeActivated');
+    checkIsDarkMode == 'true'
+    ? (this.darkMode = true)
+    : (this.darkMode = false);
+    document.body.classList.toggle('dark', this.darkMode)
   }
 
   closeSidebarAndNavigate(route: string) {
