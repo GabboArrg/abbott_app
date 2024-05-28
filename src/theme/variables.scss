@@ -1,7 +1,3 @@
-// Ionic Variables and Theming. For more info, please see:
-// http://ionicframework.com/docs/theming/
-
-/** Ionic CSS Variables **/
 :root {
   /** primary **/
   --ion-color-primary: #3880ff;
@@ -28,7 +24,7 @@
   --ion-color-tertiary-tint: #6370ff;
 
   /** success **/
-  --ion-color-success: #2dd36f;
+  --ion-color-success: #00a040;
   --ion-color-success-rgb: 45, 211, 111;
   --ion-color-success-contrast: #ffffff;
   --ion-color-success-contrast-rgb: 255, 255, 255;
@@ -74,13 +70,9 @@
   --ion-color-light-contrast-rgb: 0, 0, 0;
   --ion-color-light-shade: #d7d8da;
   --ion-color-light-tint: #f5f6f9;
+  --ion-item-divider-color-light: #3881ffd0;
+  --ion-item-divider-color-light-b: #ffffff;
 }
-
-//@media (prefers-color-scheme: dark) {
-  /*
-   * Dark Colors
-   * -------------------------------------------
-   */
 
   body.dark {
     --ion-color-primary: #428cff;
@@ -104,7 +96,7 @@
     --ion-color-tertiary-shade: #5d58e0;
     --ion-color-tertiary-tint: #7974ff;
 
-    --ion-color-success: #2fdf75;
+    --ion-color-success: #00a040;
     --ion-color-success-rgb: 47,223,117;
     --ion-color-success-contrast: #000000;
     --ion-color-success-contrast-rgb: 0,0,0;
@@ -145,12 +137,9 @@
     --ion-color-light-contrast-rgb: 255,255,255;
     --ion-color-light-shade: #1e2023;
     --ion-color-light-tint: #383a3e;
+    --ion-item-divider-color-light: #000000;
+    --ion-item-divider-color-light-b: #ffffff;
   }
-
-  /*
-   * iOS Dark Theme
-   * -------------------------------------------
-   */
 
   .ios body.dark {
     --ion-background-color: #000000;
@@ -190,12 +179,6 @@
     --ion-toolbar-border-color: var(--ion-color-step-250);
   }
 
-
-  /*
-   * Material Design Dark Theme
-   * -------------------------------------------
-   */
-
   .md body.dark {
     --ion-background-color: #121212;
     --ion-background-color-rgb: 18,18,18;
@@ -233,25 +216,12 @@
 
     --ion-card-background: #1e1e1e;
   }
-//}
 
-/* Agregado para el modo claro */
-@media (prefers-color-scheme: light) {
-  body {
-    background-color: #ffffff;
-    color: #3880ff; /* azul */
-  }
 
-  /* Contenedores azules con letras blancas */
-  .blue-container {
-    background-color: #3dc2ff; /* azul claro */
-    color: #ffffff; /* blanco */
-  }
 
-  /* Estilo para las letras dentro de los contenedores azules */
-  .blue-container p {
-    color: #ffffff; /* blanco */
-  }
 
-  /* Otros estilos para el modo claro */
-}
+    ion-item-divider {
+      background-color: var(--ion-item-divider-color-light);
+      color: var(--ion-item-divider-color-light-b);
+    }
+  

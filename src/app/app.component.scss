@@ -15,4 +15,42 @@
     font-weight: normal; /* Texto normal */
     font-style: italic;
   }
+  ion-toggle {
+  
+    --track-background: #ddd;
+    --track-background-checked: #ddd;
+  
+    --handle-background: #3b3b3b;
+    --handle-background-checked: #3880ff;
+  
+    --handle-width: 25px;
+    --handle-height: 27px;
+    --handle-max-height: auto;
+    --handle-spacing: 10px;
+  
+    --handle-border-radius: 4px;
+    --handle-box-shadow: none;
+  }
+  
+  ion-toggle::part(track) {
+    height: 10px;
+    width: 30px;
+  
+    /* Required for iOS handle to overflow the height of the track */
+    overflow: visible;
+  }
+
+  .footer-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-content p {
+    max-width: 75%;
+    margin: 2px 0;
+  }
   

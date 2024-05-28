@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { MenuController } from '@ionic/angular';
 import { NavigationStart, Router } from '@angular/router';
 import { UserService } from 'src/app/login/services/user.service';
-import { ThemeService } from 'src/app/services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -18,8 +17,7 @@ export class AppComponent implements OnInit {
   constructor(
     private router: Router, 
     private menu: MenuController, 
-    private userService: UserService,
-    private themeService: ThemeService
+    private userService: UserService
   ) {
     this.router.events.subscribe(event => {
       if (event instanceof NavigationStart) {
@@ -75,9 +73,7 @@ export class AppComponent implements OnInit {
     this.router.navigateByUrl(route);
   }
 
-  toggleTheme() {
-    this.themeService.toggleTheme();
-  }
+
 
   logout() {
     this.userService.logOut().then(() => {

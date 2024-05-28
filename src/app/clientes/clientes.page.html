@@ -3,7 +3,7 @@
 <ion-content fullscreen padding>
   <ion-list>
     <!-- Datos del cliente -->
-    <ion-item-divider class="titulo_tabla">
+    <ion-item-divider>
       <ion-label><b>Datos del cliente</b></ion-label>
     </ion-item-divider>
 
@@ -40,7 +40,7 @@
     <!-- Otras entradas de datos aquí -->
 
     <!-- Dirección Principal -->
-    <ion-item-divider class="titulo_tabla">
+    <ion-item-divider>
       <ion-label><b>Dirección Principal</b></ion-label>
     </ion-item-divider>
 
@@ -94,7 +94,7 @@
         <ion-item *ngIf="!sucursal.casa_matriz && sucursal._destroy != 'true'">
           <div style="width: 100%;">
             <!-- Título de la sucursal -->
-            <ion-item-divider class="titulo_tabla">
+            <ion-item-divider>
               <ion-label><b>Sucursal: {{ sucursal.direccion }}</b></ion-label>
             </ion-item-divider>
             
@@ -153,7 +153,7 @@
       <ng-container *ngFor="let contacto of contactos">
         <ion-item *ngIf="contacto._destroy != 'true'">
           <div style="width: 100%;">
-            <ion-item-divider class="titulo_tabla">
+            <ion-item-divider>
               <ion-label><b>Contacto: {{ contacto.nombre }}</b></ion-label>
             </ion-item-divider>
 

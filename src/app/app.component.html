@@ -5,46 +5,50 @@
       <ion-header>
         <ion-toolbar color="primary">
           <ion-title>
-            <span class="brand">Abbott</span> <span class="separator">-</span> <span class="subtitle">Pedidos</span>
+            <span class="brand">Abbott</span> 
+            <span class="separator">-</span> 
+            <span class="subtitle">Pedidos</span>
           </ion-title>
         </ion-toolbar>
       </ion-header>
       
       <ion-content>
         <ion-list>
-          <ion-item (click)="closeSidebarAndNavigate('/home')" routerDirection="root">
+          <ion-item (click)="closeSidebarAndNavigate('/home')" routerDirection="root" aria-label="Inicio">
             <ion-icon slot="start" name="home-outline"></ion-icon>
             <ion-label>Inicio</ion-label>
           </ion-item>
-          <ion-item (click)="closeSidebarAndNavigate('/pedidos')" routerDirection="root">
+          <ion-item (click)="closeSidebarAndNavigate('/pedidos')" routerDirection="root" aria-label="Pedidos">
             <ion-icon slot="start" name="cube-outline"></ion-icon>
             <ion-label>Pedidos</ion-label>
           </ion-item>
-          <ion-item (click)="closeSidebarAndNavigate('/clientes')" routerDirection="root">
+          <ion-item (click)="closeSidebarAndNavigate('/clientes')" routerDirection="root" aria-label="Agregar cliente">
             <ion-icon slot="start" name="person-add-outline"></ion-icon>
             <ion-label>Agregar cliente</ion-label>
           </ion-item>
-          <ion-item (click)="logout()">
+          <ion-item (click)="logout()" aria-label="Salir">
             <ion-icon slot="start" name="exit-outline"></ion-icon>
             <ion-label>Salir</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>
+
       <ion-footer>
         <ion-item>
           <ion-label>Modo: Claro / Oscuro</ion-label>
-          <ion-toggle class="button"
-          slot="end"
-          [checked]="darkMode"
-          (ionChange)="toggleDarkMode()"></ion-toggle>
-      </ion-item>
+          <ion-toggle 
+            slot="end"
+            [checked]="darkMode"
+            (ionChange)="toggleDarkMode()">
+          </ion-toggle>
+        </ion-item>
         <ion-toolbar>
-          <div style="display: flex; align-items: center; justify-content: center; width: 100%; flex-direction: column;">
-            <p style="max-width: 75%; text-align: center; margin-bottom: 2px;"><span class="subtitle">Bienvenido {{ nombre }}!</span></p>
-            <p style="max-width: 75%; text-align: center; margin-top: 2px;"><span class="subtitle">{{ saludo }}</span></p>
+          <div class="footer-content">
+            <p class="subtitle">Bienvenido {{ nombre }}!</p>
+            <p class="subtitle">{{ saludo }}</p>
           </div>
         </ion-toolbar>
-      </ion-footer>      
+      </ion-footer>
     </ion-menu>
 
     <!-- Contenido principal -->
