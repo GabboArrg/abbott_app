@@ -57,14 +57,8 @@ export class CrearDespachoComponent implements OnInit {
   }
 
   ngOnInit() {
-    //this.estado = this.venta.estado; REVISAR ESTO Y EL ELIMINAR ENTREGA
-    console.log("entra a crea despacho, numero: "+ this.venta_id);
-    console.log("estado: "+ this.venta.estado);
     this.loadDespachoClases();
     this.loadVariables();
-    console.log("entregas: "+ JSON.stringify(this.entregas));
-    
-    
   }
 
   loadVariables(){
@@ -90,7 +84,6 @@ export class CrearDespachoComponent implements OnInit {
   }
 
   seleccionaDespacho(idDespacho: number) {
-    console.log("id despacho: "+ idDespacho);
     this.idDespacho = idDespacho;
     if (idDespacho === 1 || idDespacho === 2) {
       this.tiene_despacho = false;
@@ -112,12 +105,10 @@ export class CrearDespachoComponent implements OnInit {
 
   
   seleccionaSucursal(idSucursal: number) {
-    console.log("sucursal: "+ idSucursal);
     this.idSucursal = idSucursal;
   }
 
   seleccionaContacto(idContacto: number) {
-    console.log("asd: "+ idContacto);
     this.idContacto = idContacto;
   }
 
@@ -146,8 +137,6 @@ export class CrearDespachoComponent implements OnInit {
       return;
     }
   
-    console.log("acumulado: " + maxEntregaObj.acumulado);
-  
     const producto = this.venta.productos.find((prod: { id: number; }) => prod.id === id);
     if (!producto) {
       console.log("Error: no se encontró el producto correspondiente para el id proporcionado");
@@ -170,7 +159,7 @@ export class CrearDespachoComponent implements OnInit {
   
       const alert = await this.alertController.create({
         header: 'Error',
-        message: 'Error: no puede ser mayor a la cantidad pendiente por entregar',
+        message: 'Error: no puede ser mayor a la cantidad pendiente por entregar, si se continúa, la entrega se creará sin ese producto',
         buttons: ['OK']
       });
       await alert.present();
@@ -188,8 +177,6 @@ export class CrearDespachoComponent implements OnInit {
     if (!this.idDespacho) {
       return this.presentAlert('Debe seleccionar tipo de despacho');
     }
-    console.log("id contacto: "+this.idContacto);
-    console.log("tipo contacto: "+ this.tipo_despacho);
     if (!this.idContacto && this.tipo_despacho) {
       return this.presentAlert('Debe seleccionar un contacto');
     }
@@ -245,12 +232,9 @@ export class CrearDespachoComponent implements OnInit {
       user_id: this.userService.getId() + ''
     };
 
-    console.log("DATA: "+ JSON.stringify(data));
-
     const loading = await this.presentLoading();
     this.ventaService.postDespacho(data).subscribe(
       response => {
-        console.log('Crear Entrega', response);
         loading.dismiss();
         this.closeAllModals();
         this.presentAlert('Entrega creada correctamente.', 'Entrega');
@@ -324,7 +308,6 @@ export class CrearDespachoComponent implements OnInit {
               await loading.present();
     
               this.ventaService.deleteDespacho(this.venta.id, this.numero).then((respuesta) => {
-                console.log('Eliminar Entrega', respuesta);
                 loading.dismiss();
                 this.closeAllModals();
                 this.presentAlert('Entrega eliminada correctamente.', 'Entrega');

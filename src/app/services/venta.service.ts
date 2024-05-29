@@ -354,7 +354,6 @@ export class VentaService {
         let descuento = 0;
   
         promo_packs.forEach((promopack: any) => {
-          console.log('c2 ' + promopack.cantidad2);
           if (promopack.material_id === element1.material_id && promopack.cantidad1 === element1.cantidad) {
             console.log('Promoción encontrada para material ' + element1.nombre + ' de posición ' + (j + 1));
             sum = 0;

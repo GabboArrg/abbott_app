@@ -58,7 +58,6 @@ export class ClienteService {
       });
     }
     const url = `${environment.API_ABBOTT}clientes/${id}`;
-    console.log("url: "+url)
     return this.http.get(url).pipe(
       catchError(error => {
         throw error;
@@ -113,7 +112,6 @@ export class ClienteService {
 
   postCliente(data: any): Observable<any> {
     const apiURL = environment.API_ABBOTT + 'clientes/';
-    console.log("entra al postcliente: "+apiURL);
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -128,7 +126,6 @@ export class ClienteService {
 
   postSucursal(data: any): Observable<any> {
     const apiURL = environment.API_ABBOTT + 'cliente_sucursales/';
-    console.log("entra al postSucursal: "+apiURL);
     const headers = new HttpHeaders({
       'Accept': 'application/json',
       'Content-Type': 'application/json'
@@ -145,7 +142,6 @@ export class ClienteService {
 
   patchCliente(data: any, id: string): Observable<any> {
     const url = `${environment.API_ABBOTT}clientes/${id}`;
-    console.log("entra a patchcliente: "+url);
     return this.http.patch(url, data).pipe(
       catchError(error => {
         throw error;
@@ -155,7 +151,6 @@ export class ClienteService {
 
   patchSucursal(data: any, id: string): Observable<any> {
     const url = `${environment.API_ABBOTT}cliente_sucursales?id=${id}`;
-    console.log("entra al patchsucursal: "+ url);
     return this.http.patch(url, data).pipe(
       catchError(error => {
         throw error;
@@ -176,7 +171,6 @@ export class ClienteService {
 
   deleteSucursal(id: string): Observable<any> {
     const url = `${environment.API_ABBOTT}cliente_sucursales?id=${id}`;
-    console.log("entra al deletesurucusal: "+url);
     return this.http.delete(url).pipe(
       catchError(error => {
         throw error;

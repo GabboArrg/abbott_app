@@ -78,7 +78,6 @@ export class PedidosPage implements OnInit {
   
 
   nuevaVenta() {
-    console.log("El cliente seleccionado es = " + this.idCliente);
     if (Number(this.idCliente) <= 0) {
       this.mostrarAlerta('Atención', 'Debe seleccionar un cliente');
       return;
@@ -88,7 +87,6 @@ export class PedidosPage implements OnInit {
 
 
   verCliente() {
-    console.log("Cliente id:" + this.idCliente);
     if (Number(this.idCliente) <= 0) {
       this.mostrarAlerta('Atención', 'Debe seleccionar un cliente');
       return;
@@ -135,7 +133,6 @@ export class PedidosPage implements OnInit {
         this.selcli = data.data; // Actualiza selcli con el cliente seleccionado
         if (this.selcli) {
           this.idCliente = this.selcli.id;
-          console.log('Cliente seleccionado:', this.selcli);
           this.obtienePedidos(this.idCliente).subscribe(
             (ventas) => {
               this.ventas = ventas.ventas; // Asignar los pedidos al array ventas

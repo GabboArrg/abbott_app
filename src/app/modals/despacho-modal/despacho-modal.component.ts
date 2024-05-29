@@ -64,7 +64,6 @@ export class DespachoComponent implements OnInit {
       this.despacho_clases = await this.ventaService.getDespachoClases();
       this.entregas = this.venta.entregas;
       
-      console.log("entregas: "+ this.entregas);
       this.maxEntrega = this.venta.productos.map((p: { id: any; cantidad: any; }) => ({
         id: p.id,
         acumulado: 0,

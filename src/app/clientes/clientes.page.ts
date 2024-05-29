@@ -275,7 +275,6 @@ export class ClientesPage implements OnInit{
     };
 
     const catch_response = (response: any) => {
-      console.log("Response received:", response);
       if (response && response.cliente) {
         this.cliente.id = response.cliente.id;
       }
@@ -304,7 +303,6 @@ export class ClientesPage implements OnInit{
 
         if (sucursal._destroy === 'false') {
           if (sucursal.is_new === 'true') {
-            console.log("POSTSUCURSAL: " + JSON.stringify(tmp));
             this.clienteService.postSucursal(tmp).subscribe(() => {
               console.log("Sucursal añadida exitosamente");
             }, () => {
@@ -312,7 +310,6 @@ export class ClientesPage implements OnInit{
             });
           } else {
             if (!sucursal.casa_matriz) {
-              console.log("PATCH SUCURSAL: " + JSON.stringify(tmp));
               this.clienteService.patchSucursal(tmp, this.getMember(sucursal.id)).subscribe(() => {
                 console.log("Sucursal actualizada exitosamente");
               }, () => {
@@ -321,7 +318,6 @@ export class ClientesPage implements OnInit{
             }
           }
         } else {
-          console.log("DELETE SUCURSAL ID: " + this.getMember(sucursal.id));
           this.clienteService.deleteSucursal(this.getMember(sucursal.id)).subscribe(() => {
             console.log("Sucursal eliminada");
           }, () => {
@@ -361,7 +357,6 @@ export class ClientesPage implements OnInit{
     }).then((loading) => {
       loading.present();
       if (this.editarCliente === false) {
-        console.log("POST Cliente: " + JSON.stringify(tmpCliente));
         this.clienteService.postCliente(tmpCliente).subscribe(
           (response: any) => {
             catch_response(response);
@@ -373,7 +368,6 @@ export class ClientesPage implements OnInit{
           }
         );
       } else {
-        console.log("PATCH Cliente: " + JSON.stringify(tmpCliente));
         this.clienteService.patchCliente(tmpCliente, tmpCliente.cliente.id).subscribe(
           (response: any) => {
             catch_response(response);
@@ -413,9 +407,6 @@ export class ClientesPage implements OnInit{
   async solicitarEvaluacion() {
     const token = this.userService.getToken();
     const clienteId = this.cliente.id ?? ''; // Proporciona un valor por defecto si es null
-
-    console.log("clienteid: " + clienteId);
-    console.log("token: " + token);
 
     if (clienteId && token) { // Asegúrate de que ninguno de los dos sea null o vacío
       try {
@@ -621,7 +612,6 @@ export class ClientesPage implements OnInit{
         // Aquí obtenemos los datos del modal cerrado y actualizamos las variables necesarias
         const { sucursal } = data.data;
         this.sucursales.push(sucursal);
-        console.log("ondidmiss modal agregar direccion: "+ JSON.stringify(this.sucursales));
       }
     });
     return await modal.present();

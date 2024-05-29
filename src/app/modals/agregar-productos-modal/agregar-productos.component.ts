@@ -93,8 +93,6 @@ export class AgregarProductosComponent implements OnInit {
 
 
   async agregaProducto() {
-    console.log('Producto a agregar:', this.codprod, 'Cantidad:', this.cantidad);
-    // Guarda una copia de ventaAux en caso de error
     const ventaAuxCopy = { ...this.ventaAux };
     
     // Obtiene los valores necesarios del componente
@@ -329,14 +327,10 @@ export class AgregarProductosComponent implements OnInit {
 
 
   updCantidad(cantidad: number): void {
-    console.log("UPDATE CANTIDAD: "+cantidad);
-  
     let bonif1 = 0;
     let dcto1 = 0;
     let neto1 = 0;
-  
     let maxval = 0;
-  
     if (cantidad < 0) {
       cantidad = 0;
     }
@@ -411,7 +405,6 @@ export class AgregarProductosComponent implements OnInit {
     let nneto: number;
     let niva: number;
     let nbruto: number;
-  console.log("update total dsc: "+ this.descuento);
     if (this.descuento && this.nprecio && this.cantidad) {
       if (this.descuento >= 0) {
         nneto = (this.nprecio * this.cantidad) * (1 - (this.descuento / 100));
@@ -430,7 +423,6 @@ export class AgregarProductosComponent implements OnInit {
   }
 
   updDescuento(descuento: number): void {
-    // console.log("descuento = " + descuento);
     this.descuento = descuento;
     this.updateTotal();
     this.updateTotales();

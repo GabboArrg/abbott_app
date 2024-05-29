@@ -27,7 +27,6 @@ export class UserService {
     const id = data.usuario.id;
     const mail = data.usuario.email;
     const nombre = data.usuario.nombre;
-    console.log("usuario: " + data.usuario.nombre);
 
     localStorage.setItem("token", token);
     localStorage.setItem("id", id);

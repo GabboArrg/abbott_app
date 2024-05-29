@@ -21,14 +21,10 @@ export class AgregarContactoComponent implements OnInit {
   ngOnInit() {}
 
   closeModalDireccion() {
-    // Utiliza el método dismiss() para cerrar el modal
     this.modalController.dismiss();
   }
 
   agregarContacto() {
-    // Aquí puedes procesar los datos del formulario
-    //console.log('Contacto:', this.contacto);
-    // Lógica para guardar los datos o realizar otras acciones
     this.modalController.dismiss({
       contacto: this.contacto
     });

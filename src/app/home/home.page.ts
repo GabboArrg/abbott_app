@@ -21,7 +21,6 @@ export class HomePage implements OnInit {
     if (userMail) {
       this.mail = userMail;
     }
-    console.log(userMail);
 
     // Asignar un valor a miVariable
     this.tituloVarLocal = 'Inicio';

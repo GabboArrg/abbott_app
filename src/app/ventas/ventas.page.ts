@@ -589,7 +589,6 @@ export class VentasPage implements OnInit {
       this.router.navigate([`ventas/${this.venta.cliente_id}/${this.venta.id}`]);//verificar
     }).catch(async (respuesta) => {
       await loading.dismiss();
-      console.log(respuesta);
       const alert = await this.alertCtrl.create({
         header: 'Error al Confirmar',
         message: respuesta.data,

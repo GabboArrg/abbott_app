@@ -54,7 +54,6 @@ export class AppComponent implements OnInit {
     }else{
       localStorage.setItem('darkModeActivated', 'false');
     }
-    console.log("variable local: "+ localStorage.getItem("darkModeActivated"));
   }
 
   checkAppMode(){
