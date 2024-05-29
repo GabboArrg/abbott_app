@@ -71,7 +71,7 @@ export class VentaService {
       this.http.request(req.method, req.url, { headers: req.headers, body: req.data })
         .toPromise()
         .then((respuesta: any) => {
-          const venta = respuesta.data.venta;
+          const venta = respuesta.venta;
           resolve(venta);
         })
         .catch((error: any) => {
@@ -295,7 +295,7 @@ export class VentaService {
       this.http.request(req.method, req.url, { headers: req.headers, body: req.data })
         .toPromise()
         .then((respuesta: any) => {
-          const venta = respuesta.data.venta;
+          const venta = respuesta.venta;
           this.dismissLoading();
           resolve(venta);
         })

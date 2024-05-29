@@ -586,7 +586,7 @@ export class VentasPage implements OnInit {
         buttons: ['OK']
       });
       await alert.present();
-      this.router.navigate(['app', 'abbott']);//cambiar este redirect
+      this.router.navigate([`ventas/${this.venta.cliente_id}/${this.venta.id}`]);//verificar
     }).catch(async (respuesta) => {
       await loading.dismiss();
       console.log(respuesta);
@@ -663,7 +663,6 @@ export class VentasPage implements OnInit {
         'observaciones': this.venta.observaciones
       }
     };
-  
     try {
       const venta = await this.ventaService.postVenta(data);
       const idVenta = venta.id;
@@ -684,7 +683,7 @@ export class VentasPage implements OnInit {
           pos_ventas_attributes: insertProds
         }
       };
-  
+
       const ventas = await this.ventaService.updateVenta(pedidoData, idVenta);
       if (ventas === undefined) {
         const alertPopupError = await this.alertCtrl.create({
@@ -703,9 +702,7 @@ export class VentasPage implements OnInit {
           buttons: ['OK']
         });
         await alertPopup.present();
-        this.router.navigate(['app', 'ventas'], {
-          queryParams: { keyUrl: idVenta, idCliente: this.idCliente }
-        });
+        this.router.navigate([`ventas/${this.venta.cliente_id}/${this.venta.id}`]);//verificar
       }
     } catch (error) {
       console.log(error);
