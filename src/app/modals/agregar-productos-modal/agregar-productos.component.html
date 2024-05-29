@@ -30,7 +30,7 @@
 
     <ion-item *ngIf="!es_muestra">
       <ion-label position="stacked">Precio unitario</ion-label>
-      <ion-input type="text" readonly value="${{ nprecio ? nprecio : 0| comma2decimal }}"></ion-input>
+      <ion-input type="text" readonly value="${{ nprecio | comma2decimal }}"></ion-input>
     </ion-item>
 
 
@@ -41,12 +41,12 @@
 
     <ion-item *ngIf="!es_muestra && (descuento && descuento > 0)">
       <ion-label position="stacked">Total sin descuento</ion-label>
-      <ion-input type="text" readonly value="${{ subtotal_pos ? subtotal_pos : 0 | comma2decimal }}"></ion-input>
+      <ion-input type="text" readonly value="${{ subtotal_pos | comma2decimal }}"></ion-input>
     </ion-item>
 
     <ion-item *ngIf="!es_muestra">
       <ion-label position="stacked">Total productos</ion-label>
-      <ion-input type="text" readonly value="${{ total_pos ? total_pos :0 | comma2decimal }}"></ion-input>
+      <ion-input type="text" readonly value="${{ total_pos | comma2decimal }}"></ion-input>
     </ion-item>
 
     <ion-button expand="full" color="primary" (click)="agregaProducto()">

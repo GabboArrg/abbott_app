@@ -63,11 +63,7 @@
             [(ngModel)]="fecha_entrega"
             [firstDayOfWeek]="1"
             [formatOptions]="{
-              date: {
-                weekday: 'long',
-                month: 'long',
-                day: '2-digit',
-              },
+              date: 'dd-MM-yyyy',
             }"
           ></ion-datetime>
           <ion-button slot="start" (click)="closeModal()">Aceptar</ion-button>

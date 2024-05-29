@@ -4,7 +4,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
 import { VentasPageRoutingModule } from './ventas-routing.module';
 import { VentasPage } from './ventas.page';
-import { SharedModule } from '../shared/shared.module'; // Importa el SharedModule aquí
+import { SharedModule } from 'src/app/shared/shared.module';
 import { FileOpener } from '@awesome-cordova-plugins/file-opener/ngx';
 import { FileTransfer } from '@awesome-cordova-plugins/file-transfer/ngx';
 import { AgregarProductosComponent } from 'src/app/modals/agregar-productos-modal/agregar-productos.component';
@@ -24,7 +24,7 @@ import { CrearDespachoComponent } from 'src/app/modals/crear-despacho-modal/crea
     ReactiveFormsModule,
     IonicModule,
     VentasPageRoutingModule,
-    SharedModule // Asegúrate de importar SharedModule aquí
+    SharedModule
   ],
   declarations: [VentasPage, AgregarProductosComponent, AgregarAdjuntosComponent, 
       FormatDatePipe, VerFotoComponent, DespachoComponent,CrearDespachoComponent],
