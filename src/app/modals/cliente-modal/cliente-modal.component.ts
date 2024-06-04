@@ -9,13 +9,12 @@ import { ModalController } from '@ionic/angular';
 export class ClienteModalComponent implements OnInit {
   
   clientesFiltrados: any[] = [];
-  @Input() clientes: any[] = []; // Cambiar el nombre del atributo
+  @Input() clientes: any[] = [];
   @Input() clienteSeleccionado: any;
 
   constructor(private modalController: ModalController) { }
 
   ngOnInit() {
-    // Al abrir el modal, mostrar todos los clientes inicialmente
     this.clientesFiltrados = this.clientes;
   }
 
@@ -29,17 +28,14 @@ export class ClienteModalComponent implements OnInit {
   }
 
   buscarCliente(event: any) {
-    const termino = event.target.value;
+    const termino = event.target.value.toLowerCase();
     if (!termino) {
-      // Si el término de búsqueda está vacío, mostrar todos los clientes
       this.clientesFiltrados = this.clientes;
       return;
     }
 
-    // Filtrar los clientes cuyo nombre contenga el término de búsqueda
     this.clientesFiltrados = this.clientes.filter(cliente =>
-      cliente.nombre.toLowerCase().includes(termino.toLowerCase())
+      cliente.nombre.toLowerCase().includes(termino) || cliente.rut.toLowerCase().includes(termino)
     );
   }
-  
 }

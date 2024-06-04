@@ -10,7 +10,7 @@
 </ion-header>
 
 <ion-content>
-  <ion-searchbar (ionInput)="buscarCliente($event)"></ion-searchbar>
+  <ion-searchbar placeholder="Buscar cliente por: nombre o rut" (ionInput)="buscarCliente($event)"></ion-searchbar>
 
   <ion-list>
     <ion-item *ngFor="let cliente of clientesFiltrados" (click)="seleccionarCliente(cliente)">
