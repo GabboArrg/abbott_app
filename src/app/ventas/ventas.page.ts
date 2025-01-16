@@ -577,26 +577,33 @@ export class VentasPage implements OnInit {
       cssClass: 'spinner-energized'
     });
     await loading.present();
-
+  
     this.ventaService.confirmarPedido(this.venta.id).then(async (respuesta) => {
       await loading.dismiss();
+      let mensaje;
+      try {
+        mensaje = JSON.parse(respuesta).message; // Intenta parsear como JSON
+      } catch {
+        mensaje = respuesta; // Si falla, usa el texto plano
+      }
       const alert = await this.alertCtrl.create({
         header: 'Pedido Confirmado',
-        message: respuesta.data,
+        message: mensaje,
         buttons: ['OK']
       });
       await alert.present();
-      this.router.navigate([`ventas/${this.venta.cliente_id}/${this.venta.id}`]);//verificar
-    }).catch(async (respuesta) => {
+      this.router.navigate([`ventas/${this.venta.cliente_id}/${this.venta.id}`]); // verificar
+    }).catch(async (error) => {
       await loading.dismiss();
       const alert = await this.alertCtrl.create({
         header: 'Error al Confirmar',
-        message: respuesta.data,
+        message: error.message || 'Error desconocido',
         buttons: ['OK']
       });
       await alert.present();
     });
   }
+  
   
   async confirmarGuardarPedido() {
     const alert = await this.alertCtrl.create({

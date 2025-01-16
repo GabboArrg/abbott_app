@@ -145,28 +145,18 @@ export class VentaService {
 
   confirmarPedido(idVenta: number): Promise<any> {
     const idUsr = this.userService.getId();
-
     const url = `${environment.API_ABBOTT}confirmar_entregas?venta_id=${idVenta}&user_id=${idUsr}`;
-    const req = {
-      method: 'POST',
-      url,
+  
+    // Retorna una promesa directamente usando HttpClient
+    return this.http.post(url, {}, { 
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
-      }
-    };
-
-    return new Promise((resolve, reject) => {
-      this.http.request(req.method, req.url, { headers: req.headers })
-        .toPromise()
-        .then((respuesta: any) => {
-          resolve(respuesta);
-        })
-        .catch((error: any) => {
-          reject(error);
-        });
-    });
+      },
+      responseType: 'text' // Asegura que la respuesta sea tratada como texto plano
+    }).toPromise();
   }
+  
 
   getDespachoClases(): Promise<any> {
     const headers = new HttpHeaders({

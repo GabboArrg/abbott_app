@@ -42,7 +42,7 @@
     "@angular-eslint/eslint-plugin-template": "^17.0.0",
     "@angular-eslint/schematics": "^17.0.0",
     "@angular-eslint/template-parser": "^17.0.0",
-    "@angular/cli": "^17.0.0",
+    "@angular/cli": "17.3.11",
     "@angular/compiler-cli": "^17.0.2",
     "@angular/language-service": "^17.0.2",
     "@ionic/angular-toolkit": "^9.0.0",
@@ -84,7 +84,9 @@
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {},
       "cordova-plugin-android-permissions": {},
-      "cordova-plugin-camera": {}
+      "cordova-plugin-camera": {
+        "ANDROIDX_CORE_VERSION": "1.6.+"
+      }
     },
     "platforms": [
       "android"

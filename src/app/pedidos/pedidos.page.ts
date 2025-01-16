@@ -63,7 +63,7 @@ export class PedidosPage implements OnInit {
   obtienePedidos(id: number) {
     if (this.selcli.id != this.LastidCliente && this.selcli.estado == "sin_evaluacion") {
       this.LastidCliente = this.cliente.id;
-      this.mostrarAlerta('Advertencia', 'Cliente sin evaluación el pedido no podrá confirmarse');
+      this.mostrarAlerta('Advertencia', 'Cliente sin evaluación, recuerde realizar solicitud');
     }
     return this.clienteService.getPedidos(id.toString());
   }

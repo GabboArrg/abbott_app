@@ -168,7 +168,7 @@
     </ion-button>
 
     <div *ngIf="venta.cliente">
-      <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas != 'Sin entregas realizadas.' && venta.cliente.estado != 'sin_evaluacion' && !creaVenta" expand="full" (click)="confirmarPedido()">
+      <ion-button *ngIf="setEstadoPedido2(venta.estado) && venta.entregas != 'Sin entregas realizadas.' && !creaVenta" expand="full" (click)="confirmarPedido()">
         Confirmar Pedido
       </ion-button>
     </div>
