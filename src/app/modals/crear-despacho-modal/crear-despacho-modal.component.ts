@@ -173,37 +173,41 @@ export class CrearDespachoComponent implements OnInit {
     if (this.idDespacho > 2 && !this.idSucursal) {
       return this.presentAlert('Debe Ingresar la dirección de despacho');
     }
-
+  
     if (!this.idDespacho) {
       return this.presentAlert('Debe seleccionar tipo de despacho');
     }
+  
     if (!this.idContacto && this.tipo_despacho) {
       return this.presentAlert('Debe seleccionar un contacto');
     }
-
-
+  
     if (this.fecha_entrega !== undefined) {
       const hoy = new Date();
+      hoy.setHours(0, 0, 0, 0); // Asegurarse de comparar solo fechas sin horas
       const fechaEntrega = new Date(this.fecha_entrega);
-      if(fechaEntrega < hoy){
+      fechaEntrega.setHours(0, 0, 0, 0); // Normalizar la hora de la fecha de entrega
+  
+      if (fechaEntrega < hoy) {
         return this.presentAlert('Debe ingresar una fecha correcta');
       }
-    }else{
+    } else {
       return this.presentAlert('Debe ingresar una fecha correcta');
     }
-
+  
     const strFec = formatDate(this.fecha_entrega, 'dd/MM/yyyy', 'en-US');
+  
     let sumCant = 0;
-
+  
     const entregas_attributes = this.nuevaEntrega.reduce((acc, value, index) => {
       const idaux = this.venta.productos[index].id;
       sumCant += value.cantidad;
-    
+  
       if (value.cantidad < 0) {
         this.presentAlert('Debe ingresar una cantidad válida');
         return acc;
       }
-    
+  
       acc[index] = {
         pos_venta_id: idaux,
         fecha_entrega: strFec,
@@ -211,11 +215,12 @@ export class CrearDespachoComponent implements OnInit {
       };
       return acc;
     }, {});
-
+  
+  
     if (sumCant < 1) {
       return this.presentAlert('La cantidad total debe ser mayor que 0.');
     }
-
+  
     const data = {
       type: 'PedidoVenta',
       clase: 'VOD',
@@ -231,21 +236,24 @@ export class CrearDespachoComponent implements OnInit {
       observacion: this.observacion,
       user_id: this.userService.getId() + ''
     };
-
+  
     const loading = await this.presentLoading();
     this.ventaService.postDespacho(data).subscribe(
       response => {
         loading.dismiss();
+        console.log('Respuesta del servicio:', response);
         this.closeAllModals();
         this.presentAlert('Entrega creada correctamente.', 'Entrega');
         this.router.navigate([`ventas/${this.idCliente}/${this.venta.id}`]);
       },
       error => {
         loading.dismiss();
+        console.log('Error del servicio:', error);
         this.presentAlert('Error al agregar entrega: ' + error.message);
       }
     );
   }
+  
   
   async closeAllModals() {
     // Aquí llamamos al dismiss() y pasamos un objeto indicando que queremos cerrar el modal padre
